@@ -7586,7 +7586,17 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="1.-Table-of-Contents-">1. Table of Contents <a class="anchor" id="TOC"></a><a class="anchor-link" href="#1.-Table-of-Contents-">¶</a></h1>
+<h1 id="1.-Table-of-Contents-">1. Table of Contents <a class="anchor" id="TOC"></a><a class="anchor-link" href="#1.-Table-of-Contents-">¶</a></h1><p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Survival Analysis</a> deals with the analysis of time-to-event data. It focuses on the expected duration of time until one or more events of interest occur, such as death, failure, or relapse. This type of analysis is used to study and model the time until the occurrence of an event, taking into account that the event might not have occurred for all subjects during the study period. Several key aspects of survival analysis include the survival function which refers to the probability that an individual survives longer than a certain time, hazard function which describes the instantaneous rate at which events occur, given no prior event, and censoring pertaining to a condition where the event of interest has not occurred for some subjects during the observation period.</p>
+<p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Right-Censored Survival Data</a> occurs when the event of interest has not happened for some subjects by the end of the study period or the last follow-up time. This type of censoring is common in survival analysis because not all individuals may experience the event before the study ends, or they might drop out or be lost to follow-up. Right-censored data is crucial in survival analysis as it allows the inclusion of all subjects in the analysis, providing more accurate and reliable estimates.</p>
+<p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Survival Models</a> refer to statistical methods used to analyze survival data, accounting for censored observations. These models aim to describe the relationship between survival time and one or more predictor variables, and to estimate the survival function and hazard function. Survival models are essential for understanding the factors that influence time-to-event data, allowing for predictions and comparisons between different groups or treatment effects. They are widely used in clinical trials, reliability engineering, and other areas where time-to-event data is prevalent.</p>
+<p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Cox Proportional Hazards Regression Models</a> relates the time until an event occurs (such as death or disease progression) to one or more predictor variables. The model is expressed through its hazard function, which represents the risk of the event happening at a particular time for an individual, given that the individual has survived up to that time. The mathematical equation is represented by the baseline hazard function (referring to the hazard for an individual when all of their covariates are zero, representing the inherent risk of the event happening over time, but is not directly estimated in the Cox model. Instead, the focus is on how the covariates influence the hazard relative to this baseline) and an exponential term that modifies the baseline hazard based on the individual's covariates (Each covariate is associated with a regression coefficient which measures the strength and direction of the effect of the covariate on the hazard. The exponential function ensures that the hazard is always positive, as hazard values can’t be negative). The proportional hazards assumption in this model means that the ratio of hazards between any two individuals is constant over time and is determined by the differences in their covariates. The Cox model doesn’t require a specific form for the baseline hazard, making it flexible, while properly accounting for censored data, which is common in survival studies.</p>
+<p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Accelerated Failure Time Models</a> are a class of survival analysis models used to analyze time-to-event data by directly modelling the survival time itself. An AFT model assumes that the effect of covariates accelerates or decelerates the life time of an event by some constant factor. The mathematical equation is represented by the logarithm of the survival time being equal to the sum of the vector of covariates multiplied to the vector of regression coefficients; and the product of the scale parameter and a random variable with a specified distribution. In an AFT model, the coefficients represent the multiplicative effect on the survival time. An exponentiated regression coefficient greater than one prolongs survival time, while a value less than one shortens it. The scale parameter determines the spread or variability of survival times. AFT models assume that the effect of covariates on survival time is multiplicative and that the survival times can be transformed to follow a specific distribution.</p>
+<p><a href="http://appliedpredictivemodeling.com/">Regularization Methods</a>, in the context of binary classification using Logistic Regression, are primarily used to prevent overfitting and improve the model's generalization to new data. Overfitting occurs when a model is too complex and learns not only the underlying pattern in the data but also the noise. This leads to poor performance on unseen data. Regularization introduces a penalty for large coefficients in the model, which helps in controlling the model complexity. In Logistic Regression, this is done by adding a regularization term to the loss function, which penalizes large values of the coefficients. This forces the model to keep the coefficients small, thereby reducing the likelihood of overfitting. Addiitonally, by penalizing the complexity of the model through the regularization term, regularization methods also help the model generalize better to unseen data. This is because the model is less likely to overfit the training data and more likely to capture the true underlying pattern.</p>
+<p><a href="https://proceedings.neurips.cc/paper_files/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Paper.pdf">Shapley Additive Explanations</a> are based on Shapley values developed in the cooperative game theory. The process involves explaining a prediction by assuming that each explanatory variable for an instance is a player in a game where the prediction is the payout. The game is the prediction task for a single instance of the data set. The gain is the actual prediction for this instance minus the average prediction for all instances. The players are the explanatory variable values of the instance that collaborate to receive the gain (predict a certain value). The determined value is the average marginal contribution of an explanatory variable across all possible coalitions.</p>
+<p><a href="https://fastapi.tiangolo.com/">FastAPI</a> is a modern, fast (high-performance) web framework for building APIs with Python. It’s designed to make it easy to create APIs quickly, while still providing strong validation and type hints that improve both code quality and performance. FastAPI allows building APIs by defining endpoints, which are essentially routes that handle HTTP requests. Routes are defined in Python functions, and FastAPI takes care of handling the request, validating input data, and generating responses. Significant features include high performance (FastAPI is one of the fastest Python frameworks, comparable to Node.js and Go, making it ideal for production use, especially in applications that require low latency, such as machine learning model inference), asynchronous support (FastAPI natively supports asynchronous programming, which is great for handling multiple requests concurrently, improving performance in scenarios with high traffic), data validation (FastAPI automatically validates the data coming into the API based on type annotations. If the user sends incorrect data (e.g., wrong data type), FastAPI generates informative error messages), and auto-generated documentation (FastAPI automatically generates API documentation in both Swagger UI and ReDoc formats. This makes testing and understanding the created API simple and fast for developers and stakeholders). In the context of machine learning model deployment, FastAPI acts as the backend API that handles requests for predictions. When a client or application (like a frontend UI) sends data to the API, FastAPI passes it to the model, retrieves the model’s prediction, and sends the result back to the client.</p>
+<p><a href="https://streamlit.io/">Streamlit</a> is an open-source Python library that simplifies the creation and deployment of web applications for machine learning and data science projects. It allows developers and data scientists to turn Python scripts into interactive web apps quickly without requiring extensive web development knowledge. Streamlit seamlessly integrates with popular Python libraries such as Pandas, Matplotlib, Plotly, and TensorFlow, allowing one to leverage existing data processing and visualization tools within the application. Streamlit apps can be easily deployed on various platforms, including Streamlit Community Cloud, Heroku, or any cloud service that supports Python web applications.</p>
+<p><a href="https://streamlit.io/cloud">Streamlit Community Cloud</a>, formerly known as Streamlit Sharing, is a free cloud-based platform provided by Streamlit that allows users to easily deploy and share Streamlit apps online. It is particularly popular among data scientists, machine learning engineers, and developers for quickly showcasing projects, creating interactive demos, and sharing data-driven applications with a wider audience without needing to manage server infrastructure. Significant features include free hosting (Streamlit Community Cloud provides free hosting for Streamlit apps, making it accessible for users who want to share their work without incurring hosting costs), easy deployment (users can connect their GitHub repository to Streamlit Community Cloud, and the app is automatically deployed from the repository), continuous deployment (if the code in the connected GitHub repository is updated, the app is automatically redeployed with the latest changes),
+sharing capabilities (once deployed, apps can be shared with others via a simple URL, making it easy for collaborators, stakeholders, or the general public to access and interact with the app), built-in authentication (users can restrict access to their apps using GitHub-based authentication, allowing control over who can view and interact with the app), and community support (the platform is supported by a community of users and developers who share knowledge, templates, and best practices for building and deploying Streamlit apps).</p>
 </div>
 </div>
 </div>
@@ -7597,7 +7607,31 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="1.1.-Data-Background-">1.1. Data Background <a class="anchor" id="1.1"></a><a class="anchor-link" href="#1.1.-Data-Background-">¶</a></h2>
+<h2 id="1.1.-Data-Background-">1.1. Data Background <a class="anchor" id="1.1"></a><a class="anchor-link" href="#1.1.-Data-Background-">¶</a></h2><p>An open <a href="https://paperswithcode.com/dataset/survival-analysis-of-heart-failure-patients">Heart Failure Dataset</a> from <a href="https://paperswithcode.com/">Papers With Code</a> (with all credits attributed to <a href="https://paperswithcode.com/search?q=author%3ASaurav+Mishra">Saurav Mishra</a>) was used for the analysis as consolidated from the following primary source:</p>
+<ol>
+<li>Research Paper entitled <strong>A Comparative Study for Time-to-Event Analysis and Survival Prediction for Heart Failure Condition using Machine Learning Techniques</strong> from the <a href="http://jeeemi.org/index.php/jeeemi/article/view/225/94">Journal of Electronics, Electromedical Engineering, and Medical Informatics</a></li>
+<li>Research Paper entitled <strong>Machine Learning Can Predict Survival of Patients with Heart Failure from Serum Creatinine and Ejection Fraction Alone</strong> from the <a href="https://bmcmedinformdecismak.biomedcentral.com/articles/10.1186/s12911-020-1023-5">BMC Medical Informatics and Decision Making</a> Journal</li>
+</ol>
+<p>This study hypothesized that cardiovascular, hematologic, and metabolic markers influence heart failure survival risks between patients.</p>
+<p>The event status and survival duration variables for the study are:</p>
+<ul>
+<li><span style="color: #FF0000">DEATH_EVENT</span> - Status of the patient within the follow-up period (0, censored | 1, death)</li>
+<li><span style="color: #FF0000">TIME</span> - Follow-up period (Days)</li>
+</ul>
+<p>The predictor variables for the study are:</p>
+<ul>
+<li><span style="color: #FF0000">AGE</span> - Patient's age (Years)</li>
+<li><span style="color: #FF0000">ANAEMIA</span> - Hematologic marker for the indication of anaemia (decrease of red blood cells or hemoglobin level in the blood) (0, Absent | 1 Present)</li>
+<li><span style="color: #FF0000">CREATININE_PHOSPHOKINASE</span> - Metabolic marker for the level of the CPK enzyme in the blood (mcg/L)</li>
+<li><span style="color: #FF0000">DIABETES</span> - Metabolic marker for the indication of diabetes (0, Absent | 1 Present)</li>
+<li><span style="color: #FF0000">EJECTION_FRACTION</span> - Cardiovascular marker for the ejection fraction (percentage of blood leaving the heart at each contraction) (%)</li>
+<li><span style="color: #FF0000">HIGH_BLOOD_PRESSURE</span> - Cardiovascular marker for the indication of hypertension (0, Absent | 1 Present)</li>
+<li><span style="color: #FF0000">PLATELETS</span> - Hematologic marker for the platelets in the blood (kiloplatelets/mL)</li>
+<li><span style="color: #FF0000">SERUM_CREATININE</span> - Metabolic marker for level of creatinine in the blood (mg/dL)</li>
+<li><span style="color: #FF0000">SERUM_SODIUM</span> - Metabolic marker for the level of sodium in the blood (mEq/L)</li>
+<li><span style="color: #FF0000">SEX</span> - Patient's sex (0, Female | 1, Male)</li>
+<li><span style="color: #FF0000">SMOKING</span> - Cardiovascular marker for the indication of smoking (0, Absent | 1 Present)</li>
+</ul>
 </div>
 </div>
 </div>
@@ -7612,6 +7646,937 @@ a.anchor-link {
 </div>
 </div>
 </div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=e012a458-4156-4eae-8f64-43a98ee469df">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Loading Python Libraries</span>
+<span class="c1">##################################</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">joblib</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">add</span><span class="p">,</span><span class="n">mul</span><span class="p">,</span><span class="n">truediv</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.experimental</span> <span class="kn">import</span> <span class="n">enable_iterative_imputer</span>
+<span class="kn">from</span> <span class="nn">sklearn.impute</span> <span class="kn">import</span> <span class="n">IterativeImputer</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">PowerTransformer</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.compose</span> <span class="kn">import</span> <span class="n">ColumnTransformer</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">KFold</span>
+<span class="kn">from</span> <span class="nn">sklearn.inspection</span> <span class="kn">import</span> <span class="n">permutation_importance</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.nonparametric.smoothers_lowess</span> <span class="kn">import</span> <span class="n">lowess</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">ttest_ind</span><span class="p">,</span> <span class="n">chi2_contingency</span>
+
+<span class="kn">from</span> <span class="nn">lifelines</span> <span class="kn">import</span> <span class="n">KaplanMeierFitter</span><span class="p">,</span> <span class="n">CoxPHFitter</span>
+<span class="kn">from</span> <span class="nn">lifelines.utils</span> <span class="kn">import</span> <span class="n">concordance_index</span>
+<span class="kn">from</span> <span class="nn">lifelines.statistics</span> <span class="kn">import</span> <span class="n">logrank_test</span>
+<span class="kn">import</span> <span class="nn">shap</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=f5150b5f-1655-4554-995e-be62a94186d6">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Defining file paths</span>
+<span class="c1">##################################</span>
+<span class="n">DATASETS_ORIGINAL_PATH</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"datasets\original"</span>
+<span class="n">DATASETS_PREPROCESSED_PATH</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"datasets\preprocessed"</span>
+<span class="n">DATASETS_FINAL_PATH</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"datasets\final\complete"</span>
+<span class="n">DATASETS_FINAL_TRAIN_PATH</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"datasets\final\train"</span>
+<span class="n">DATASETS_FINAL_TRAIN_FEATURES_PATH</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"datasets\final\train\features"</span>
+<span class="n">DATASETS_FINAL_TRAIN_TARGET_PATH</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"datasets\final\train\target"</span>
+<span class="n">DATASETS_FINAL_VALIDATION_PATH</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"datasets\final\validation"</span>
+<span class="n">DATASETS_FINAL_VALIDATION_FEATURES_PATH</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"datasets\final\validation\features"</span>
+<span class="n">DATASETS_FINAL_VALIDATION_TARGET_PATH</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"datasets\final\validation\target"</span>
+<span class="n">DATASETS_FINAL_TEST_PATH</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"datasets\final\test"</span>
+<span class="n">DATASETS_FINAL_TEST_FEATURES_PATH</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"datasets\final\test\features"</span>
+<span class="n">DATASETS_FINAL_TEST_TARGET_PATH</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"datasets\final\test\target"</span>
+<span class="n">MODELS_PATH</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"models"</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=7dc20d76-0fa1-4853-9f65-770aefdda888">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Loading the dataset</span>
+<span class="c1"># from the DATASETS_ORIGINAL_PATH</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">".."</span><span class="p">,</span> <span class="n">DATASETS_ORIGINAL_PATH</span><span class="p">,</span> <span class="s2">"heart_failure_clinical_records_dataset.csv"</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=a9150bb0-7882-4d8b-b774-cff94d1cd3b6">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Performing a general exploration of the dataset</span>
+<span class="c1">##################################</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Dataset Dimensions: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">heart_failure</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Dataset Dimensions: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>(299, 13)</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e9220352-f9d8-4740-83c9-b25ec311645b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Verifying the column names</span>
+<span class="c1">##################################</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Column Names: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">heart_failure</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Column Names: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Index(['age', 'anaemia', 'creatinine_phosphokinase', 'diabetes',
+       'ejection_fraction', 'high_blood_pressure', 'platelets',
+       'serum_creatinine', 'serum_sodium', 'sex', 'smoking', 'time',
+       'DEATH_EVENT'],
+      dtype='object')</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=40a1ebb5-2ab6-4884-b0c2-f1e89433fb8f">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Removing trailing white spaces</span>
+<span class="c1"># in column names</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">heart_failure</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=88bc79aa-edf3-4ed3-85a5-c0e8f2787f2b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Standardizing the column names</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'AGE'</span><span class="p">,</span> 
+                         <span class="s1">'ANAEMIA'</span><span class="p">,</span> 
+                         <span class="s1">'CREATININE_PHOSPHOKINASE'</span><span class="p">,</span> 
+                         <span class="s1">'DIABETES'</span><span class="p">,</span> 
+                         <span class="s1">'EJECTION_FRACTION'</span><span class="p">,</span>
+                         <span class="s1">'HIGH_BLOOD_PRESSURE'</span><span class="p">,</span> 
+                         <span class="s1">'PLATELETS'</span><span class="p">,</span> 
+                         <span class="s1">'SERUM_CREATININE'</span><span class="p">,</span> 
+                         <span class="s1">'SERUM_SODIUM'</span><span class="p">,</span> 
+                         <span class="s1">'SEX'</span><span class="p">,</span>
+                         <span class="s1">'SMOKING'</span><span class="p">,</span> 
+                         <span class="s1">'TIME'</span><span class="p">,</span> 
+                         <span class="s1">'DEATH_EVENT'</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=8887bf47-9094-44b6-92a6-a13d16efef92">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Verifying the corrected column names</span>
+<span class="c1">##################################</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Column Names: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">heart_failure</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Column Names: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Index(['AGE', 'ANAEMIA', 'CREATININE_PHOSPHOKINASE', 'DIABETES',
+       'EJECTION_FRACTION', 'HIGH_BLOOD_PRESSURE', 'PLATELETS',
+       'SERUM_CREATININE', 'SERUM_SODIUM', 'SEX', 'SMOKING', 'TIME',
+       'DEATH_EVENT'],
+      dtype='object')</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e195c602-25f4-4ce5-b755-bea2c1aa1697">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Listing the column names and data types</span>
+<span class="c1">##################################</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Column Names and Data Types:'</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">heart_failure</span><span class="o">.</span><span class="n">dtypes</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Column Names and Data Types:
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>AGE                         float64
+ANAEMIA                       int64
+CREATININE_PHOSPHOKINASE      int64
+DIABETES                      int64
+EJECTION_FRACTION             int64
+HIGH_BLOOD_PRESSURE           int64
+PLATELETS                   float64
+SERUM_CREATININE            float64
+SERUM_SODIUM                  int64
+SEX                           int64
+SMOKING                       int64
+TIME                          int64
+DEATH_EVENT                   int64
+dtype: object</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=fc7069c8-4b6f-41c5-9336-646840aca552">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Taking a snapshot of the dataset</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[10]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>AGE</th>
+<th>ANAEMIA</th>
+<th>CREATININE_PHOSPHOKINASE</th>
+<th>DIABETES</th>
+<th>EJECTION_FRACTION</th>
+<th>HIGH_BLOOD_PRESSURE</th>
+<th>PLATELETS</th>
+<th>SERUM_CREATININE</th>
+<th>SERUM_SODIUM</th>
+<th>SEX</th>
+<th>SMOKING</th>
+<th>TIME</th>
+<th>DEATH_EVENT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>75.0</td>
+<td>0</td>
+<td>582</td>
+<td>0</td>
+<td>20</td>
+<td>1</td>
+<td>265000.00</td>
+<td>1.9</td>
+<td>130</td>
+<td>1</td>
+<td>0</td>
+<td>4</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1</th>
+<td>55.0</td>
+<td>0</td>
+<td>7861</td>
+<td>0</td>
+<td>38</td>
+<td>0</td>
+<td>263358.03</td>
+<td>1.1</td>
+<td>136</td>
+<td>1</td>
+<td>0</td>
+<td>6</td>
+<td>1</td>
+</tr>
+<tr>
+<th>2</th>
+<td>65.0</td>
+<td>0</td>
+<td>146</td>
+<td>0</td>
+<td>20</td>
+<td>0</td>
+<td>162000.00</td>
+<td>1.3</td>
+<td>129</td>
+<td>1</td>
+<td>1</td>
+<td>7</td>
+<td>1</td>
+</tr>
+<tr>
+<th>3</th>
+<td>50.0</td>
+<td>1</td>
+<td>111</td>
+<td>0</td>
+<td>20</td>
+<td>0</td>
+<td>210000.00</td>
+<td>1.9</td>
+<td>137</td>
+<td>1</td>
+<td>0</td>
+<td>7</td>
+<td>1</td>
+</tr>
+<tr>
+<th>4</th>
+<td>65.0</td>
+<td>1</td>
+<td>160</td>
+<td>1</td>
+<td>20</td>
+<td>0</td>
+<td>327000.00</td>
+<td>2.7</td>
+<td>116</td>
+<td>0</td>
+<td>0</td>
+<td>8</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=516fe63c-2b3e-4cbd-a3be-c9e7394b5e0e">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Setting the levels of the dichotomous categorical variables</span>
+<span class="c1"># to boolean values</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure</span><span class="p">[</span><span class="s1">'DEATH_EVENT'</span><span class="p">]</span> <span class="o">=</span> <span class="n">heart_failure</span><span class="p">[</span><span class="s1">'DEATH_EVENT'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'category'</span><span class="p">)</span>
+<span class="n">heart_failure</span><span class="p">[</span><span class="s1">'DEATH_EVENT'</span><span class="p">]</span> <span class="o">=</span> <span class="n">heart_failure</span><span class="p">[</span><span class="s1">'DEATH_EVENT'</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">set_categories</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ordered</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">heart_failure</span><span class="p">[</span><span class="s1">'SEX'</span><span class="p">]</span> <span class="o">=</span> <span class="n">heart_failure</span><span class="p">[</span><span class="s1">'SEX'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+<span class="n">heart_failure</span><span class="p">[</span><span class="s1">'SEX'</span><span class="p">]</span> <span class="o">=</span> <span class="n">heart_failure</span><span class="p">[</span><span class="s1">'SEX'</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="s1">'Female'</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">'Male'</span><span class="p">})</span>
+<span class="n">int_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'ANAEMIA'</span><span class="p">,</span>
+               <span class="s1">'DIABETES'</span><span class="p">,</span> 
+               <span class="s1">'HIGH_BLOOD_PRESSURE'</span><span class="p">,</span>
+               <span class="s1">'SMOKING'</span><span class="p">]</span>
+<span class="n">heart_failure</span><span class="p">[</span><span class="n">int_columns</span><span class="p">]</span> <span class="o">=</span> <span class="n">heart_failure</span><span class="p">[</span><span class="n">int_columns</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+<span class="n">heart_failure</span><span class="p">[</span><span class="n">int_columns</span><span class="p">]</span> <span class="o">=</span> <span class="n">heart_failure</span><span class="p">[</span><span class="n">int_columns</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="s1">'Absent'</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">'Present'</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=7d4b0093-5441-4518-8e40-cd7eb89eb547">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Listing the column names and data types</span>
+<span class="c1">##################################</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Column Names and Data Types:'</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">heart_failure</span><span class="o">.</span><span class="n">dtypes</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Column Names and Data Types:
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>AGE                          float64
+ANAEMIA                       object
+CREATININE_PHOSPHOKINASE       int64
+DIABETES                      object
+EJECTION_FRACTION              int64
+HIGH_BLOOD_PRESSURE           object
+PLATELETS                    float64
+SERUM_CREATININE             float64
+SERUM_SODIUM                   int64
+SEX                           object
+SMOKING                       object
+TIME                           int64
+DEATH_EVENT                 category
+dtype: object</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=fbbe50c1-61e6-4a5d-b356-9cd1c2fbd24d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Taking a snapshot of the dataset</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[13]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>AGE</th>
+<th>ANAEMIA</th>
+<th>CREATININE_PHOSPHOKINASE</th>
+<th>DIABETES</th>
+<th>EJECTION_FRACTION</th>
+<th>HIGH_BLOOD_PRESSURE</th>
+<th>PLATELETS</th>
+<th>SERUM_CREATININE</th>
+<th>SERUM_SODIUM</th>
+<th>SEX</th>
+<th>SMOKING</th>
+<th>TIME</th>
+<th>DEATH_EVENT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>75.0</td>
+<td>Absent</td>
+<td>582</td>
+<td>Absent</td>
+<td>20</td>
+<td>Present</td>
+<td>265000.00</td>
+<td>1.9</td>
+<td>130</td>
+<td>Male</td>
+<td>Absent</td>
+<td>4</td>
+<td>1</td>
+</tr>
+<tr>
+<th>1</th>
+<td>55.0</td>
+<td>Absent</td>
+<td>7861</td>
+<td>Absent</td>
+<td>38</td>
+<td>Absent</td>
+<td>263358.03</td>
+<td>1.1</td>
+<td>136</td>
+<td>Male</td>
+<td>Absent</td>
+<td>6</td>
+<td>1</td>
+</tr>
+<tr>
+<th>2</th>
+<td>65.0</td>
+<td>Absent</td>
+<td>146</td>
+<td>Absent</td>
+<td>20</td>
+<td>Absent</td>
+<td>162000.00</td>
+<td>1.3</td>
+<td>129</td>
+<td>Male</td>
+<td>Present</td>
+<td>7</td>
+<td>1</td>
+</tr>
+<tr>
+<th>3</th>
+<td>50.0</td>
+<td>Present</td>
+<td>111</td>
+<td>Absent</td>
+<td>20</td>
+<td>Absent</td>
+<td>210000.00</td>
+<td>1.9</td>
+<td>137</td>
+<td>Male</td>
+<td>Absent</td>
+<td>7</td>
+<td>1</td>
+</tr>
+<tr>
+<th>4</th>
+<td>65.0</td>
+<td>Present</td>
+<td>160</td>
+<td>Present</td>
+<td>20</td>
+<td>Absent</td>
+<td>327000.00</td>
+<td>2.7</td>
+<td>116</td>
+<td>Female</td>
+<td>Absent</td>
+<td>8</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b7e7480d-6ca6-4e94-87fe-21d47210c52b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Performing a general exploration </span>
+<span class="c1"># of the numeric variables</span>
+<span class="c1">##################################</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Numeric Variable Summary:'</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">heart_failure</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="s1">'number'</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Numeric Variable Summary:
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>count</th>
+<th>mean</th>
+<th>std</th>
+<th>min</th>
+<th>25%</th>
+<th>50%</th>
+<th>75%</th>
+<th>max</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>AGE</th>
+<td>299.0</td>
+<td>60.833893</td>
+<td>11.894809</td>
+<td>40.0</td>
+<td>51.0</td>
+<td>60.0</td>
+<td>70.0</td>
+<td>95.0</td>
+</tr>
+<tr>
+<th>CREATININE_PHOSPHOKINASE</th>
+<td>299.0</td>
+<td>581.839465</td>
+<td>970.287881</td>
+<td>23.0</td>
+<td>116.5</td>
+<td>250.0</td>
+<td>582.0</td>
+<td>7861.0</td>
+</tr>
+<tr>
+<th>EJECTION_FRACTION</th>
+<td>299.0</td>
+<td>38.083612</td>
+<td>11.834841</td>
+<td>14.0</td>
+<td>30.0</td>
+<td>38.0</td>
+<td>45.0</td>
+<td>80.0</td>
+</tr>
+<tr>
+<th>PLATELETS</th>
+<td>299.0</td>
+<td>263358.029264</td>
+<td>97804.236869</td>
+<td>25100.0</td>
+<td>212500.0</td>
+<td>262000.0</td>
+<td>303500.0</td>
+<td>850000.0</td>
+</tr>
+<tr>
+<th>SERUM_CREATININE</th>
+<td>299.0</td>
+<td>1.393880</td>
+<td>1.034510</td>
+<td>0.5</td>
+<td>0.9</td>
+<td>1.1</td>
+<td>1.4</td>
+<td>9.4</td>
+</tr>
+<tr>
+<th>SERUM_SODIUM</th>
+<td>299.0</td>
+<td>136.625418</td>
+<td>4.412477</td>
+<td>113.0</td>
+<td>134.0</td>
+<td>137.0</td>
+<td>140.0</td>
+<td>148.0</td>
+</tr>
+<tr>
+<th>TIME</th>
+<td>299.0</td>
+<td>130.260870</td>
+<td>77.614208</td>
+<td>4.0</td>
+<td>73.0</td>
+<td>115.0</td>
+<td>203.0</td>
+<td>285.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=ed7d330f-dec8-4f0c-96c6-c5c30d321d91">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Performing a general exploration </span>
+<span class="c1"># of the object and categorical variables</span>
+<span class="c1">##################################</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Categorical Variable Summary:'</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">heart_failure</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s1">'category'</span><span class="p">,</span><span class="s1">'object'</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Categorical Variable Summary:
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>count</th>
+<th>unique</th>
+<th>top</th>
+<th>freq</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>ANAEMIA</th>
+<td>299</td>
+<td>2</td>
+<td>Absent</td>
+<td>170</td>
+</tr>
+<tr>
+<th>DIABETES</th>
+<td>299</td>
+<td>2</td>
+<td>Absent</td>
+<td>174</td>
+</tr>
+<tr>
+<th>HIGH_BLOOD_PRESSURE</th>
+<td>299</td>
+<td>2</td>
+<td>Absent</td>
+<td>194</td>
+</tr>
+<tr>
+<th>SEX</th>
+<td>299</td>
+<td>2</td>
+<td>Male</td>
+<td>194</td>
+</tr>
+<tr>
+<th>SMOKING</th>
+<td>299</td>
+<td>2</td>
+<td>Absent</td>
+<td>203</td>
+</tr>
+<tr>
+<th>DEATH_EVENT</th>
+<td>299</td>
+<td>2</td>
+<td>0</td>
+<td>203</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=57759e48-85e1-4e65-97b2-3dfd6b456a07">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -7620,6 +8585,1592 @@ a.anchor-link {
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h2 id="1.3.-Data-Quality-Assessment-">1.3. Data Quality Assessment <a class="anchor" id="1.3"></a><a class="anchor-link" href="#1.3.-Data-Quality-Assessment-">¶</a></h2>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=26f98132-b43e-4d46-9d9b-4fa27b5aa57a">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Counting the number of duplicated rows</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[16]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>0</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=98af828c-8e62-4917-a9a7-75f1362cc762">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the data types for each column</span>
+<span class="c1">##################################</span>
+<span class="n">data_type_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">heart_failure</span><span class="o">.</span><span class="n">dtypes</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=569ef051-1abe-46e7-a641-c010ed7cbb52">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the variable names for each column</span>
+<span class="c1">##################################</span>
+<span class="n">variable_name_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">heart_failure</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=2b73d356-81c2-4053-99d2-236265c23df8">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the number of observations for each column</span>
+<span class="c1">##################################</span>
+<span class="n">row_count_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">heart_failure</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">heart_failure</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=7c0dd145-9612-4ef1-b9eb-c4227350c4e6">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the number of missing data for each column</span>
+<span class="c1">##################################</span>
+<span class="n">null_count_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">heart_failure</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=cb12a29c-b8cf-49e3-8967-1453e24f259e">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the number of non-missing data for each column</span>
+<span class="c1">##################################</span>
+<span class="n">non_null_count_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">heart_failure</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=de57b064-db44-4f03-b4da-091e55a8dac4">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [22]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the missing data percentage for each column</span>
+<span class="c1">##################################</span>
+<span class="n">fill_rate_list</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">truediv</span><span class="p">,</span> <span class="n">non_null_count_list</span><span class="p">,</span> <span class="n">row_count_list</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=8031fdb2-c052-4e10-bc65-cc8a23c10edf">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [23]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Formulating the summary</span>
+<span class="c1"># for all columns</span>
+<span class="c1">##################################</span>
+<span class="n">all_column_quality_summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">variable_name_list</span><span class="p">,</span>
+                                              <span class="n">data_type_list</span><span class="p">,</span>
+                                              <span class="n">row_count_list</span><span class="p">,</span>
+                                              <span class="n">non_null_count_list</span><span class="p">,</span>
+                                              <span class="n">null_count_list</span><span class="p">,</span>
+                                              <span class="n">fill_rate_list</span><span class="p">),</span> 
+                                        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'Column.Name'</span><span class="p">,</span>
+                                                 <span class="s1">'Column.Type'</span><span class="p">,</span>
+                                                 <span class="s1">'Row.Count'</span><span class="p">,</span>
+                                                 <span class="s1">'Non.Null.Count'</span><span class="p">,</span>
+                                                 <span class="s1">'Null.Count'</span><span class="p">,</span>                                                 
+                                                 <span class="s1">'Fill.Rate'</span><span class="p">])</span>
+<span class="n">display</span><span class="p">(</span><span class="n">all_column_quality_summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>Column.Name</th>
+<th>Column.Type</th>
+<th>Row.Count</th>
+<th>Non.Null.Count</th>
+<th>Null.Count</th>
+<th>Fill.Rate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>AGE</td>
+<td>float64</td>
+<td>299</td>
+<td>299</td>
+<td>0</td>
+<td>1.0</td>
+</tr>
+<tr>
+<th>1</th>
+<td>ANAEMIA</td>
+<td>object</td>
+<td>299</td>
+<td>299</td>
+<td>0</td>
+<td>1.0</td>
+</tr>
+<tr>
+<th>2</th>
+<td>CREATININE_PHOSPHOKINASE</td>
+<td>int64</td>
+<td>299</td>
+<td>299</td>
+<td>0</td>
+<td>1.0</td>
+</tr>
+<tr>
+<th>3</th>
+<td>DIABETES</td>
+<td>object</td>
+<td>299</td>
+<td>299</td>
+<td>0</td>
+<td>1.0</td>
+</tr>
+<tr>
+<th>4</th>
+<td>EJECTION_FRACTION</td>
+<td>int64</td>
+<td>299</td>
+<td>299</td>
+<td>0</td>
+<td>1.0</td>
+</tr>
+<tr>
+<th>5</th>
+<td>HIGH_BLOOD_PRESSURE</td>
+<td>object</td>
+<td>299</td>
+<td>299</td>
+<td>0</td>
+<td>1.0</td>
+</tr>
+<tr>
+<th>6</th>
+<td>PLATELETS</td>
+<td>float64</td>
+<td>299</td>
+<td>299</td>
+<td>0</td>
+<td>1.0</td>
+</tr>
+<tr>
+<th>7</th>
+<td>SERUM_CREATININE</td>
+<td>float64</td>
+<td>299</td>
+<td>299</td>
+<td>0</td>
+<td>1.0</td>
+</tr>
+<tr>
+<th>8</th>
+<td>SERUM_SODIUM</td>
+<td>int64</td>
+<td>299</td>
+<td>299</td>
+<td>0</td>
+<td>1.0</td>
+</tr>
+<tr>
+<th>9</th>
+<td>SEX</td>
+<td>object</td>
+<td>299</td>
+<td>299</td>
+<td>0</td>
+<td>1.0</td>
+</tr>
+<tr>
+<th>10</th>
+<td>SMOKING</td>
+<td>object</td>
+<td>299</td>
+<td>299</td>
+<td>0</td>
+<td>1.0</td>
+</tr>
+<tr>
+<th>11</th>
+<td>TIME</td>
+<td>int64</td>
+<td>299</td>
+<td>299</td>
+<td>0</td>
+<td>1.0</td>
+</tr>
+<tr>
+<th>12</th>
+<td>DEATH_EVENT</td>
+<td>category</td>
+<td>299</td>
+<td>299</td>
+<td>0</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=2cca9f77-6417-4106-8a73-423e7d9b4908">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [24]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Counting the number of columns</span>
+<span class="c1"># with Fill.Rate &lt; 1.00</span>
+<span class="c1">##################################</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Number of Columns with Missing Data:'</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_column_quality_summary</span><span class="p">[(</span><span class="n">all_column_quality_summary</span><span class="p">[</span><span class="s1">'Fill.Rate'</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">1</span><span class="p">)])))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Number of Columns with Missing Data: 0
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=2ec0c2fe-4c3d-40c6-8e77-34e76d3153b6">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [25]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the metadata labels for each observation</span>
+<span class="c1">##################################</span>
+<span class="n">row_metadata_list</span> <span class="o">=</span> <span class="n">heart_failure</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=030aa79d-f0c9-414d-9899-686640583dc3">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [26]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the number of columns for each observation</span>
+<span class="c1">##################################</span>
+<span class="n">column_count_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">heart_failure</span><span class="o">.</span><span class="n">columns</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">heart_failure</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=377017b8-15a1-4760-a2fb-ace8312ccfe4">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [27]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the number of missing data for each row</span>
+<span class="c1">##################################</span>
+<span class="n">null_row_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">heart_failure</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=03c3bd60-5462-4809-adcd-ca0b7fe17fea">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [28]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the missing data percentage for each column</span>
+<span class="c1">##################################</span>
+<span class="n">missing_rate_list</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">truediv</span><span class="p">,</span> <span class="n">null_row_list</span><span class="p">,</span> <span class="n">column_count_list</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=ea7df1aa-18c6-46c8-9e10-c3059913b579">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [29]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Exploring the rows</span>
+<span class="c1"># for missing data</span>
+<span class="c1">##################################</span>
+<span class="n">all_row_quality_summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">row_metadata_list</span><span class="p">,</span>
+                                           <span class="n">column_count_list</span><span class="p">,</span>
+                                           <span class="n">null_row_list</span><span class="p">,</span>
+                                           <span class="n">missing_rate_list</span><span class="p">),</span> 
+                                        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'Row.Name'</span><span class="p">,</span>
+                                                 <span class="s1">'Column.Count'</span><span class="p">,</span>
+                                                 <span class="s1">'Null.Count'</span><span class="p">,</span>                                                 
+                                                 <span class="s1">'Missing.Rate'</span><span class="p">])</span>
+<span class="n">display</span><span class="p">(</span><span class="n">all_row_quality_summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>Row.Name</th>
+<th>Column.Count</th>
+<th>Null.Count</th>
+<th>Missing.Rate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>0</td>
+<td>13</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>1</th>
+<td>1</td>
+<td>13</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>2</th>
+<td>2</td>
+<td>13</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>3</th>
+<td>3</td>
+<td>13</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>4</th>
+<td>4</td>
+<td>13</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<th>294</th>
+<td>294</td>
+<td>13</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>295</th>
+<td>295</td>
+<td>13</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>296</th>
+<td>296</td>
+<td>13</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>297</th>
+<td>297</td>
+<td>13</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr>
+<th>298</th>
+<td>298</td>
+<td>13</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+</tbody>
+</table>
+<p>299 rows × 4 columns</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=569f85bf-1e22-4e55-bfcc-05457d33298d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [30]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Counting the number of rows</span>
+<span class="c1"># with Fill.Rate &lt; 1.00</span>
+<span class="c1">##################################</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Number of Rows with Missing Data:'</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_row_quality_summary</span><span class="p">[</span><span class="n">all_row_quality_summary</span><span class="p">[</span><span class="s1">'Missing.Rate'</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">])))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Number of Rows with Missing Data: 0
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=36c4a885-71d6-4ed1-b175-90ee85c20a97">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [31]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Formulating the dataset</span>
+<span class="c1"># with numeric columns only</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure_numeric</span> <span class="o">=</span> <span class="n">heart_failure</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s1">'number'</span><span class="p">,</span><span class="s1">'int'</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=bcaeb4dd-7519-4be8-b1ba-59e6ed3259fc">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [32]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the variable names for each numeric column</span>
+<span class="c1">##################################</span>
+<span class="n">numeric_variable_name_list</span> <span class="o">=</span> <span class="n">heart_failure_numeric</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=1750c362-66ed-4991-98db-e29d5f433199">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [33]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the minimum value for each numeric column</span>
+<span class="c1">##################################</span>
+<span class="n">numeric_minimum_list</span> <span class="o">=</span> <span class="n">heart_failure_numeric</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=50e0064f-e5d7-49cf-8317-e4e1629f895e">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [34]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the mean value for each numeric column</span>
+<span class="c1">##################################</span>
+<span class="n">numeric_mean_list</span> <span class="o">=</span> <span class="n">heart_failure_numeric</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d7a3bf4e-058e-480a-bfe3-f8904037a068">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [35]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the median value for each numeric column</span>
+<span class="c1">##################################</span>
+<span class="n">numeric_median_list</span> <span class="o">=</span> <span class="n">heart_failure_numeric</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=f1346537-d731-4a71-aed4-1dc3eb056b2b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [36]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the maximum value for each numeric column</span>
+<span class="c1">##################################</span>
+<span class="n">numeric_maximum_list</span> <span class="o">=</span> <span class="n">heart_failure_numeric</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=3d284832-e0ca-4319-b005-ec1d54b41e28">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [37]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the first mode values for each numeric column</span>
+<span class="c1">##################################</span>
+<span class="n">numeric_first_mode_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">heart_failure</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">heart_failure_numeric</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=120e5f17-df3a-4bc0-92b8-3d48a3714eac">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [38]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the second mode values for each numeric column</span>
+<span class="c1">##################################</span>
+<span class="n">numeric_second_mode_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">heart_failure</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">heart_failure_numeric</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=debd9717-7ad8-43c4-a6bf-344ac9d87f70">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [39]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the count of first mode values for each numeric column</span>
+<span class="c1">##################################</span>
+<span class="n">numeric_first_mode_count_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">heart_failure_numeric</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="n">heart_failure</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">heart_failure_numeric</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=669bda13-9e27-4505-a9ce-6bfb2d0eea76">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [40]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the count of second mode values for each numeric column</span>
+<span class="c1">##################################</span>
+<span class="n">numeric_second_mode_count_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">heart_failure_numeric</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="n">heart_failure</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">1</span><span class="p">]])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">heart_failure_numeric</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d022a1c7-49cb-4b4a-94e1-ab67e6d8d125">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [41]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the first mode to second mode ratio for each numeric column</span>
+<span class="c1">##################################</span>
+<span class="n">numeric_first_second_mode_ratio_list</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">truediv</span><span class="p">,</span> <span class="n">numeric_first_mode_count_list</span><span class="p">,</span> <span class="n">numeric_second_mode_count_list</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=6ca51687-fb50-4d04-9283-7b7300bce1a6">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [42]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the count of unique values for each numeric column</span>
+<span class="c1">##################################</span>
+<span class="n">numeric_unique_count_list</span> <span class="o">=</span> <span class="n">heart_failure_numeric</span><span class="o">.</span><span class="n">nunique</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=a0803926-5b98-4670-a49e-c14299d39e99">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [43]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the number of observations for each numeric column</span>
+<span class="c1">##################################</span>
+<span class="n">numeric_row_count_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">heart_failure_numeric</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">heart_failure_numeric</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=29350142-b312-4a69-a892-885e3c694380">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [44]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the unique to count ratio for each numeric column</span>
+<span class="c1">##################################</span>
+<span class="n">numeric_unique_count_ratio_list</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">truediv</span><span class="p">,</span> <span class="n">numeric_unique_count_list</span><span class="p">,</span> <span class="n">numeric_row_count_list</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=ed645f22-4387-43ed-a7d6-60a239882a62">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [45]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the skewness value for each numeric column</span>
+<span class="c1">##################################</span>
+<span class="n">numeric_skewness_list</span> <span class="o">=</span> <span class="n">heart_failure_numeric</span><span class="o">.</span><span class="n">skew</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=6d8bd4ba-f20f-4b94-946e-04bcfdfbb701">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [46]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the kurtosis value for each numeric column</span>
+<span class="c1">##################################</span>
+<span class="n">numeric_kurtosis_list</span> <span class="o">=</span> <span class="n">heart_failure_numeric</span><span class="o">.</span><span class="n">kurtosis</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=f3740d7f-3a56-47ab-a19f-ca86719f02d8">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [47]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">numeric_column_quality_summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">numeric_variable_name_list</span><span class="p">,</span>
+                                                <span class="n">numeric_minimum_list</span><span class="p">,</span>
+                                                <span class="n">numeric_mean_list</span><span class="p">,</span>
+                                                <span class="n">numeric_median_list</span><span class="p">,</span>
+                                                <span class="n">numeric_maximum_list</span><span class="p">,</span>
+                                                <span class="n">numeric_first_mode_list</span><span class="p">,</span>
+                                                <span class="n">numeric_second_mode_list</span><span class="p">,</span>
+                                                <span class="n">numeric_first_mode_count_list</span><span class="p">,</span>
+                                                <span class="n">numeric_second_mode_count_list</span><span class="p">,</span>
+                                                <span class="n">numeric_first_second_mode_ratio_list</span><span class="p">,</span>
+                                                <span class="n">numeric_unique_count_list</span><span class="p">,</span>
+                                                <span class="n">numeric_row_count_list</span><span class="p">,</span>
+                                                <span class="n">numeric_unique_count_ratio_list</span><span class="p">,</span>
+                                                <span class="n">numeric_skewness_list</span><span class="p">,</span>
+                                                <span class="n">numeric_kurtosis_list</span><span class="p">),</span> 
+                                        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'Numeric.Column.Name'</span><span class="p">,</span>
+                                                 <span class="s1">'Minimum'</span><span class="p">,</span>
+                                                 <span class="s1">'Mean'</span><span class="p">,</span>
+                                                 <span class="s1">'Median'</span><span class="p">,</span>
+                                                 <span class="s1">'Maximum'</span><span class="p">,</span>
+                                                 <span class="s1">'First.Mode'</span><span class="p">,</span>
+                                                 <span class="s1">'Second.Mode'</span><span class="p">,</span>
+                                                 <span class="s1">'First.Mode.Count'</span><span class="p">,</span>
+                                                 <span class="s1">'Second.Mode.Count'</span><span class="p">,</span>
+                                                 <span class="s1">'First.Second.Mode.Ratio'</span><span class="p">,</span>
+                                                 <span class="s1">'Unique.Count'</span><span class="p">,</span>
+                                                 <span class="s1">'Row.Count'</span><span class="p">,</span>
+                                                 <span class="s1">'Unique.Count.Ratio'</span><span class="p">,</span>
+                                                 <span class="s1">'Skewness'</span><span class="p">,</span>
+                                                 <span class="s1">'Kurtosis'</span><span class="p">])</span>
+<span class="n">display</span><span class="p">(</span><span class="n">numeric_column_quality_summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>Numeric.Column.Name</th>
+<th>Minimum</th>
+<th>Mean</th>
+<th>Median</th>
+<th>Maximum</th>
+<th>First.Mode</th>
+<th>Second.Mode</th>
+<th>First.Mode.Count</th>
+<th>Second.Mode.Count</th>
+<th>First.Second.Mode.Ratio</th>
+<th>Unique.Count</th>
+<th>Row.Count</th>
+<th>Unique.Count.Ratio</th>
+<th>Skewness</th>
+<th>Kurtosis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>AGE</td>
+<td>40.0</td>
+<td>60.833893</td>
+<td>60.0</td>
+<td>95.0</td>
+<td>60.00</td>
+<td>50.0</td>
+<td>33</td>
+<td>27</td>
+<td>1.222222</td>
+<td>47</td>
+<td>299</td>
+<td>0.157191</td>
+<td>0.423062</td>
+<td>-0.184871</td>
+</tr>
+<tr>
+<th>1</th>
+<td>CREATININE_PHOSPHOKINASE</td>
+<td>23.0</td>
+<td>581.839465</td>
+<td>250.0</td>
+<td>7861.0</td>
+<td>582.00</td>
+<td>66.0</td>
+<td>47</td>
+<td>4</td>
+<td>11.750000</td>
+<td>208</td>
+<td>299</td>
+<td>0.695652</td>
+<td>4.463110</td>
+<td>25.149046</td>
+</tr>
+<tr>
+<th>2</th>
+<td>EJECTION_FRACTION</td>
+<td>14.0</td>
+<td>38.083612</td>
+<td>38.0</td>
+<td>80.0</td>
+<td>35.00</td>
+<td>38.0</td>
+<td>49</td>
+<td>40</td>
+<td>1.225000</td>
+<td>17</td>
+<td>299</td>
+<td>0.056856</td>
+<td>0.555383</td>
+<td>0.041409</td>
+</tr>
+<tr>
+<th>3</th>
+<td>PLATELETS</td>
+<td>25100.0</td>
+<td>263358.029264</td>
+<td>262000.0</td>
+<td>850000.0</td>
+<td>263358.03</td>
+<td>221000.0</td>
+<td>25</td>
+<td>4</td>
+<td>6.250000</td>
+<td>176</td>
+<td>299</td>
+<td>0.588629</td>
+<td>1.462321</td>
+<td>6.209255</td>
+</tr>
+<tr>
+<th>4</th>
+<td>SERUM_CREATININE</td>
+<td>0.5</td>
+<td>1.393880</td>
+<td>1.1</td>
+<td>9.4</td>
+<td>1.00</td>
+<td>1.1</td>
+<td>50</td>
+<td>32</td>
+<td>1.562500</td>
+<td>40</td>
+<td>299</td>
+<td>0.133779</td>
+<td>4.455996</td>
+<td>25.828239</td>
+</tr>
+<tr>
+<th>5</th>
+<td>SERUM_SODIUM</td>
+<td>113.0</td>
+<td>136.625418</td>
+<td>137.0</td>
+<td>148.0</td>
+<td>136.00</td>
+<td>137.0</td>
+<td>40</td>
+<td>38</td>
+<td>1.052632</td>
+<td>27</td>
+<td>299</td>
+<td>0.090301</td>
+<td>-1.048136</td>
+<td>4.119712</td>
+</tr>
+<tr>
+<th>6</th>
+<td>TIME</td>
+<td>4.0</td>
+<td>130.260870</td>
+<td>115.0</td>
+<td>285.0</td>
+<td>250.00</td>
+<td>187.0</td>
+<td>7</td>
+<td>7</td>
+<td>1.000000</td>
+<td>148</td>
+<td>299</td>
+<td>0.494983</td>
+<td>0.127803</td>
+<td>-1.212048</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=6453f3b3-4623-4618-a347-137326a514b1">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [48]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Counting the number of numeric columns</span>
+<span class="c1"># with Unique.Count.Ratio &gt; 10.00</span>
+<span class="c1">##################################</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">numeric_column_quality_summary</span><span class="p">[(</span><span class="n">numeric_column_quality_summary</span><span class="p">[</span><span class="s1">'Unique.Count.Ratio'</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">10</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[48]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>0</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=180c0c47-3cbd-4b47-a230-07b3c4473b90">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [49]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Counting the number of numeric columns</span>
+<span class="c1"># with Skewness &gt; 3.00 or Skewness &lt; -3.00</span>
+<span class="c1">##################################</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">numeric_column_quality_summary</span><span class="p">[(</span><span class="n">numeric_column_quality_summary</span><span class="p">[</span><span class="s1">'Skewness'</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">numeric_column_quality_summary</span><span class="p">[</span><span class="s1">'Skewness'</span><span class="p">]</span><span class="o">&lt;</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">))])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[49]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>2</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=fd502015-60f2-4528-9510-dd8bca26b801">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [50]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Formulating the dataset</span>
+<span class="c1"># with object or categorical column only</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure_object</span> <span class="o">=</span> <span class="n">heart_failure</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s1">'object'</span><span class="p">,</span><span class="s1">'category'</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=e0351ff5-5cef-4f14-954f-252e2140c9b2">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [51]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the variable names for the object or categorical column</span>
+<span class="c1">##################################</span>
+<span class="n">categorical_variable_name_list</span> <span class="o">=</span> <span class="n">heart_failure_object</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=78534b5e-e2ea-4018-8dc1-e141d2285f74">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [52]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the first mode values for the object or categorical column</span>
+<span class="c1">##################################</span>
+<span class="n">categorical_first_mode_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">heart_failure</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">heart_failure_object</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d2293b3c-617e-4497-b53f-4cc53057d7db">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [53]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the second mode values for each object or categorical column</span>
+<span class="c1">##################################</span>
+<span class="n">categorical_second_mode_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">heart_failure</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">heart_failure_object</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=994f9a79-5a4a-494f-bd30-095f4ad68a0e">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [54]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the count of first mode values for each object or categorical column</span>
+<span class="c1">##################################</span>
+<span class="n">categorical_first_mode_count_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">heart_failure_object</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="n">heart_failure</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">heart_failure_object</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=58478a5b-93f9-4339-92b1-530c3daa335f">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [55]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the count of second mode values for each object or categorical column</span>
+<span class="c1">##################################</span>
+<span class="n">categorical_second_mode_count_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">heart_failure_object</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="n">heart_failure</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">1</span><span class="p">]])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">heart_failure_object</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=7bffc8ee-22c4-4e1f-befd-c93d3474973d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [56]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the first mode to second mode ratio for each object or categorical column</span>
+<span class="c1">##################################</span>
+<span class="n">categorical_first_second_mode_ratio_list</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">truediv</span><span class="p">,</span> <span class="n">categorical_first_mode_count_list</span><span class="p">,</span> <span class="n">categorical_second_mode_count_list</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=c5c9f4f3-20bb-433a-b1a6-18a99865b6df">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [57]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the count of unique values for each object or categorical column</span>
+<span class="c1">##################################</span>
+<span class="n">categorical_unique_count_list</span> <span class="o">=</span> <span class="n">heart_failure_object</span><span class="o">.</span><span class="n">nunique</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=4f89a3ae-c14b-4c15-8e84-cb48fe24c680">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [58]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the number of observations for each object or categorical column</span>
+<span class="c1">##################################</span>
+<span class="n">categorical_row_count_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">heart_failure_object</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">heart_failure_object</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=95e1dcd6-6711-4e15-a1b1-9728675078b8">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [59]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Gathering the unique to count ratio for each object or categorical column</span>
+<span class="c1">##################################</span>
+<span class="n">categorical_unique_count_ratio_list</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">truediv</span><span class="p">,</span> <span class="n">categorical_unique_count_list</span><span class="p">,</span> <span class="n">categorical_row_count_list</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=fa5f4377-e229-4c8e-a730-b076ff791c3f">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [60]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">categorical_column_quality_summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">categorical_variable_name_list</span><span class="p">,</span>
+                                                 <span class="n">categorical_first_mode_list</span><span class="p">,</span>
+                                                 <span class="n">categorical_second_mode_list</span><span class="p">,</span>
+                                                 <span class="n">categorical_first_mode_count_list</span><span class="p">,</span>
+                                                 <span class="n">categorical_second_mode_count_list</span><span class="p">,</span>
+                                                 <span class="n">categorical_first_second_mode_ratio_list</span><span class="p">,</span>
+                                                 <span class="n">categorical_unique_count_list</span><span class="p">,</span>
+                                                 <span class="n">categorical_row_count_list</span><span class="p">,</span>
+                                                 <span class="n">categorical_unique_count_ratio_list</span><span class="p">),</span> 
+                                        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'Categorical.Column.Name'</span><span class="p">,</span>
+                                                 <span class="s1">'First.Mode'</span><span class="p">,</span>
+                                                 <span class="s1">'Second.Mode'</span><span class="p">,</span>
+                                                 <span class="s1">'First.Mode.Count'</span><span class="p">,</span>
+                                                 <span class="s1">'Second.Mode.Count'</span><span class="p">,</span>
+                                                 <span class="s1">'First.Second.Mode.Ratio'</span><span class="p">,</span>
+                                                 <span class="s1">'Unique.Count'</span><span class="p">,</span>
+                                                 <span class="s1">'Row.Count'</span><span class="p">,</span>
+                                                 <span class="s1">'Unique.Count.Ratio'</span><span class="p">])</span>
+<span class="n">display</span><span class="p">(</span><span class="n">categorical_column_quality_summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>Categorical.Column.Name</th>
+<th>First.Mode</th>
+<th>Second.Mode</th>
+<th>First.Mode.Count</th>
+<th>Second.Mode.Count</th>
+<th>First.Second.Mode.Ratio</th>
+<th>Unique.Count</th>
+<th>Row.Count</th>
+<th>Unique.Count.Ratio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>ANAEMIA</td>
+<td>Absent</td>
+<td>Present</td>
+<td>170</td>
+<td>129</td>
+<td>1.317829</td>
+<td>2</td>
+<td>299</td>
+<td>0.006689</td>
+</tr>
+<tr>
+<th>1</th>
+<td>DIABETES</td>
+<td>Absent</td>
+<td>Present</td>
+<td>174</td>
+<td>125</td>
+<td>1.392000</td>
+<td>2</td>
+<td>299</td>
+<td>0.006689</td>
+</tr>
+<tr>
+<th>2</th>
+<td>HIGH_BLOOD_PRESSURE</td>
+<td>Absent</td>
+<td>Present</td>
+<td>194</td>
+<td>105</td>
+<td>1.847619</td>
+<td>2</td>
+<td>299</td>
+<td>0.006689</td>
+</tr>
+<tr>
+<th>3</th>
+<td>SEX</td>
+<td>Male</td>
+<td>Female</td>
+<td>194</td>
+<td>105</td>
+<td>1.847619</td>
+<td>2</td>
+<td>299</td>
+<td>0.006689</td>
+</tr>
+<tr>
+<th>4</th>
+<td>SMOKING</td>
+<td>Absent</td>
+<td>Present</td>
+<td>203</td>
+<td>96</td>
+<td>2.114583</td>
+<td>2</td>
+<td>299</td>
+<td>0.006689</td>
+</tr>
+<tr>
+<th>5</th>
+<td>DEATH_EVENT</td>
+<td>0</td>
+<td>1</td>
+<td>203</td>
+<td>96</td>
+<td>2.114583</td>
+<td>2</td>
+<td>299</td>
+<td>0.006689</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=9119682c-9d6e-42a0-a571-87e2679b5488">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [61]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Counting the number of object or categorical columns</span>
+<span class="c1"># with First.Second.Mode.Ratio &gt; 5.00</span>
+<span class="c1">##################################</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">categorical_column_quality_summary</span><span class="p">[(</span><span class="n">categorical_column_quality_summary</span><span class="p">[</span><span class="s1">'First.Second.Mode.Ratio'</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[61]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>0</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=bbae3e65-3e21-4053-91c3-7d31e2fa0d6e">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [62]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Identifying the object or categorical columns</span>
+<span class="c1"># with First.Second.Mode.Ratio &gt; 5.00</span>
+<span class="c1">##################################</span>
+<span class="n">display</span><span class="p">(</span><span class="n">categorical_column_quality_summary</span><span class="p">[(</span><span class="n">categorical_column_quality_summary</span><span class="p">[</span><span class="s1">'First.Second.Mode.Ratio'</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">)]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">'First.Second.Mode.Ratio'</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>Categorical.Column.Name</th>
+<th>First.Mode</th>
+<th>Second.Mode</th>
+<th>First.Mode.Count</th>
+<th>Second.Mode.Count</th>
+<th>First.Second.Mode.Ratio</th>
+<th>Unique.Count</th>
+<th>Row.Count</th>
+<th>Unique.Count.Ratio</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b8ae253a-2866-4217-8818-4405609109c4">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [63]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Counting the number of object or categorical columns</span>
+<span class="c1"># with Unique.Count.Ratio &gt; 10.00</span>
+<span class="c1">##################################</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">categorical_column_quality_summary</span><span class="p">[(</span><span class="n">categorical_column_quality_summary</span><span class="p">[</span><span class="s1">'Unique.Count.Ratio'</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">10</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[63]:</div>
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
+<pre>0</pre>
+</div>
 </div>
 </div>
 </div>
@@ -7922,7 +10473,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [64]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
