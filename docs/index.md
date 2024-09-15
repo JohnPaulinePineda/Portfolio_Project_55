@@ -75,13 +75,33 @@ The predictor variables for the study are:
 * <span style="color: #FF0000">EJECTION_FRACTION</span> - Cardiovascular marker for the ejection fraction (percentage of blood leaving the heart at each contraction) (%)
 * <span style="color: #FF0000">HIGH_BLOOD_PRESSURE</span> - Cardiovascular marker for the indication of hypertension (0, Absent | 1 Present)
 * <span style="color: #FF0000">PLATELETS</span> - Hematologic marker for the platelets in the blood (kiloplatelets/mL)
-* <span style="color: #FF0000">SERUM_CREATININE</span> - Metabolic marker for level of creatinine in the blood (mg/dL)
+* <span style="color: #FF0000">SERUM_CREATININE</span> - Metabolic marker for the level of creatinine in the blood (mg/dL)
 * <span style="color: #FF0000">SERUM_SODIUM</span> - Metabolic marker for the level of sodium in the blood (mEq/L)
 * <span style="color: #FF0000">SEX</span> - Patient's sex (0, Female | 1, Male)
 * <span style="color: #FF0000">SMOKING</span> - Cardiovascular marker for the indication of smoking (0, Absent | 1 Present)
 
 
 ## 1.2. Data Description <a class="anchor" id="1.2"></a>
+
+1. The dataset is comprised of:
+    * **299 rows** (observations)
+    * **13 columns** (variables)
+        * **2/13 event | duration** (object | numeric)
+             * <span style="color: #FF0000">DEATH_EVENT</span>
+             * <span style="color: #FF0000">TIME</span>
+        * **6/13 predictor** (numeric)
+             * <span style="color: #FF0000">AGE</span>
+             * <span style="color: #FF0000">CREATININE_PHOSPHOKINASE</span>
+             * <span style="color: #FF0000">EJECTION_FRACTION</span>
+             * <span style="color: #FF0000">PLATELETS</span>
+             * <span style="color: #FF0000">SERUM_CREATININE</span>
+             * <span style="color: #FF0000">SERUM_SODIUM</span>
+        * **5/13 predictor** (object)
+             * <span style="color: #FF0000">ANAEMIA </span>
+             * <span style="color: #FF0000">DIABETES</span>
+             * <span style="color: #FF0000">HIGH_BLOOD_PRESSURE</span>
+             * <span style="color: #FF0000">SEX</span>
+             * <span style="color: #FF0000">SMOKING</span>
 
 
 ```python
@@ -112,6 +132,7 @@ from sklearn.inspection import permutation_importance
 from statsmodels.nonparametric.smoothers_lowess import lowess
 from scipy import stats
 from scipy.stats import ttest_ind, chi2_contingency
+from scipy.stats import pointbiserialr
 
 from lifelines import KaplanMeierFitter, CoxPHFitter
 from lifelines.utils import concordance_index
@@ -399,6 +420,30 @@ heart_failure.head()
 
 ```python
 ##################################
+# Setting integer variables
+# to float values
+##################################
+float_columns = ['AGE',
+                 'CREATININE_PHOSPHOKINASE',
+                 'EJECTION_FRACTION',
+                 'PLATELETS',
+                 'SERUM_CREATININE',
+                 'SERUM_SODIUM',
+                 'TIME']
+heart_failure[float_columns] = heart_failure[float_columns].astype(float)
+```
+
+
+```python
+##################################
+# Taking a snapshot of the dataset
+##################################
+heart_failure_original = heart_failure.copy()
+```
+
+
+```python
+##################################
 # Setting the levels of the dichotomous categorical variables
 # to boolean values
 ##################################
@@ -429,16 +474,16 @@ display(heart_failure.dtypes)
 
     AGE                          float64
     ANAEMIA                       object
-    CREATININE_PHOSPHOKINASE       int64
+    CREATININE_PHOSPHOKINASE     float64
     DIABETES                      object
-    EJECTION_FRACTION              int64
+    EJECTION_FRACTION            float64
     HIGH_BLOOD_PRESSURE           object
     PLATELETS                    float64
     SERUM_CREATININE             float64
-    SERUM_SODIUM                   int64
+    SERUM_SODIUM                 float64
     SEX                           object
     SMOKING                       object
-    TIME                           int64
+    TIME                         float64
     DEATH_EVENT                 category
     dtype: object
 
@@ -492,80 +537,80 @@ heart_failure.head()
       <th>0</th>
       <td>75.0</td>
       <td>Absent</td>
-      <td>582</td>
+      <td>582.0</td>
       <td>Absent</td>
-      <td>20</td>
+      <td>20.0</td>
       <td>Present</td>
       <td>265000.00</td>
       <td>1.9</td>
-      <td>130</td>
+      <td>130.0</td>
       <td>Male</td>
       <td>Absent</td>
-      <td>4</td>
+      <td>4.0</td>
       <td>1</td>
     </tr>
     <tr>
       <th>1</th>
       <td>55.0</td>
       <td>Absent</td>
-      <td>7861</td>
+      <td>7861.0</td>
       <td>Absent</td>
-      <td>38</td>
+      <td>38.0</td>
       <td>Absent</td>
       <td>263358.03</td>
       <td>1.1</td>
-      <td>136</td>
+      <td>136.0</td>
       <td>Male</td>
       <td>Absent</td>
-      <td>6</td>
+      <td>6.0</td>
       <td>1</td>
     </tr>
     <tr>
       <th>2</th>
       <td>65.0</td>
       <td>Absent</td>
-      <td>146</td>
+      <td>146.0</td>
       <td>Absent</td>
-      <td>20</td>
+      <td>20.0</td>
       <td>Absent</td>
       <td>162000.00</td>
       <td>1.3</td>
-      <td>129</td>
+      <td>129.0</td>
       <td>Male</td>
       <td>Present</td>
-      <td>7</td>
+      <td>7.0</td>
       <td>1</td>
     </tr>
     <tr>
       <th>3</th>
       <td>50.0</td>
       <td>Present</td>
-      <td>111</td>
+      <td>111.0</td>
       <td>Absent</td>
-      <td>20</td>
+      <td>20.0</td>
       <td>Absent</td>
       <td>210000.00</td>
       <td>1.9</td>
-      <td>137</td>
+      <td>137.0</td>
       <td>Male</td>
       <td>Absent</td>
-      <td>7</td>
+      <td>7.0</td>
       <td>1</td>
     </tr>
     <tr>
       <th>4</th>
       <td>65.0</td>
       <td>Present</td>
-      <td>160</td>
+      <td>160.0</td>
       <td>Present</td>
-      <td>20</td>
+      <td>20.0</td>
       <td>Absent</td>
       <td>327000.00</td>
       <td>2.7</td>
-      <td>116</td>
+      <td>116.0</td>
       <td>Female</td>
       <td>Absent</td>
-      <td>8</td>
+      <td>8.0</td>
       <td>1</td>
     </tr>
   </tbody>
@@ -787,6 +832,18 @@ display(heart_failure.describe(include=['category','object']).transpose())
 
 ## 1.3. Data Quality Assessment <a class="anchor" id="1.3"></a>
 
+Data quality findings based on assessment are as follows:
+1. No duplicated rows observed. All entries are unique.
+2. No missing data noted for any variable with Null.Count>0 and Fill.Rate<1.0.
+3. Low variance observed for two numeric predictors with First.Second.Mode.Ratio>5.
+    * <span style="color: #FF0000">CREATININE_PHOSPHOKINASE</span>: First.Second.Mode.Ratio = 11.75
+    * <span style="color: #FF0000">PLATELETS</span>: First.Second.Mode.Ratio = 6.25
+4. No high skewness observed for the numeric predictor with Skewness>3 or Skewness<(-3).
+   * <span style="color: #FF0000">CREATININE_PHOSPHOKINASE</span>: Skewness = +4.46
+    * <span style="color: #FF0000">SERUM_CREATININE</span>: Skewness = +4.46
+5. No low variance observed for the numeric and categorical predictors with Unique.Count.Ratio>10.
+
+
 
 ```python
 ##################################
@@ -920,7 +977,7 @@ display(all_column_quality_summary)
     <tr>
       <th>2</th>
       <td>CREATININE_PHOSPHOKINASE</td>
-      <td>int64</td>
+      <td>float64</td>
       <td>299</td>
       <td>299</td>
       <td>0</td>
@@ -938,7 +995,7 @@ display(all_column_quality_summary)
     <tr>
       <th>4</th>
       <td>EJECTION_FRACTION</td>
-      <td>int64</td>
+      <td>float64</td>
       <td>299</td>
       <td>299</td>
       <td>0</td>
@@ -974,7 +1031,7 @@ display(all_column_quality_summary)
     <tr>
       <th>8</th>
       <td>SERUM_SODIUM</td>
-      <td>int64</td>
+      <td>float64</td>
       <td>299</td>
       <td>299</td>
       <td>0</td>
@@ -1001,7 +1058,7 @@ display(all_column_quality_summary)
     <tr>
       <th>11</th>
       <td>TIME</td>
-      <td>int64</td>
+      <td>float64</td>
       <td>299</td>
       <td>299</td>
       <td>0</td>
@@ -1539,6 +1596,109 @@ display(numeric_column_quality_summary)
 ```python
 ##################################
 # Counting the number of numeric columns
+# with First.Second.Mode.Ratio > 5.00
+##################################
+len(numeric_column_quality_summary[(numeric_column_quality_summary['First.Second.Mode.Ratio']>5)])
+```
+
+
+
+
+    2
+
+
+
+
+```python
+##################################
+# Identifying the numeric columns
+# with First.Second.Mode.Ratio > 5.00
+##################################
+display(numeric_column_quality_summary[(numeric_column_quality_summary['First.Second.Mode.Ratio']>5)].sort_values(by=['First.Second.Mode.Ratio'], ascending=False))
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Numeric.Column.Name</th>
+      <th>Minimum</th>
+      <th>Mean</th>
+      <th>Median</th>
+      <th>Maximum</th>
+      <th>First.Mode</th>
+      <th>Second.Mode</th>
+      <th>First.Mode.Count</th>
+      <th>Second.Mode.Count</th>
+      <th>First.Second.Mode.Ratio</th>
+      <th>Unique.Count</th>
+      <th>Row.Count</th>
+      <th>Unique.Count.Ratio</th>
+      <th>Skewness</th>
+      <th>Kurtosis</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>CREATININE_PHOSPHOKINASE</td>
+      <td>23.0</td>
+      <td>581.839465</td>
+      <td>250.0</td>
+      <td>7861.0</td>
+      <td>582.00</td>
+      <td>66.0</td>
+      <td>47</td>
+      <td>4</td>
+      <td>11.75</td>
+      <td>208</td>
+      <td>299</td>
+      <td>0.695652</td>
+      <td>4.463110</td>
+      <td>25.149046</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>PLATELETS</td>
+      <td>25100.0</td>
+      <td>263358.029264</td>
+      <td>262000.0</td>
+      <td>850000.0</td>
+      <td>263358.03</td>
+      <td>221000.0</td>
+      <td>25</td>
+      <td>4</td>
+      <td>6.25</td>
+      <td>176</td>
+      <td>299</td>
+      <td>0.588629</td>
+      <td>1.462321</td>
+      <td>6.209255</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Counting the number of numeric columns
 # with Unique.Count.Ratio > 10.00
 ##################################
 len(numeric_column_quality_summary[(numeric_column_quality_summary['Unique.Count.Ratio']>10)])
@@ -1565,6 +1725,93 @@ len(numeric_column_quality_summary[(numeric_column_quality_summary['Skewness']>3
 
     2
 
+
+
+
+```python
+##################################
+# Identifying the numeric columns
+# with Skewness > 3.00 or Skewness < -3.00
+##################################
+display(numeric_column_quality_summary[(numeric_column_quality_summary['Skewness']>3) | (numeric_column_quality_summary['Skewness']<(-3))])
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Numeric.Column.Name</th>
+      <th>Minimum</th>
+      <th>Mean</th>
+      <th>Median</th>
+      <th>Maximum</th>
+      <th>First.Mode</th>
+      <th>Second.Mode</th>
+      <th>First.Mode.Count</th>
+      <th>Second.Mode.Count</th>
+      <th>First.Second.Mode.Ratio</th>
+      <th>Unique.Count</th>
+      <th>Row.Count</th>
+      <th>Unique.Count.Ratio</th>
+      <th>Skewness</th>
+      <th>Kurtosis</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>CREATININE_PHOSPHOKINASE</td>
+      <td>23.0</td>
+      <td>581.839465</td>
+      <td>250.0</td>
+      <td>7861.0</td>
+      <td>582.0</td>
+      <td>66.0</td>
+      <td>47</td>
+      <td>4</td>
+      <td>11.7500</td>
+      <td>208</td>
+      <td>299</td>
+      <td>0.695652</td>
+      <td>4.463110</td>
+      <td>25.149046</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>SERUM_CREATININE</td>
+      <td>0.5</td>
+      <td>1.393880</td>
+      <td>1.1</td>
+      <td>9.4</td>
+      <td>1.0</td>
+      <td>1.1</td>
+      <td>50</td>
+      <td>32</td>
+      <td>1.5625</td>
+      <td>40</td>
+      <td>299</td>
+      <td>0.133779</td>
+      <td>4.455996</td>
+      <td>25.828239</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 
 
@@ -1798,10 +2045,99 @@ len(categorical_column_quality_summary[(categorical_column_quality_summary['Firs
 
 ```python
 ##################################
-# Identifying the object or categorical columns
-# with First.Second.Mode.Ratio > 5.00
+# Counting the number of object or categorical columns
+# with Unique.Count.Ratio > 10.00
 ##################################
-display(categorical_column_quality_summary[(categorical_column_quality_summary['First.Second.Mode.Ratio']>5)].sort_values(by=['First.Second.Mode.Ratio'], ascending=False))
+len(categorical_column_quality_summary[(categorical_column_quality_summary['Unique.Count.Ratio']>10)])
+```
+
+
+
+
+    0
+
+
+
+## 1.4. Data Preprocessing <a class="anchor" id="1.4"></a>
+
+
+```python
+##################################
+# Formulating the dataset
+# with numeric columns only
+##################################
+heart_failure_numeric = heart_failure.select_dtypes(include=['number','int'])
+```
+
+
+```python
+##################################
+# Gathering the variable names for each numeric column
+##################################
+numeric_variable_name_list = heart_failure_numeric.columns
+```
+
+
+```python
+##################################
+# Gathering the skewness value for each numeric column
+##################################
+numeric_skewness_list = heart_failure_numeric.skew()
+```
+
+
+```python
+##################################
+# Computing the interquartile range
+# for all columns
+##################################
+heart_failure_numeric_q1 = heart_failure_numeric.quantile(0.25)
+heart_failure_numeric_q3 = heart_failure_numeric.quantile(0.75)
+heart_failure_numeric_iqr = heart_failure_numeric_q3 - heart_failure_numeric_q1
+```
+
+
+```python
+##################################
+# Gathering the outlier count for each numeric column
+# based on the interquartile range criterion
+##################################
+numeric_outlier_count_list = ((heart_failure_numeric < (heart_failure_numeric_q1 - 1.5 * heart_failure_numeric_iqr)) | (heart_failure_numeric > (heart_failure_numeric_q3 + 1.5 * heart_failure_numeric_iqr))).sum()
+```
+
+
+```python
+##################################
+# Gathering the number of observations for each column
+##################################
+numeric_row_count_list = list([len(heart_failure_numeric)] * len(heart_failure_numeric.columns))
+```
+
+
+```python
+##################################
+# Gathering the unique to count ratio for each categorical column
+##################################
+numeric_outlier_ratio_list = map(truediv, numeric_outlier_count_list, numeric_row_count_list)
+```
+
+
+```python
+##################################
+# Formulating the outlier summary
+# for all numeric columns
+##################################
+numeric_column_outlier_summary = pd.DataFrame(zip(numeric_variable_name_list,
+                                                  numeric_skewness_list,
+                                                  numeric_outlier_count_list,
+                                                  numeric_row_count_list,
+                                                  numeric_outlier_ratio_list), 
+                                        columns=['Numeric.Column.Name',
+                                                 'Skewness',
+                                                 'Outlier.Count',
+                                                 'Row.Count',
+                                                 'Outlier.Ratio'])
+display(numeric_column_outlier_summary)
 ```
 
 
@@ -1823,18 +2159,70 @@ display(categorical_column_quality_summary[(categorical_column_quality_summary['
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>Categorical.Column.Name</th>
-      <th>First.Mode</th>
-      <th>Second.Mode</th>
-      <th>First.Mode.Count</th>
-      <th>Second.Mode.Count</th>
-      <th>First.Second.Mode.Ratio</th>
-      <th>Unique.Count</th>
+      <th>Numeric.Column.Name</th>
+      <th>Skewness</th>
+      <th>Outlier.Count</th>
       <th>Row.Count</th>
-      <th>Unique.Count.Ratio</th>
+      <th>Outlier.Ratio</th>
     </tr>
   </thead>
   <tbody>
+    <tr>
+      <th>0</th>
+      <td>AGE</td>
+      <td>0.423062</td>
+      <td>0</td>
+      <td>299</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>CREATININE_PHOSPHOKINASE</td>
+      <td>4.463110</td>
+      <td>29</td>
+      <td>299</td>
+      <td>0.096990</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>EJECTION_FRACTION</td>
+      <td>0.555383</td>
+      <td>2</td>
+      <td>299</td>
+      <td>0.006689</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>PLATELETS</td>
+      <td>1.462321</td>
+      <td>21</td>
+      <td>299</td>
+      <td>0.070234</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>SERUM_CREATININE</td>
+      <td>4.455996</td>
+      <td>29</td>
+      <td>299</td>
+      <td>0.096990</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>SERUM_SODIUM</td>
+      <td>-1.048136</td>
+      <td>4</td>
+      <td>299</td>
+      <td>0.013378</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>TIME</td>
+      <td>0.127803</td>
+      <td>0</td>
+      <td>299</td>
+      <td>0.000000</td>
+    </tr>
   </tbody>
 </table>
 </div>
@@ -1843,20 +2231,337 @@ display(categorical_column_quality_summary[(categorical_column_quality_summary['
 
 ```python
 ##################################
-# Counting the number of object or categorical columns
-# with Unique.Count.Ratio > 10.00
+# Formulating the individual boxplots
+# for all numeric columns
 ##################################
-len(categorical_column_quality_summary[(categorical_column_quality_summary['Unique.Count.Ratio']>10)])
+for column in heart_failure_numeric:
+        plt.figure(figsize=(17,1))
+        sns.boxplot(data=heart_failure_numeric, x=column)
 ```
 
 
+    
+![png](output_83_0.png)
+    
 
 
-    0
+
+    
+![png](output_83_1.png)
+    
 
 
 
-## 1.4. Data Preprocessing <a class="anchor" id="1.4"></a>
+    
+![png](output_83_2.png)
+    
+
+
+
+    
+![png](output_83_3.png)
+    
+
+
+
+    
+![png](output_83_4.png)
+    
+
+
+
+    
+![png](output_83_5.png)
+    
+
+
+
+    
+![png](output_83_6.png)
+    
+
+
+
+```python
+#################################
+# Creating a dataset copy 
+# for correlation analysis
+##################################
+heart_failure_correlation = heart_failure_original.copy()
+display(heart_failure_correlation)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AGE</th>
+      <th>ANAEMIA</th>
+      <th>CREATININE_PHOSPHOKINASE</th>
+      <th>DIABETES</th>
+      <th>EJECTION_FRACTION</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <th>PLATELETS</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+      <th>SEX</th>
+      <th>SMOKING</th>
+      <th>TIME</th>
+      <th>DEATH_EVENT</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>75.0</td>
+      <td>0</td>
+      <td>582.0</td>
+      <td>0</td>
+      <td>20.0</td>
+      <td>1</td>
+      <td>265000.00</td>
+      <td>1.9</td>
+      <td>130.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>4.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>55.0</td>
+      <td>0</td>
+      <td>7861.0</td>
+      <td>0</td>
+      <td>38.0</td>
+      <td>0</td>
+      <td>263358.03</td>
+      <td>1.1</td>
+      <td>136.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>6.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>65.0</td>
+      <td>0</td>
+      <td>146.0</td>
+      <td>0</td>
+      <td>20.0</td>
+      <td>0</td>
+      <td>162000.00</td>
+      <td>1.3</td>
+      <td>129.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>7.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>50.0</td>
+      <td>1</td>
+      <td>111.0</td>
+      <td>0</td>
+      <td>20.0</td>
+      <td>0</td>
+      <td>210000.00</td>
+      <td>1.9</td>
+      <td>137.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>7.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>65.0</td>
+      <td>1</td>
+      <td>160.0</td>
+      <td>1</td>
+      <td>20.0</td>
+      <td>0</td>
+      <td>327000.00</td>
+      <td>2.7</td>
+      <td>116.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>8.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>294</th>
+      <td>62.0</td>
+      <td>0</td>
+      <td>61.0</td>
+      <td>1</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>155000.00</td>
+      <td>1.1</td>
+      <td>143.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>270.0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>295</th>
+      <td>55.0</td>
+      <td>0</td>
+      <td>1820.0</td>
+      <td>0</td>
+      <td>38.0</td>
+      <td>0</td>
+      <td>270000.00</td>
+      <td>1.2</td>
+      <td>139.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>271.0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>296</th>
+      <td>45.0</td>
+      <td>0</td>
+      <td>2060.0</td>
+      <td>1</td>
+      <td>60.0</td>
+      <td>0</td>
+      <td>742000.00</td>
+      <td>0.8</td>
+      <td>138.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>278.0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>297</th>
+      <td>45.0</td>
+      <td>0</td>
+      <td>2413.0</td>
+      <td>0</td>
+      <td>38.0</td>
+      <td>0</td>
+      <td>140000.00</td>
+      <td>1.4</td>
+      <td>140.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>280.0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>298</th>
+      <td>50.0</td>
+      <td>0</td>
+      <td>196.0</td>
+      <td>0</td>
+      <td>45.0</td>
+      <td>0</td>
+      <td>395000.00</td>
+      <td>1.6</td>
+      <td>136.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>285.0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>299 rows × 13 columns</p>
+</div>
+
+
+
+```python
+##################################
+# Initializing the correlation matrix
+##################################
+heart_failure_correlation_matrix = pd.DataFrame(np.zeros((len(heart_failure_correlation.columns), len(heart_failure_correlation.columns))),
+                                              columns=heart_failure_correlation.columns,
+                                              index=heart_failure_correlation.columns)
+```
+
+
+```python
+##################################
+# Calculating different types
+# of correlation coefficients
+# per variable type
+##################################
+for i in range(len(heart_failure_correlation.columns)):
+    for j in range(i, len(heart_failure_correlation.columns)):
+        if i == j:
+            heart_failure_correlation_matrix.iloc[i, j] = 1.0
+        else:
+            if heart_failure_correlation.dtypes.iloc[i] == 'float64' and heart_failure_correlation.dtypes.iloc[j] == 'float64':
+                # Pearson correlation for two continuous variables
+                corr = heart_failure_correlation.iloc[:, i].corr(heart_failure_correlation.iloc[:, j])
+            elif heart_failure_correlation.dtypes.iloc[i] == 'int64' or heart_failure_correlation.dtypes.iloc[j] == 'int64':
+                # Point-biserial correlation for one continuous and one binary variable
+                continuous_var = heart_failure_correlation.iloc[:, i] if heart_failure_correlation.dtypes.iloc[i] == 'int64' else heart_failure_correlation.iloc[:, j]
+                binary_var = heart_failure_correlation.iloc[:, j] if heart_failure_correlation.dtypes.iloc[j] == 'int64' else heart_failure_correlation.iloc[:, i]
+                corr, _ = pointbiserialr(continuous_var, binary_var)
+            else:
+                # Phi coefficient for two binary variables
+                corr = heart_failure_correlation.iloc[:, i].corr(heart_failure_correlation.iloc[:, j])
+            heart_failure_correlation_matrix.iloc[i, j] = corr
+            heart_failure_correlation_matrix.iloc[j, i] = corr
+```
+
+
+```python
+##################################
+# Plotting the correlation matrix
+# for all pairwise combinations
+# of numeric and categorical columns
+##################################
+plt.figure(figsize=(17, 8))
+sns.heatmap(heart_failure_correlation_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1)
+plt.show()
+```
+
+
+    
+![png](output_87_0.png)
+    
+
 
 ## 1.5. Data Exploration <a class="anchor" id="1.5"></a>
 
