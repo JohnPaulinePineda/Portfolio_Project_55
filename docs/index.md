@@ -2783,6 +2783,282 @@ display(numeric_column_outlier_summary)
 
 ### 1.5.1 Exploratory Data Analysis <a class="anchor" id="1.5.1"></a>
 
+
+```python
+##################################
+# Formulating a complete dataframe
+##################################
+heart_failure_EDA = pd.concat([heart_failure_numeric_predictor_transformed,
+                               heart_failure.select_dtypes(include=['category','object']),
+                               heart_failure_numeric['TIME']],
+                              axis=1)
+heart_failure_EDA['DEATH_EVENT'] = heart_failure_EDA['DEATH_EVENT'].replace({0: False, 1: True})
+heart_failure_EDA.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AGE</th>
+      <th>CREATININE_PHOSPHOKINASE</th>
+      <th>EJECTION_FRACTION</th>
+      <th>PLATELETS</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+      <th>ANAEMIA</th>
+      <th>DIABETES</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <th>SEX</th>
+      <th>SMOKING</th>
+      <th>DEATH_EVENT</th>
+      <th>TIME</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.173233</td>
+      <td>0.691615</td>
+      <td>-1.773346</td>
+      <td>0.110528</td>
+      <td>1.212227</td>
+      <td>-1.468519</td>
+      <td>Absent</td>
+      <td>Absent</td>
+      <td>Present</td>
+      <td>Male</td>
+      <td>Absent</td>
+      <td>True</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>-0.423454</td>
+      <td>2.401701</td>
+      <td>0.100914</td>
+      <td>0.093441</td>
+      <td>-0.087641</td>
+      <td>-0.244181</td>
+      <td>Absent</td>
+      <td>Absent</td>
+      <td>Absent</td>
+      <td>Male</td>
+      <td>Absent</td>
+      <td>True</td>
+      <td>6.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.434332</td>
+      <td>-0.553424</td>
+      <td>-1.773346</td>
+      <td>-1.093142</td>
+      <td>0.381817</td>
+      <td>-1.642143</td>
+      <td>Absent</td>
+      <td>Absent</td>
+      <td>Absent</td>
+      <td>Male</td>
+      <td>Present</td>
+      <td>True</td>
+      <td>7.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>-0.910411</td>
+      <td>-0.833885</td>
+      <td>-1.773346</td>
+      <td>-0.494713</td>
+      <td>1.212227</td>
+      <td>-0.006503</td>
+      <td>Present</td>
+      <td>Absent</td>
+      <td>Absent</td>
+      <td>Male</td>
+      <td>Absent</td>
+      <td>True</td>
+      <td>7.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.434332</td>
+      <td>-0.462335</td>
+      <td>-1.773346</td>
+      <td>0.720277</td>
+      <td>1.715066</td>
+      <td>-3.285073</td>
+      <td>Present</td>
+      <td>Present</td>
+      <td>Absent</td>
+      <td>Female</td>
+      <td>Absent</td>
+      <td>True</td>
+      <td>8.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Plotting the baseline survival curve
+# and computing the survival rates
+##################################
+kmf = KaplanMeierFitter()
+kmf.fit(durations=heart_failure_EDA['TIME'], event_observed=heart_failure_EDA['DEATH_EVENT'])
+plt.figure(figsize=(17, 8))
+kmf.plot_survival_function()
+plt.title('Kaplan-Meier Baseline Survival Plot')
+plt.ylim(0, 1.05)
+plt.xlabel('TIME')
+plt.ylabel('DEATH_EVENT Survival Probability')
+
+##################################
+# Determing the at-risk numbers
+##################################
+at_risk_counts = kmf.event_table.at_risk
+survival_probabilities = kmf.survival_function_.values.flatten()
+time_points = kmf.survival_function_.index
+for time, prob, at_risk in zip(time_points, survival_probabilities, at_risk_counts):
+    if time % 50 == 0: 
+        plt.text(time, prob, f'{prob:.2f} : {at_risk}', ha='left', fontsize=10)
+median_survival_time = kmf.median_survival_time_
+plt.axvline(x=median_survival_time, color='r', linestyle='--')
+plt.axhline(y=0.5, color='r', linestyle='--')
+plt.show()
+```
+
+
+    
+![png](output_98_0.png)
+    
+
+
+
+```python
+##################################
+# Computing the median survival time
+##################################
+median_survival_time = kmf.median_survival_time_
+print(f'Median Survival Time: {median_survival_time}')
+```
+
+    Median Survival Time: inf
+    
+
+
+```python
+##################################
+# Exploring the relationships between
+# the numeric predictors and event status
+##################################
+plt.figure(figsize=(17, 12))
+for i in range(1, 7):
+    plt.subplot(2, 3, i)
+    sns.boxplot(x='DEATH_EVENT', y=heart_failure_numeric_predictor.columns[i-1], hue='DEATH_EVENT', data=heart_failure_EDA)
+    plt.title(f'{heart_failure_numeric_predictor.columns[i-1]} vs DEATH_EVENT Status')
+    plt.legend(loc='upper center')
+plt.tight_layout()
+plt.show()
+```
+
+
+    
+![png](output_100_0.png)
+    
+
+
+
+```python
+##################################
+# Exploring the relationships between
+# the numeric predictors and event status
+##################################
+heart_failure_categorical_predictor = heart_failure_categorical.drop('DEATH_EVENT',axis=1)
+heart_failure_EDA[int_columns] = heart_failure_EDA[int_columns].astype(object)
+plt.figure(figsize=(17, 12))
+for i in range(1, 6):
+    plt.subplot(2, 3, i)
+    sns.countplot(hue='DEATH_EVENT', x=heart_failure_categorical_predictor.columns[i-1], data=heart_failure_EDA)
+    plt.title(f'{heart_failure_categorical_predictor.columns[i-1]} vs DEATH_EVENT Status')
+    plt.legend(loc='upper center')
+plt.tight_layout()
+plt.show()
+```
+
+
+    
+![png](output_101_0.png)
+    
+
+
+
+```python
+##################################
+# Exploring the relationships between
+# the numeric predictors and survival time
+##################################
+plt.figure(figsize=(17, 12))
+for i in range(1, 7):
+    plt.subplot(2, 3, i)
+    sns.scatterplot(x='TIME', y=heart_failure_numeric_predictor.columns[i-1], hue='DEATH_EVENT', data=heart_failure_EDA)
+    loess_smoothed = lowess(heart_failure_EDA['TIME'], heart_failure_EDA[heart_failure_numeric_predictor.columns[i-1]], frac=0.3)
+    plt.plot(loess_smoothed[:, 1], loess_smoothed[:, 0], color='red')
+    plt.title(f'{heart_failure_numeric_predictor.columns[i-1]} vs Survival Time')
+    plt.legend(loc='upper center')
+plt.tight_layout()
+plt.show()
+```
+
+
+    
+![png](output_102_0.png)
+    
+
+
+
+```python
+##################################
+# Exploring the relationships between
+# the object predictors and survival time
+##################################
+plt.figure(figsize=(17, 12))
+for i in range(1, 6):
+    plt.subplot(2, 3, i)
+    sns.boxplot(x=heart_failure_categorical_predictor.columns[i-1], y='TIME', hue='DEATH_EVENT', data=heart_failure_EDA)
+    plt.title(f'{heart_failure_categorical_predictor.columns[i-1]} vs Survival Time')
+    plt.legend(loc='upper center')
+plt.tight_layout()
+plt.show()
+```
+
+
+    
+![png](output_103_0.png)
+    
+
+
 ### 1.5.2 Hypothesis Testing <a class="anchor" id="1.5.2"></a>
 
 ## 1.6. Predictive Model Development <a class="anchor" id="1.6"></a>
