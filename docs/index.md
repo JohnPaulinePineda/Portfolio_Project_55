@@ -420,7 +420,7 @@ heart_failure.head()
 
 ```python
 ##################################
-# Setting integer variables
+# Setting certain integer variables
 # to float values
 ##################################
 float_columns = ['AGE',
@@ -436,7 +436,22 @@ heart_failure[float_columns] = heart_failure[float_columns].astype(float)
 
 ```python
 ##################################
-# Taking a snapshot of the dataset
+# Setting certain integer variables
+# to object or categorical values
+##################################
+int_columns = ['ANAEMIA',
+               'DIABETES', 
+               'HIGH_BLOOD_PRESSURE',
+               'SMOKING',
+               'SEX']
+heart_failure[int_columns] = heart_failure[int_columns].astype(object)
+heart_failure['DEATH_EVENT'] = heart_failure['DEATH_EVENT'].astype('category')
+```
+
+
+```python
+##################################
+# Saving a copy of the original dataset
 ##################################
 heart_failure_original = heart_failure.copy()
 ```
@@ -447,15 +462,8 @@ heart_failure_original = heart_failure.copy()
 # Setting the levels of the dichotomous categorical variables
 # to boolean values
 ##################################
-heart_failure['DEATH_EVENT'] = heart_failure['DEATH_EVENT'].astype('category')
 heart_failure['DEATH_EVENT'] = heart_failure['DEATH_EVENT'].cat.set_categories([0, 1], ordered=True)
-heart_failure['SEX'] = heart_failure['SEX'].astype(object)
 heart_failure['SEX'] = heart_failure['SEX'].replace({0: 'Female', 1: 'Male'})
-int_columns = ['ANAEMIA',
-               'DIABETES', 
-               'HIGH_BLOOD_PRESSURE',
-               'SMOKING']
-heart_failure[int_columns] = heart_failure[int_columns].astype(object)
 heart_failure[int_columns] = heart_failure[int_columns].replace({0: 'Absent', 1: 'Present'})
 ```
 
@@ -2060,225 +2068,17 @@ len(categorical_column_quality_summary[(categorical_column_quality_summary['Uniq
 
 ## 1.4. Data Preprocessing <a class="anchor" id="1.4"></a>
 
-
-```python
-##################################
-# Formulating the dataset
-# with numeric columns only
-##################################
-heart_failure_numeric = heart_failure.select_dtypes(include=['number','int'])
-```
-
-
-```python
-##################################
-# Gathering the variable names for each numeric column
-##################################
-numeric_variable_name_list = heart_failure_numeric.columns
-```
-
-
-```python
-##################################
-# Gathering the skewness value for each numeric column
-##################################
-numeric_skewness_list = heart_failure_numeric.skew()
-```
-
-
-```python
-##################################
-# Computing the interquartile range
-# for all columns
-##################################
-heart_failure_numeric_q1 = heart_failure_numeric.quantile(0.25)
-heart_failure_numeric_q3 = heart_failure_numeric.quantile(0.75)
-heart_failure_numeric_iqr = heart_failure_numeric_q3 - heart_failure_numeric_q1
-```
-
-
-```python
-##################################
-# Gathering the outlier count for each numeric column
-# based on the interquartile range criterion
-##################################
-numeric_outlier_count_list = ((heart_failure_numeric < (heart_failure_numeric_q1 - 1.5 * heart_failure_numeric_iqr)) | (heart_failure_numeric > (heart_failure_numeric_q3 + 1.5 * heart_failure_numeric_iqr))).sum()
-```
-
-
-```python
-##################################
-# Gathering the number of observations for each column
-##################################
-numeric_row_count_list = list([len(heart_failure_numeric)] * len(heart_failure_numeric.columns))
-```
-
-
-```python
-##################################
-# Gathering the unique to count ratio for each categorical column
-##################################
-numeric_outlier_ratio_list = map(truediv, numeric_outlier_count_list, numeric_row_count_list)
-```
-
-
-```python
-##################################
-# Formulating the outlier summary
-# for all numeric columns
-##################################
-numeric_column_outlier_summary = pd.DataFrame(zip(numeric_variable_name_list,
-                                                  numeric_skewness_list,
-                                                  numeric_outlier_count_list,
-                                                  numeric_row_count_list,
-                                                  numeric_outlier_ratio_list), 
-                                        columns=['Numeric.Column.Name',
-                                                 'Skewness',
-                                                 'Outlier.Count',
-                                                 'Row.Count',
-                                                 'Outlier.Ratio'])
-display(numeric_column_outlier_summary)
-```
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Numeric.Column.Name</th>
-      <th>Skewness</th>
-      <th>Outlier.Count</th>
-      <th>Row.Count</th>
-      <th>Outlier.Ratio</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>AGE</td>
-      <td>0.423062</td>
-      <td>0</td>
-      <td>299</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>CREATININE_PHOSPHOKINASE</td>
-      <td>4.463110</td>
-      <td>29</td>
-      <td>299</td>
-      <td>0.096990</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>EJECTION_FRACTION</td>
-      <td>0.555383</td>
-      <td>2</td>
-      <td>299</td>
-      <td>0.006689</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>PLATELETS</td>
-      <td>1.462321</td>
-      <td>21</td>
-      <td>299</td>
-      <td>0.070234</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>SERUM_CREATININE</td>
-      <td>4.455996</td>
-      <td>29</td>
-      <td>299</td>
-      <td>0.096990</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>SERUM_SODIUM</td>
-      <td>-1.048136</td>
-      <td>4</td>
-      <td>299</td>
-      <td>0.013378</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>TIME</td>
-      <td>0.127803</td>
-      <td>0</td>
-      <td>299</td>
-      <td>0.000000</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-```python
-##################################
-# Formulating the individual boxplots
-# for all numeric columns
-##################################
-for column in heart_failure_numeric:
-        plt.figure(figsize=(17,1))
-        sns.boxplot(data=heart_failure_numeric, x=column)
-```
-
-
-    
-![png](output_83_0.png)
-    
-
-
-
-    
-![png](output_83_1.png)
-    
-
-
-
-    
-![png](output_83_2.png)
-    
-
-
-
-    
-![png](output_83_3.png)
-    
-
-
-
-    
-![png](output_83_4.png)
-    
-
-
-
-    
-![png](output_83_5.png)
-    
-
-
-
-    
-![png](output_83_6.png)
-    
+1. Data transformation and scaling is necessary to address excessive outliers and high skewness as observed on several numeric predictors:
+    * <span style="color: #FF0000">CREATININE_PHOSPHOKINASE</span>: Skewness = +4.463, Outlier.Count = 29, Outlier.Ratio = 0.096
+    * <span style="color: #FF0000">SERUM_CREATININE</span>: Skewness = +4.456, Outlier.Count = 29, Outlier Ratio = 0.096
+    * <span style="color: #FF0000">PLATELETS</span>: Skewness = +1.462, Outlier.Count = 21, Outlier.Ratio = 0.070
+2. Most variables achieved symmetrical distributions with minimal outliers after evaluating a Yeo-Johnson transformation, except for:
+    * <span style="color: #FF0000">PLATELETS</span>: Skewness = +1.155, Outlier.Count = 18, Outlier.Ratio = 0.060
+3. Among pairwise combinations of variables in the training subset, sufficiently high correlation values were observed but with no excessive multicollinearity noted:
+    * <span style="color: #FF0000">TIME</span> and <span style="color: #FF0000">DEATH_EVENT</span>: Point.Biserial.Correlation = -0.530
+    * <span style="color: #FF0000">SMOKING</span> and <span style="color: #FF0000">SEX</span>: Phi.Coefficient = +0.450
+    * <span style="color: #FF0000">SERUM_CREATININE</span> and <span style="color: #FF0000">DEATH_EVENT</span>: Point.Biserial.Correlation = +0.290
+    * <span style="color: #FF0000">AGE</span> and <span style="color: #FF0000">DEATH_EVENT</span>: Point.Biserial.Correlation = +0.250
 
 
 
@@ -2559,8 +2359,424 @@ plt.show()
 
 
     
-![png](output_87_0.png)
+![png](output_79_0.png)
     
+
+
+
+```python
+##################################
+# Formulating the dataset
+# with numeric columns only
+##################################
+heart_failure_numeric = heart_failure.select_dtypes(include=['number','int'])
+```
+
+
+```python
+##################################
+# Gathering the variable names for each numeric column
+##################################
+numeric_variable_name_list = heart_failure_numeric.columns
+```
+
+
+```python
+##################################
+# Gathering the skewness value for each numeric column
+##################################
+numeric_skewness_list = heart_failure_numeric.skew()
+```
+
+
+```python
+##################################
+# Computing the interquartile range
+# for all columns
+##################################
+heart_failure_numeric_q1 = heart_failure_numeric.quantile(0.25)
+heart_failure_numeric_q3 = heart_failure_numeric.quantile(0.75)
+heart_failure_numeric_iqr = heart_failure_numeric_q3 - heart_failure_numeric_q1
+```
+
+
+```python
+##################################
+# Gathering the outlier count for each numeric column
+# based on the interquartile range criterion
+##################################
+numeric_outlier_count_list = ((heart_failure_numeric < (heart_failure_numeric_q1 - 1.5 * heart_failure_numeric_iqr)) | (heart_failure_numeric > (heart_failure_numeric_q3 + 1.5 * heart_failure_numeric_iqr))).sum()
+```
+
+
+```python
+##################################
+# Gathering the number of observations for each column
+##################################
+numeric_row_count_list = list([len(heart_failure_numeric)] * len(heart_failure_numeric.columns))
+```
+
+
+```python
+##################################
+# Gathering the unique to count ratio for each categorical column
+##################################
+numeric_outlier_ratio_list = map(truediv, numeric_outlier_count_list, numeric_row_count_list)
+```
+
+
+```python
+##################################
+# Formulating the outlier summary
+# for all numeric columns
+##################################
+numeric_column_outlier_summary = pd.DataFrame(zip(numeric_variable_name_list,
+                                                  numeric_skewness_list,
+                                                  numeric_outlier_count_list,
+                                                  numeric_row_count_list,
+                                                  numeric_outlier_ratio_list), 
+                                        columns=['Numeric.Column.Name',
+                                                 'Skewness',
+                                                 'Outlier.Count',
+                                                 'Row.Count',
+                                                 'Outlier.Ratio'])
+display(numeric_column_outlier_summary)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Numeric.Column.Name</th>
+      <th>Skewness</th>
+      <th>Outlier.Count</th>
+      <th>Row.Count</th>
+      <th>Outlier.Ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>AGE</td>
+      <td>0.423062</td>
+      <td>0</td>
+      <td>299</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>CREATININE_PHOSPHOKINASE</td>
+      <td>4.463110</td>
+      <td>29</td>
+      <td>299</td>
+      <td>0.096990</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>EJECTION_FRACTION</td>
+      <td>0.555383</td>
+      <td>2</td>
+      <td>299</td>
+      <td>0.006689</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>PLATELETS</td>
+      <td>1.462321</td>
+      <td>21</td>
+      <td>299</td>
+      <td>0.070234</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>SERUM_CREATININE</td>
+      <td>4.455996</td>
+      <td>29</td>
+      <td>299</td>
+      <td>0.096990</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>SERUM_SODIUM</td>
+      <td>-1.048136</td>
+      <td>4</td>
+      <td>299</td>
+      <td>0.013378</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>TIME</td>
+      <td>0.127803</td>
+      <td>0</td>
+      <td>299</td>
+      <td>0.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Formulating the individual boxplots
+# for all numeric columns
+##################################
+for column in heart_failure_numeric:
+        plt.figure(figsize=(17,1))
+        sns.boxplot(data=heart_failure_numeric, x=column)
+```
+
+
+    
+![png](output_88_0.png)
+    
+
+
+
+    
+![png](output_88_1.png)
+    
+
+
+
+    
+![png](output_88_2.png)
+    
+
+
+
+    
+![png](output_88_3.png)
+    
+
+
+
+    
+![png](output_88_4.png)
+    
+
+
+
+    
+![png](output_88_5.png)
+    
+
+
+
+    
+![png](output_88_6.png)
+    
+
+
+
+```python
+##################################
+# Formulating the dataset
+# with numeric predictor columns only
+##################################
+heart_failure_numeric_predictor = heart_failure_numeric.drop('TIME', axis=1)
+```
+
+
+```python
+##################################
+# Formulating the dataset
+# with categorical or object columns only
+##################################
+heart_failure_categorical = heart_failure_original.select_dtypes(include=['category','object'])
+```
+
+
+```python
+##################################
+# Evaluating a Yeo-Johnson Transformation
+# to address the distributional
+# shape of the variables
+##################################
+yeo_johnson_transformer = PowerTransformer(method='yeo-johnson',
+                                          standardize=True)
+heart_failure_numeric_predictor_transformed_array = yeo_johnson_transformer.fit_transform(heart_failure_numeric_predictor)
+```
+
+
+```python
+##################################
+# Formulating a new dataset object
+# for the transformed data
+##################################
+heart_failure_numeric_predictor_transformed = pd.DataFrame(heart_failure_numeric_predictor_transformed_array,
+                                                           columns=heart_failure_numeric_predictor.columns)
+```
+
+
+```python
+##################################
+# Formulating the individual boxplots
+# for all transformed numeric predictor columns
+##################################
+for column in heart_failure_numeric_predictor_transformed:
+        plt.figure(figsize=(17,1))
+        sns.boxplot(data=heart_failure_numeric_predictor_transformed, x=column)
+```
+
+
+    
+![png](output_93_0.png)
+    
+
+
+
+    
+![png](output_93_1.png)
+    
+
+
+
+    
+![png](output_93_2.png)
+    
+
+
+
+    
+![png](output_93_3.png)
+    
+
+
+
+    
+![png](output_93_4.png)
+    
+
+
+
+    
+![png](output_93_5.png)
+    
+
+
+
+```python
+##################################
+# Formulating the outlier summary
+# for all numeric predictor columns
+##################################
+numeric_variable_name_list = heart_failure_numeric_predictor_transformed.columns
+numeric_skewness_list = heart_failure_numeric_predictor_transformed.skew()
+heart_failure_numeric_predictor_transformed_q1 = heart_failure_numeric_predictor_transformed.quantile(0.25)
+heart_failure_numeric_predictor_transformed_q3 = heart_failure_numeric_predictor_transformed.quantile(0.75)
+heart_failure_numeric_predictor_transformed_iqr = heart_failure_numeric_predictor_transformed_q3 - heart_failure_numeric_predictor_transformed_q1
+numeric_outlier_count_list = ((heart_failure_numeric_predictor_transformed < (heart_failure_numeric_predictor_transformed_q1 - 1.5 * heart_failure_numeric_predictor_transformed_iqr)) | (heart_failure_numeric_predictor_transformed > (heart_failure_numeric_predictor_transformed_q3 + 1.5 * heart_failure_numeric_predictor_transformed_iqr))).sum()
+numeric_row_count_list = list([len(heart_failure_numeric_predictor_transformed)] * len(heart_failure_numeric_predictor_transformed.columns))
+numeric_outlier_ratio_list = map(truediv, numeric_outlier_count_list, numeric_row_count_list)
+
+numeric_column_outlier_summary = pd.DataFrame(zip(numeric_variable_name_list,
+                                                  numeric_skewness_list,
+                                                  numeric_outlier_count_list,
+                                                  numeric_row_count_list,
+                                                  numeric_outlier_ratio_list), 
+                                        columns=['Numeric.Column.Name',
+                                                 'Skewness',
+                                                 'Outlier.Count',
+                                                 'Row.Count',
+                                                 'Outlier.Ratio'])
+display(numeric_column_outlier_summary)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Numeric.Column.Name</th>
+      <th>Skewness</th>
+      <th>Outlier.Count</th>
+      <th>Row.Count</th>
+      <th>Outlier.Ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>AGE</td>
+      <td>-0.000746</td>
+      <td>0</td>
+      <td>299</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>CREATININE_PHOSPHOKINASE</td>
+      <td>0.044225</td>
+      <td>0</td>
+      <td>299</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>EJECTION_FRACTION</td>
+      <td>-0.006637</td>
+      <td>2</td>
+      <td>299</td>
+      <td>0.006689</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>PLATELETS</td>
+      <td>0.155360</td>
+      <td>18</td>
+      <td>299</td>
+      <td>0.060201</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>SERUM_CREATININE</td>
+      <td>0.150380</td>
+      <td>1</td>
+      <td>299</td>
+      <td>0.003344</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>SERUM_SODIUM</td>
+      <td>0.082305</td>
+      <td>3</td>
+      <td>299</td>
+      <td>0.010033</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
 
 ## 1.5. Data Exploration <a class="anchor" id="1.5"></a>
