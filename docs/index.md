@@ -3061,6 +3061,573 @@ plt.show()
 
 ### 1.5.2 Hypothesis Testing <a class="anchor" id="1.5.2"></a>
 
+
+```python
+##################################
+# Formulating a complete dataframe
+##################################
+heart_failure_HT = pd.concat([heart_failure_numeric_predictor_transformed,
+                               heart_failure_categorical,
+                               heart_failure_numeric['TIME']],
+                              axis=1)
+heart_failure_HT['DEATH_EVENT'] = heart_failure_HT['DEATH_EVENT'].replace({0: False, 1: True})
+heart_failure_HT.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AGE</th>
+      <th>CREATININE_PHOSPHOKINASE</th>
+      <th>EJECTION_FRACTION</th>
+      <th>PLATELETS</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+      <th>ANAEMIA</th>
+      <th>DIABETES</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <th>SEX</th>
+      <th>SMOKING</th>
+      <th>DEATH_EVENT</th>
+      <th>TIME</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.173233</td>
+      <td>0.691615</td>
+      <td>-1.773346</td>
+      <td>0.110528</td>
+      <td>1.212227</td>
+      <td>-1.468519</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>True</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>-0.423454</td>
+      <td>2.401701</td>
+      <td>0.100914</td>
+      <td>0.093441</td>
+      <td>-0.087641</td>
+      <td>-0.244181</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>True</td>
+      <td>6.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.434332</td>
+      <td>-0.553424</td>
+      <td>-1.773346</td>
+      <td>-1.093142</td>
+      <td>0.381817</td>
+      <td>-1.642143</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>True</td>
+      <td>7.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>-0.910411</td>
+      <td>-0.833885</td>
+      <td>-1.773346</td>
+      <td>-0.494713</td>
+      <td>1.212227</td>
+      <td>-0.006503</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>True</td>
+      <td>7.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.434332</td>
+      <td>-0.462335</td>
+      <td>-1.773346</td>
+      <td>0.720277</td>
+      <td>1.715066</td>
+      <td>-3.285073</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>True</td>
+      <td>8.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Computing the t-test 
+# statistic and p-values
+# between the event variable
+# and numeric predictor columns
+##################################
+heart_failure_numeric_ttest_event = {}
+for numeric_column in heart_failure_numeric_predictor.columns:
+    group_0 = heart_failure_HT[heart_failure_HT.loc[:,'DEATH_EVENT']==False]
+    group_1 = heart_failure_HT[heart_failure_HT.loc[:,'DEATH_EVENT']==True]
+    heart_failure_numeric_ttest_event['DEATH_EVENT_' + numeric_column] = stats.ttest_ind(
+        group_0[numeric_column], 
+        group_1[numeric_column], 
+        equal_var=True)
+```
+
+
+```python
+##################################
+# Formulating the pairwise ttest summary
+# between the event variable
+# and numeric predictor columns
+##################################
+heart_failure_numeric_ttest_summary = heart_failure_HT.from_dict(heart_failure_numeric_ttest_event, orient='index')
+heart_failure_numeric_ttest_summary.columns = ['T.Test.Statistic', 'T.Test.PValue']
+display(heart_failure_numeric_ttest_summary.sort_values(by=['T.Test.PValue'], ascending=True))
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>T.Test.Statistic</th>
+      <th>T.Test.PValue</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>DEATH_EVENT_SERUM_CREATININE</th>
+      <td>-6.825678</td>
+      <td>4.927143e-11</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_EJECTION_FRACTION</th>
+      <td>5.495673</td>
+      <td>8.382875e-08</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_AGE</th>
+      <td>-4.274623</td>
+      <td>2.582635e-05</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_SERUM_SODIUM</th>
+      <td>3.229580</td>
+      <td>1.378737e-03</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_PLATELETS</th>
+      <td>1.031261</td>
+      <td>3.032576e-01</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_CREATININE_PHOSPHOKINASE</th>
+      <td>-0.565564</td>
+      <td>5.721174e-01</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Computing the chisquare
+# statistic and p-values
+# between the event variable
+# and categorical predictor columns
+##################################
+heart_failure_categorical_chisquare_event = {}
+for categorical_column in heart_failure_categorical_predictor.columns:
+    contingency_table = pd.crosstab(heart_failure_HT[categorical_column], 
+                                    heart_failure_HT['DEATH_EVENT'])
+    heart_failure_categorical_chisquare_event['DEATH_EVENT_' + categorical_column] = stats.chi2_contingency(
+        contingency_table)[0:2]
+```
+
+
+```python
+##################################
+# Formulating the pairwise chisquare summary
+# between the event variable
+# and categorical predictor columns
+##################################
+heart_failure_categorical_chisquare_event_summary = heart_failure_HT.from_dict(heart_failure_categorical_chisquare_event, orient='index')
+heart_failure_categorical_chisquare_event_summary.columns = ['ChiSquare.Test.Statistic', 'ChiSquare.Test.PValue']
+display(heart_failure_categorical_chisquare_event_summary.sort_values(by=['ChiSquare.Test.PValue'], ascending=True))
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ChiSquare.Test.Statistic</th>
+      <th>ChiSquare.Test.PValue</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>DEATH_EVENT_HIGH_BLOOD_PRESSURE</th>
+      <td>1.543461</td>
+      <td>0.214103</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_ANAEMIA</th>
+      <td>1.042175</td>
+      <td>0.307316</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_SMOKING</th>
+      <td>0.007331</td>
+      <td>0.931765</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_DIABETES</th>
+      <td>0.000000</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_SEX</th>
+      <td>0.000000</td>
+      <td>1.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Exploring the relationships between
+# the categorical predictors with
+# survival event and duration
+##################################
+plt.figure(figsize=(17, 18))
+for i in range(1, 6):
+    ax = plt.subplot(3, 2, i)
+    for group in [0,1]:
+        kmf.fit(durations=heart_failure_HT[heart_failure_HT[heart_failure_categorical_predictor.columns[i-1]] == group]['TIME'],
+                event_observed=heart_failure_HT[heart_failure_HT[heart_failure_categorical_predictor.columns[i-1]] == group]['DEATH_EVENT'], label=group)
+        kmf.plot_survival_function(ax=ax)
+    plt.title(f'Survival Probabilities by {heart_failure_categorical_predictor.columns[i-1]} Categories')
+    plt.xlabel('TIME')
+    plt.ylabel('DEATH_EVENT Survival Probability')
+plt.tight_layout()
+plt.show()
+```
+
+
+    
+![png](output_110_0.png)
+    
+
+
+
+```python
+##################################
+# Computing the log-rank test
+# statistic and p-values
+# between the event and duration variables
+# with the categorical predictor columns
+##################################
+heart_failure_categorical_lrtest_event = {}
+for categorical_column in heart_failure_categorical_predictor.columns:
+    groups = [0,1]
+    group_0_event = heart_failure_HT[heart_failure_HT[categorical_column] == groups[0]]['DEATH_EVENT']
+    group_1_event = heart_failure_HT[heart_failure_HT[categorical_column] == groups[1]]['DEATH_EVENT']
+    group_0_duration = heart_failure_HT[heart_failure_HT[categorical_column] == groups[0]]['TIME']
+    group_1_duration = heart_failure_HT[heart_failure_HT[categorical_column] == groups[1]]['TIME']
+    lr_test = logrank_test(group_0_duration, group_1_duration,event_observed_A=group_0_event, event_observed_B=group_1_event)
+    heart_failure_categorical_lrtest_event['DEATH_EVENT_TIME_' + categorical_column] = (lr_test.test_statistic, lr_test.p_value)
+```
+
+
+```python
+##################################
+# Formulating the log-rank test summary
+# between the event and duration variables
+# with the categorical predictor columns
+##################################
+heart_failure_categorical_lrtest_summary = heart_failure_HT.from_dict(heart_failure_categorical_lrtest_event, orient='index')
+heart_failure_categorical_lrtest_summary.columns = ['LR.Test.Statistic', 'LR.Test.PValue']
+display(heart_failure_categorical_lrtest_summary.sort_values(by=['LR.Test.PValue'], ascending=True))
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>LR.Test.Statistic</th>
+      <th>LR.Test.PValue</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>DEATH_EVENT_TIME_HIGH_BLOOD_PRESSURE</th>
+      <td>4.406248</td>
+      <td>0.035808</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_TIME_ANAEMIA</th>
+      <td>2.726464</td>
+      <td>0.098698</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_TIME_DIABETES</th>
+      <td>0.040528</td>
+      <td>0.840452</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_TIME_SEX</th>
+      <td>0.003971</td>
+      <td>0.949752</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_TIME_SMOKING</th>
+      <td>0.002042</td>
+      <td>0.963960</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Creating an alternate copy of the 
+# EDA data which will utilize
+# binning for numeric predictors
+##################################
+heart_failure_HT_binned = heart_failure_HT.copy()
+
+##################################
+# Creating a function to bin
+# numeric predictors into two groups
+##################################
+def bin_numeric_predictor(df, predictor):
+    median = df[predictor].median()
+    df[f'Binned_{predictor}'] = np.where(df[predictor] <= median, 0, 1)
+    return df
+
+##################################
+# Binning the numeric predictors
+# in the alternate data into two groups
+##################################
+for numeric_column in heart_failure_numeric_predictor.columns:
+    heart_failure_HT_binned = bin_numeric_predictor(heart_failure_HT_binned, numeric_column)
+    
+##################################
+# Formulating the binned numeric predictors
+##################################    
+heart_failure_binned_numeric_predictor = ["Binned_" + predictor for predictor in heart_failure_numeric_predictor.columns]
+```
+
+
+```python
+##################################
+# Exploring the relationships between
+# the binned numeric predictors with
+# survival event and duration
+##################################
+plt.figure(figsize=(17, 18))
+for i in range(1, 7):
+    ax = plt.subplot(3, 2, i)
+    for group in [0,1]:
+            kmf.fit(durations=heart_failure_HT_binned[heart_failure_HT_binned[heart_failure_binned_numeric_predictor[i-1]] == group]['TIME'],
+                event_observed=heart_failure_HT_binned[heart_failure_HT_binned[heart_failure_binned_numeric_predictor[i-1]] == group]['DEATH_EVENT'], label=group)
+            kmf.plot_survival_function(ax=ax)
+    plt.title(f'Survival Probabilities by {heart_failure_binned_numeric_predictor[i-1]} Categories')
+    plt.xlabel('TIME')
+    plt.ylabel('DEATH_EVENT Survival Probability')
+plt.tight_layout()
+plt.show()
+```
+
+
+    
+![png](output_114_0.png)
+    
+
+
+
+```python
+##################################
+# Computing the log-rank test
+# statistic and p-values
+# between the event and duration variables
+# with the binned numeric predictor columns
+##################################
+heart_failure_binned_numeric_lrtest_event = {}
+for binned_numeric_column in heart_failure_binned_numeric_predictor:
+    groups = [0,1]
+    group_0_event = heart_failure_HT_binned[heart_failure_HT_binned[binned_numeric_column] == groups[0]]['DEATH_EVENT']
+    group_1_event = heart_failure_HT_binned[heart_failure_HT_binned[binned_numeric_column] == groups[1]]['DEATH_EVENT']
+    group_0_duration = heart_failure_HT_binned[heart_failure_HT_binned[binned_numeric_column] == groups[0]]['TIME']
+    group_1_duration = heart_failure_HT_binned[heart_failure_HT_binned[binned_numeric_column] == groups[1]]['TIME']
+    lr_test = logrank_test(group_0_duration, group_1_duration,event_observed_A=group_0_event, event_observed_B=group_1_event)
+    heart_failure_binned_numeric_lrtest_event['DEATH_EVENT_TIME_' + binned_numeric_column] = (lr_test.test_statistic, lr_test.p_value)
+```
+
+
+```python
+##################################
+# Formulating the log-rank test summary
+# between the event and duration variables
+# with the binned numeric predictor columns
+##################################
+heart_failure_binned_numeric_lrtest_summary = heart_failure_HT_binned.from_dict(heart_failure_binned_numeric_lrtest_event, orient='index')
+heart_failure_binned_numeric_lrtest_summary.columns = ['LR.Test.Statistic', 'LR.Test.PValue']
+display(heart_failure_binned_numeric_lrtest_summary.sort_values(by=['LR.Test.PValue'], ascending=True))
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>LR.Test.Statistic</th>
+      <th>LR.Test.PValue</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>DEATH_EVENT_TIME_Binned_SERUM_CREATININE</th>
+      <td>21.190414</td>
+      <td>0.000004</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_TIME_Binned_EJECTION_FRACTION</th>
+      <td>9.469633</td>
+      <td>0.002089</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_TIME_Binned_AGE</th>
+      <td>4.951760</td>
+      <td>0.026064</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_TIME_Binned_SERUM_SODIUM</th>
+      <td>4.887878</td>
+      <td>0.027046</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_TIME_Binned_CREATININE_PHOSPHOKINASE</th>
+      <td>0.055576</td>
+      <td>0.813630</td>
+    </tr>
+    <tr>
+      <th>DEATH_EVENT_TIME_Binned_PLATELETS</th>
+      <td>0.009122</td>
+      <td>0.923912</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
 ## 1.6. Predictive Model Development <a class="anchor" id="1.6"></a>
 
 ### 1.6.1 Pre-Modelling Data Preparation <a class="anchor" id="1.6.1"></a>
