@@ -3632,7 +3632,740 @@ display(heart_failure_binned_numeric_lrtest_summary.sort_values(by=['LR.Test.PVa
 
 ### 1.6.1 Pre-Modelling Data Preparation <a class="anchor" id="1.6.1"></a>
 
+
+```python
+#################################
+# Creating a dataset copy 
+# for data splitting and modelling
+##################################
+heart_failure_transformed = heart_failure_original.copy()
+heart_failure_transformed['DEATH_EVENT'] = heart_failure_transformed['DEATH_EVENT'].replace({0: False, 1: True})
+display(heart_failure_transformed)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AGE</th>
+      <th>ANAEMIA</th>
+      <th>CREATININE_PHOSPHOKINASE</th>
+      <th>DIABETES</th>
+      <th>EJECTION_FRACTION</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <th>PLATELETS</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+      <th>SEX</th>
+      <th>SMOKING</th>
+      <th>TIME</th>
+      <th>DEATH_EVENT</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>75.0</td>
+      <td>0</td>
+      <td>582.0</td>
+      <td>0</td>
+      <td>20.0</td>
+      <td>1</td>
+      <td>265000.00</td>
+      <td>1.9</td>
+      <td>130.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>4.0</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>55.0</td>
+      <td>0</td>
+      <td>7861.0</td>
+      <td>0</td>
+      <td>38.0</td>
+      <td>0</td>
+      <td>263358.03</td>
+      <td>1.1</td>
+      <td>136.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>6.0</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>65.0</td>
+      <td>0</td>
+      <td>146.0</td>
+      <td>0</td>
+      <td>20.0</td>
+      <td>0</td>
+      <td>162000.00</td>
+      <td>1.3</td>
+      <td>129.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>7.0</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>50.0</td>
+      <td>1</td>
+      <td>111.0</td>
+      <td>0</td>
+      <td>20.0</td>
+      <td>0</td>
+      <td>210000.00</td>
+      <td>1.9</td>
+      <td>137.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>7.0</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>65.0</td>
+      <td>1</td>
+      <td>160.0</td>
+      <td>1</td>
+      <td>20.0</td>
+      <td>0</td>
+      <td>327000.00</td>
+      <td>2.7</td>
+      <td>116.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>8.0</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>294</th>
+      <td>62.0</td>
+      <td>0</td>
+      <td>61.0</td>
+      <td>1</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>155000.00</td>
+      <td>1.1</td>
+      <td>143.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>270.0</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>295</th>
+      <td>55.0</td>
+      <td>0</td>
+      <td>1820.0</td>
+      <td>0</td>
+      <td>38.0</td>
+      <td>0</td>
+      <td>270000.00</td>
+      <td>1.2</td>
+      <td>139.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>271.0</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>296</th>
+      <td>45.0</td>
+      <td>0</td>
+      <td>2060.0</td>
+      <td>1</td>
+      <td>60.0</td>
+      <td>0</td>
+      <td>742000.00</td>
+      <td>0.8</td>
+      <td>138.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>278.0</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>297</th>
+      <td>45.0</td>
+      <td>0</td>
+      <td>2413.0</td>
+      <td>0</td>
+      <td>38.0</td>
+      <td>0</td>
+      <td>140000.00</td>
+      <td>1.4</td>
+      <td>140.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>280.0</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>298</th>
+      <td>50.0</td>
+      <td>0</td>
+      <td>196.0</td>
+      <td>0</td>
+      <td>45.0</td>
+      <td>0</td>
+      <td>395000.00</td>
+      <td>1.6</td>
+      <td>136.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>285.0</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+<p>299 rows × 13 columns</p>
+</div>
+
+
+
+```python
+##################################
+# Saving the tranformed data
+# to the DATASETS_PREPROCESSED_PATH
+##################################
+heart_failure_transformed.to_csv(os.path.join("..", DATASETS_PREPROCESSED_PATH, "heart_failure_transformed.csv"), index=False)
+```
+
+
+```python
+##################################
+# Filtering out predictors that did not exhibit 
+# sufficient discrimination of the target variable
+# Saving the tranformed data
+# to the DATASETS_PREPROCESSED_PATH
+##################################
+heart_failure_filtered = heart_failure_transformed.drop(['DIABETES','SEX', 'SMOKING', 'AGE','CREATININE_PHOSPHOKINASE','PLATELETS'], axis=1)
+heart_failure_filtered.to_csv(os.path.join("..", DATASETS_FINAL_PATH, "heart_failure_final.csv"), index=False)
+display(heart_failure_filtered)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ANAEMIA</th>
+      <th>EJECTION_FRACTION</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+      <th>TIME</th>
+      <th>DEATH_EVENT</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>20.0</td>
+      <td>1</td>
+      <td>1.9</td>
+      <td>130.0</td>
+      <td>4.0</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>38.0</td>
+      <td>0</td>
+      <td>1.1</td>
+      <td>136.0</td>
+      <td>6.0</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>20.0</td>
+      <td>0</td>
+      <td>1.3</td>
+      <td>129.0</td>
+      <td>7.0</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>20.0</td>
+      <td>0</td>
+      <td>1.9</td>
+      <td>137.0</td>
+      <td>7.0</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>20.0</td>
+      <td>0</td>
+      <td>2.7</td>
+      <td>116.0</td>
+      <td>8.0</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>294</th>
+      <td>0</td>
+      <td>38.0</td>
+      <td>1</td>
+      <td>1.1</td>
+      <td>143.0</td>
+      <td>270.0</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>295</th>
+      <td>0</td>
+      <td>38.0</td>
+      <td>0</td>
+      <td>1.2</td>
+      <td>139.0</td>
+      <td>271.0</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>296</th>
+      <td>0</td>
+      <td>60.0</td>
+      <td>0</td>
+      <td>0.8</td>
+      <td>138.0</td>
+      <td>278.0</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>297</th>
+      <td>0</td>
+      <td>38.0</td>
+      <td>0</td>
+      <td>1.4</td>
+      <td>140.0</td>
+      <td>280.0</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>298</th>
+      <td>0</td>
+      <td>45.0</td>
+      <td>0</td>
+      <td>1.6</td>
+      <td>136.0</td>
+      <td>285.0</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+<p>299 rows × 7 columns</p>
+</div>
+
+
 ### 1.6.2 Data Splitting <a class="anchor" id="1.6.2"></a>
+
+
+```python
+##################################
+# Creating a dataset copy
+# of the filtered data
+##################################
+heart_failure_final = heart_failure_filtered.copy()
+```
+
+
+```python
+##################################
+# Performing a general exploration
+# of the final dataset
+##################################
+print('Final Dataset Dimensions: ')
+display(heart_failure_final.shape)
+```
+
+    Final Dataset Dimensions: 
+    
+
+
+    (299, 7)
+
+
+
+```python
+print('Target Variable Breakdown: ')
+heart_failure_breakdown = heart_failure_final.groupby('DEATH_EVENT', observed=True).size().reset_index(name='Count')
+heart_failure_breakdown['Percentage'] = (heart_failure_breakdown['Count'] / len(heart_failure_final)) * 100
+display(heart_failure_breakdown)
+```
+
+    Target Variable Breakdown: 
+    
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>DEATH_EVENT</th>
+      <th>Count</th>
+      <th>Percentage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>False</td>
+      <td>203</td>
+      <td>67.892977</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>True</td>
+      <td>96</td>
+      <td>32.107023</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Formulating the train and test data
+# from the final dataset
+# by applying stratification and
+# using a 70-30 ratio
+##################################
+heart_failure_train_initial, heart_failure_test = train_test_split(heart_failure_final, 
+                                                                   test_size=0.25, 
+                                                                   stratify=heart_failure_final['DEATH_EVENT'], 
+                                                                   random_state=88888888)
+```
+
+
+```python
+##################################
+# Performing a general exploration
+# of the initial training dataset
+##################################
+X_train_initial = heart_failure_train_initial.drop('DEATH_EVENT', axis = 1)
+y_train_initial = heart_failure_train_initial['DEATH_EVENT']
+print('Initial Training Dataset Dimensions: ')
+display(X_train_initial.shape)
+display(y_train_initial.shape)
+print('Initial Training Target Variable Breakdown: ')
+display(y_train_initial.value_counts())
+print('Initial Training Target Variable Proportion: ')
+display(y_train_initial.value_counts(normalize = True))
+```
+
+    Initial Training Dataset Dimensions: 
+    
+
+
+    (224, 6)
+
+
+
+    (224,)
+
+
+    Initial Training Target Variable Breakdown: 
+    
+
+
+    DEATH_EVENT
+    False    152
+    True      72
+    Name: count, dtype: int64
+
+
+    Initial Training Target Variable Proportion: 
+    
+
+
+    DEATH_EVENT
+    False    0.678571
+    True     0.321429
+    Name: proportion, dtype: float64
+
+
+
+```python
+##################################
+# Performing a general exploration
+# of the test dataset
+##################################
+X_test = heart_failure_test.drop('DEATH_EVENT', axis = 1)
+y_test = heart_failure_test['DEATH_EVENT']
+print('Test Dataset Dimensions: ')
+display(X_test.shape)
+display(y_test.shape)
+print('Test Target Variable Breakdown: ')
+display(y_test.value_counts())
+print('Test Target Variable Proportion: ')
+display(y_test.value_counts(normalize = True))
+```
+
+    Test Dataset Dimensions: 
+    
+
+
+    (75, 6)
+
+
+
+    (75,)
+
+
+    Test Target Variable Breakdown: 
+    
+
+
+    DEATH_EVENT
+    False    51
+    True     24
+    Name: count, dtype: int64
+
+
+    Test Target Variable Proportion: 
+    
+
+
+    DEATH_EVENT
+    False    0.68
+    True     0.32
+    Name: proportion, dtype: float64
+
+
+
+```python
+##################################
+# Formulating the train and validation data
+# from the train dataset
+# by applying stratification and
+# using a 70-30 ratio
+##################################
+heart_failure_train, heart_failure_validation = train_test_split(heart_failure_train_initial, 
+                                                                 test_size=0.25, 
+                                                                 stratify=heart_failure_train_initial['DEATH_EVENT'], 
+                                                                 random_state=88888888)
+```
+
+
+```python
+##################################
+# Performing a general exploration
+# of the final training dataset
+##################################
+X_train = heart_failure_train.drop('DEATH_EVENT', axis = 1)
+y_train = heart_failure_train['DEATH_EVENT']
+print('Final Training Dataset Dimensions: ')
+display(X_train.shape)
+display(y_train.shape)
+print('Final Training Target Variable Breakdown: ')
+display(y_train.value_counts())
+print('Final Training Target Variable Proportion: ')
+display(y_train.value_counts(normalize = True))
+```
+
+    Final Training Dataset Dimensions: 
+    
+
+
+    (168, 6)
+
+
+
+    (168,)
+
+
+    Final Training Target Variable Breakdown: 
+    
+
+
+    DEATH_EVENT
+    False    114
+    True      54
+    Name: count, dtype: int64
+
+
+    Final Training Target Variable Proportion: 
+    
+
+
+    DEATH_EVENT
+    False    0.678571
+    True     0.321429
+    Name: proportion, dtype: float64
+
+
+
+```python
+##################################
+# Performing a general exploration
+# of the validation dataset
+##################################
+X_validation = heart_failure_validation.drop('DEATH_EVENT', axis = 1)
+y_validation = heart_failure_validation['DEATH_EVENT']
+print('Validation Dataset Dimensions: ')
+display(X_validation.shape)
+display(y_validation.shape)
+print('Validation Target Variable Breakdown: ')
+display(y_validation.value_counts())
+print('Validation Target Variable Proportion: ')
+display(y_validation.value_counts(normalize = True))
+```
+
+    Validation Dataset Dimensions: 
+    
+
+
+    (56, 6)
+
+
+
+    (56,)
+
+
+    Validation Target Variable Breakdown: 
+    
+
+
+    DEATH_EVENT
+    False    38
+    True     18
+    Name: count, dtype: int64
+
+
+    Validation Target Variable Proportion: 
+    
+
+
+    DEATH_EVENT
+    False    0.678571
+    True     0.321429
+    Name: proportion, dtype: float64
+
+
+
+```python
+##################################
+# Saving the training data
+# to the DATASETS_FINAL_TRAIN_PATH
+# and DATASETS_FINAL_TRAIN_FEATURES_PATH
+# and DATASETS_FINAL_TRAIN_TARGET_PATH
+##################################
+heart_failure_train.to_csv(os.path.join("..", DATASETS_FINAL_TRAIN_PATH, "heart_failure_train.csv"), index=False)
+X_train.to_csv(os.path.join("..", DATASETS_FINAL_TRAIN_FEATURES_PATH, "X_train.csv"), index=False)
+y_train.to_csv(os.path.join("..", DATASETS_FINAL_TRAIN_TARGET_PATH, "y_train.csv"), index=False)
+```
+
+
+```python
+##################################
+# Saving the validation data
+# to the DATASETS_FINAL_VALIDATION_PATH
+# and DATASETS_FINAL_VALIDATION_FEATURE_PATH
+# and DATASETS_FINAL_VALIDATION_TARGET_PATH
+##################################
+heart_failure_validation.to_csv(os.path.join("..", DATASETS_FINAL_VALIDATION_PATH, "heart_failure_validation.csv"), index=False)
+X_validation.to_csv(os.path.join("..", DATASETS_FINAL_VALIDATION_FEATURES_PATH, "X_validation.csv"), index=False)
+y_validation.to_csv(os.path.join("..", DATASETS_FINAL_VALIDATION_TARGET_PATH, "y_validation.csv"), index=False)
+```
+
+
+```python
+##################################
+# Saving the test data
+# to the DATASETS_FINAL_TEST_PATH
+# and DATASETS_FINAL_TEST_FEATURES_PATH
+# and DATASETS_FINAL_TEST_TARGET_PATH
+##################################
+heart_failure_test.to_csv(os.path.join("..", DATASETS_FINAL_TEST_PATH, "heart_failure_test.csv"), index=False)
+X_test.to_csv(os.path.join("..", DATASETS_FINAL_TEST_FEATURES_PATH, "X_test.csv"), index=False)
+y_test.to_csv(os.path.join("..", DATASETS_FINAL_TEST_TARGET_PATH, "y_test.csv"), index=False)
+```
 
 ### 1.6.3 Modelling Pipeline Development <a class="anchor" id="1.6.3"></a>
 

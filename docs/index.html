@@ -12558,6 +12558,444 @@ dtype: object</pre>
 </div>
 </div>
 </div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e5668704-7327-4578-8b77-f7c055f0ca2d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [107]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">#################################</span>
+<span class="c1"># Creating a dataset copy </span>
+<span class="c1"># for data splitting and modelling</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure_transformed</span> <span class="o">=</span> <span class="n">heart_failure_original</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">heart_failure_transformed</span><span class="p">[</span><span class="s1">'DEATH_EVENT'</span><span class="p">]</span> <span class="o">=</span> <span class="n">heart_failure_transformed</span><span class="p">[</span><span class="s1">'DEATH_EVENT'</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="n">display</span><span class="p">(</span><span class="n">heart_failure_transformed</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>AGE</th>
+<th>ANAEMIA</th>
+<th>CREATININE_PHOSPHOKINASE</th>
+<th>DIABETES</th>
+<th>EJECTION_FRACTION</th>
+<th>HIGH_BLOOD_PRESSURE</th>
+<th>PLATELETS</th>
+<th>SERUM_CREATININE</th>
+<th>SERUM_SODIUM</th>
+<th>SEX</th>
+<th>SMOKING</th>
+<th>TIME</th>
+<th>DEATH_EVENT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>75.0</td>
+<td>0</td>
+<td>582.0</td>
+<td>0</td>
+<td>20.0</td>
+<td>1</td>
+<td>265000.00</td>
+<td>1.9</td>
+<td>130.0</td>
+<td>1</td>
+<td>0</td>
+<td>4.0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>1</th>
+<td>55.0</td>
+<td>0</td>
+<td>7861.0</td>
+<td>0</td>
+<td>38.0</td>
+<td>0</td>
+<td>263358.03</td>
+<td>1.1</td>
+<td>136.0</td>
+<td>1</td>
+<td>0</td>
+<td>6.0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>2</th>
+<td>65.0</td>
+<td>0</td>
+<td>146.0</td>
+<td>0</td>
+<td>20.0</td>
+<td>0</td>
+<td>162000.00</td>
+<td>1.3</td>
+<td>129.0</td>
+<td>1</td>
+<td>1</td>
+<td>7.0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>3</th>
+<td>50.0</td>
+<td>1</td>
+<td>111.0</td>
+<td>0</td>
+<td>20.0</td>
+<td>0</td>
+<td>210000.00</td>
+<td>1.9</td>
+<td>137.0</td>
+<td>1</td>
+<td>0</td>
+<td>7.0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>4</th>
+<td>65.0</td>
+<td>1</td>
+<td>160.0</td>
+<td>1</td>
+<td>20.0</td>
+<td>0</td>
+<td>327000.00</td>
+<td>2.7</td>
+<td>116.0</td>
+<td>0</td>
+<td>0</td>
+<td>8.0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<th>294</th>
+<td>62.0</td>
+<td>0</td>
+<td>61.0</td>
+<td>1</td>
+<td>38.0</td>
+<td>1</td>
+<td>155000.00</td>
+<td>1.1</td>
+<td>143.0</td>
+<td>1</td>
+<td>1</td>
+<td>270.0</td>
+<td>False</td>
+</tr>
+<tr>
+<th>295</th>
+<td>55.0</td>
+<td>0</td>
+<td>1820.0</td>
+<td>0</td>
+<td>38.0</td>
+<td>0</td>
+<td>270000.00</td>
+<td>1.2</td>
+<td>139.0</td>
+<td>0</td>
+<td>0</td>
+<td>271.0</td>
+<td>False</td>
+</tr>
+<tr>
+<th>296</th>
+<td>45.0</td>
+<td>0</td>
+<td>2060.0</td>
+<td>1</td>
+<td>60.0</td>
+<td>0</td>
+<td>742000.00</td>
+<td>0.8</td>
+<td>138.0</td>
+<td>0</td>
+<td>0</td>
+<td>278.0</td>
+<td>False</td>
+</tr>
+<tr>
+<th>297</th>
+<td>45.0</td>
+<td>0</td>
+<td>2413.0</td>
+<td>0</td>
+<td>38.0</td>
+<td>0</td>
+<td>140000.00</td>
+<td>1.4</td>
+<td>140.0</td>
+<td>1</td>
+<td>1</td>
+<td>280.0</td>
+<td>False</td>
+</tr>
+<tr>
+<th>298</th>
+<td>50.0</td>
+<td>0</td>
+<td>196.0</td>
+<td>0</td>
+<td>45.0</td>
+<td>0</td>
+<td>395000.00</td>
+<td>1.6</td>
+<td>136.0</td>
+<td>1</td>
+<td>1</td>
+<td>285.0</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+<p>299 rows × 13 columns</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=fd5fa7a7-03ec-4ba9-a436-ef1cb6df5c07">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [108]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Saving the tranformed data</span>
+<span class="c1"># to the DATASETS_PREPROCESSED_PATH</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure_transformed</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">".."</span><span class="p">,</span> <span class="n">DATASETS_PREPROCESSED_PATH</span><span class="p">,</span> <span class="s2">"heart_failure_transformed.csv"</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=3e06003f-3b58-47bf-825d-c2288c5e4e3a">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [109]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Filtering out predictors that did not exhibit </span>
+<span class="c1"># sufficient discrimination of the target variable</span>
+<span class="c1"># Saving the tranformed data</span>
+<span class="c1"># to the DATASETS_PREPROCESSED_PATH</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure_filtered</span> <span class="o">=</span> <span class="n">heart_failure_transformed</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">'DIABETES'</span><span class="p">,</span><span class="s1">'SEX'</span><span class="p">,</span> <span class="s1">'SMOKING'</span><span class="p">,</span> <span class="s1">'AGE'</span><span class="p">,</span><span class="s1">'CREATININE_PHOSPHOKINASE'</span><span class="p">,</span><span class="s1">'PLATELETS'</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">heart_failure_filtered</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">".."</span><span class="p">,</span> <span class="n">DATASETS_FINAL_PATH</span><span class="p">,</span> <span class="s2">"heart_failure_final.csv"</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">heart_failure_filtered</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>ANAEMIA</th>
+<th>EJECTION_FRACTION</th>
+<th>HIGH_BLOOD_PRESSURE</th>
+<th>SERUM_CREATININE</th>
+<th>SERUM_SODIUM</th>
+<th>TIME</th>
+<th>DEATH_EVENT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>0</td>
+<td>20.0</td>
+<td>1</td>
+<td>1.9</td>
+<td>130.0</td>
+<td>4.0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>1</th>
+<td>0</td>
+<td>38.0</td>
+<td>0</td>
+<td>1.1</td>
+<td>136.0</td>
+<td>6.0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>2</th>
+<td>0</td>
+<td>20.0</td>
+<td>0</td>
+<td>1.3</td>
+<td>129.0</td>
+<td>7.0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>3</th>
+<td>1</td>
+<td>20.0</td>
+<td>0</td>
+<td>1.9</td>
+<td>137.0</td>
+<td>7.0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>4</th>
+<td>1</td>
+<td>20.0</td>
+<td>0</td>
+<td>2.7</td>
+<td>116.0</td>
+<td>8.0</td>
+<td>True</td>
+</tr>
+<tr>
+<th>...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<th>294</th>
+<td>0</td>
+<td>38.0</td>
+<td>1</td>
+<td>1.1</td>
+<td>143.0</td>
+<td>270.0</td>
+<td>False</td>
+</tr>
+<tr>
+<th>295</th>
+<td>0</td>
+<td>38.0</td>
+<td>0</td>
+<td>1.2</td>
+<td>139.0</td>
+<td>271.0</td>
+<td>False</td>
+</tr>
+<tr>
+<th>296</th>
+<td>0</td>
+<td>60.0</td>
+<td>0</td>
+<td>0.8</td>
+<td>138.0</td>
+<td>278.0</td>
+<td>False</td>
+</tr>
+<tr>
+<th>297</th>
+<td>0</td>
+<td>38.0</td>
+<td>0</td>
+<td>1.4</td>
+<td>140.0</td>
+<td>280.0</td>
+<td>False</td>
+</tr>
+<tr>
+<th>298</th>
+<td>0</td>
+<td>45.0</td>
+<td>0</td>
+<td>1.6</td>
+<td>136.0</td>
+<td>285.0</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+<p>299 rows × 7 columns</p>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=91e51125-c662-47a6-aa98-c2a1d2eb6771">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -12566,6 +13004,580 @@ dtype: object</pre>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="1.6.2-Data-Splitting-">1.6.2 Data Splitting <a class="anchor" id="1.6.2"></a><a class="anchor-link" href="#1.6.2-Data-Splitting-">¶</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=ced911cf-babf-4a3a-b619-fc007379b352">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [110]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Creating a dataset copy</span>
+<span class="c1"># of the filtered data</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure_final</span> <span class="o">=</span> <span class="n">heart_failure_filtered</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=13b50033-15d7-4380-9a9d-879176507ce1">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [111]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Performing a general exploration</span>
+<span class="c1"># of the final dataset</span>
+<span class="c1">##################################</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Final Dataset Dimensions: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">heart_failure_final</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Final Dataset Dimensions: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>(299, 7)</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=203ac8e7-b6e4-4257-bd9c-e974fefcf90a">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [112]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'Target Variable Breakdown: '</span><span class="p">)</span>
+<span class="n">heart_failure_breakdown</span> <span class="o">=</span> <span class="n">heart_failure_final</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'DEATH_EVENT'</span><span class="p">,</span> <span class="n">observed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'Count'</span><span class="p">)</span>
+<span class="n">heart_failure_breakdown</span><span class="p">[</span><span class="s1">'Percentage'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">heart_failure_breakdown</span><span class="p">[</span><span class="s1">'Count'</span><span class="p">]</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">heart_failure_final</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="n">display</span><span class="p">(</span><span class="n">heart_failure_breakdown</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Target Variable Breakdown: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>DEATH_EVENT</th>
+<th>Count</th>
+<th>Percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>False</td>
+<td>203</td>
+<td>67.892977</td>
+</tr>
+<tr>
+<th>1</th>
+<td>True</td>
+<td>96</td>
+<td>32.107023</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d8553b8b-38a9-48b9-927d-1cd72f8eac1d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [113]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Formulating the train and test data</span>
+<span class="c1"># from the final dataset</span>
+<span class="c1"># by applying stratification and</span>
+<span class="c1"># using a 70-30 ratio</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure_train_initial</span><span class="p">,</span> <span class="n">heart_failure_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">heart_failure_final</span><span class="p">,</span> 
+                                                                   <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> 
+                                                                   <span class="n">stratify</span><span class="o">=</span><span class="n">heart_failure_final</span><span class="p">[</span><span class="s1">'DEATH_EVENT'</span><span class="p">],</span> 
+                                                                   <span class="n">random_state</span><span class="o">=</span><span class="mi">88888888</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=949db143-55b7-418c-9e1e-34f6c3bac595">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [114]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Performing a general exploration</span>
+<span class="c1"># of the initial training dataset</span>
+<span class="c1">##################################</span>
+<span class="n">X_train_initial</span> <span class="o">=</span> <span class="n">heart_failure_train_initial</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'DEATH_EVENT'</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">y_train_initial</span> <span class="o">=</span> <span class="n">heart_failure_train_initial</span><span class="p">[</span><span class="s1">'DEATH_EVENT'</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Initial Training Dataset Dimensions: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">X_train_initial</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">y_train_initial</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Initial Training Target Variable Breakdown: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">y_train_initial</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Initial Training Target Variable Proportion: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">y_train_initial</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span> <span class="o">=</span> <span class="kc">True</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Initial Training Dataset Dimensions: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>(224, 6)</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>(224,)</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Initial Training Target Variable Breakdown: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>DEATH_EVENT
+False    152
+True      72
+Name: count, dtype: int64</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Initial Training Target Variable Proportion: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>DEATH_EVENT
+False    0.678571
+True     0.321429
+Name: proportion, dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=edeafa3e-8f89-4070-9d09-cfb4a3a4c97a">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [115]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Performing a general exploration</span>
+<span class="c1"># of the test dataset</span>
+<span class="c1">##################################</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">heart_failure_test</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'DEATH_EVENT'</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="n">heart_failure_test</span><span class="p">[</span><span class="s1">'DEATH_EVENT'</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Test Dataset Dimensions: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">X_test</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">y_test</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Test Target Variable Breakdown: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">y_test</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Test Target Variable Proportion: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">y_test</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span> <span class="o">=</span> <span class="kc">True</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Test Dataset Dimensions: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>(75, 6)</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>(75,)</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Test Target Variable Breakdown: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>DEATH_EVENT
+False    51
+True     24
+Name: count, dtype: int64</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Test Target Variable Proportion: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>DEATH_EVENT
+False    0.68
+True     0.32
+Name: proportion, dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=1ddafd2b-0424-439a-af99-7c840cf86192">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [116]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Formulating the train and validation data</span>
+<span class="c1"># from the train dataset</span>
+<span class="c1"># by applying stratification and</span>
+<span class="c1"># using a 70-30 ratio</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure_train</span><span class="p">,</span> <span class="n">heart_failure_validation</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">heart_failure_train_initial</span><span class="p">,</span> 
+                                                                 <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> 
+                                                                 <span class="n">stratify</span><span class="o">=</span><span class="n">heart_failure_train_initial</span><span class="p">[</span><span class="s1">'DEATH_EVENT'</span><span class="p">],</span> 
+                                                                 <span class="n">random_state</span><span class="o">=</span><span class="mi">88888888</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=466d6f40-f83a-4317-9928-77c92ff7cf94">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [117]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Performing a general exploration</span>
+<span class="c1"># of the final training dataset</span>
+<span class="c1">##################################</span>
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">heart_failure_train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'DEATH_EVENT'</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">y_train</span> <span class="o">=</span> <span class="n">heart_failure_train</span><span class="p">[</span><span class="s1">'DEATH_EVENT'</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Final Training Dataset Dimensions: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Final Training Target Variable Breakdown: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">y_train</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Final Training Target Variable Proportion: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">y_train</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span> <span class="o">=</span> <span class="kc">True</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Final Training Dataset Dimensions: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>(168, 6)</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>(168,)</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Final Training Target Variable Breakdown: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>DEATH_EVENT
+False    114
+True      54
+Name: count, dtype: int64</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Final Training Target Variable Proportion: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>DEATH_EVENT
+False    0.678571
+True     0.321429
+Name: proportion, dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=a7484328-0ba0-4276-8fb0-c55e8c20bb2e">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [118]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Performing a general exploration</span>
+<span class="c1"># of the validation dataset</span>
+<span class="c1">##################################</span>
+<span class="n">X_validation</span> <span class="o">=</span> <span class="n">heart_failure_validation</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'DEATH_EVENT'</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">y_validation</span> <span class="o">=</span> <span class="n">heart_failure_validation</span><span class="p">[</span><span class="s1">'DEATH_EVENT'</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Validation Dataset Dimensions: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">X_validation</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">y_validation</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Validation Target Variable Breakdown: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">y_validation</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Validation Target Variable Proportion: '</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">y_validation</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span> <span class="o">=</span> <span class="kc">True</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Validation Dataset Dimensions: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>(56, 6)</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>(56,)</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Validation Target Variable Breakdown: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>DEATH_EVENT
+False    38
+True     18
+Name: count, dtype: int64</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Validation Target Variable Proportion: 
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>DEATH_EVENT
+False    0.678571
+True     0.321429
+Name: proportion, dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=f39523f7-862b-4f73-95d6-d44fa331fb30">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [119]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Saving the training data</span>
+<span class="c1"># to the DATASETS_FINAL_TRAIN_PATH</span>
+<span class="c1"># and DATASETS_FINAL_TRAIN_FEATURES_PATH</span>
+<span class="c1"># and DATASETS_FINAL_TRAIN_TARGET_PATH</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure_train</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">".."</span><span class="p">,</span> <span class="n">DATASETS_FINAL_TRAIN_PATH</span><span class="p">,</span> <span class="s2">"heart_failure_train.csv"</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">X_train</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">".."</span><span class="p">,</span> <span class="n">DATASETS_FINAL_TRAIN_FEATURES_PATH</span><span class="p">,</span> <span class="s2">"X_train.csv"</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">y_train</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">".."</span><span class="p">,</span> <span class="n">DATASETS_FINAL_TRAIN_TARGET_PATH</span><span class="p">,</span> <span class="s2">"y_train.csv"</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=01fb72c1-8afe-4277-9de1-e0fe104d7cea">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [120]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Saving the validation data</span>
+<span class="c1"># to the DATASETS_FINAL_VALIDATION_PATH</span>
+<span class="c1"># and DATASETS_FINAL_VALIDATION_FEATURE_PATH</span>
+<span class="c1"># and DATASETS_FINAL_VALIDATION_TARGET_PATH</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure_validation</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">".."</span><span class="p">,</span> <span class="n">DATASETS_FINAL_VALIDATION_PATH</span><span class="p">,</span> <span class="s2">"heart_failure_validation.csv"</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">X_validation</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">".."</span><span class="p">,</span> <span class="n">DATASETS_FINAL_VALIDATION_FEATURES_PATH</span><span class="p">,</span> <span class="s2">"X_validation.csv"</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">y_validation</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">".."</span><span class="p">,</span> <span class="n">DATASETS_FINAL_VALIDATION_TARGET_PATH</span><span class="p">,</span> <span class="s2">"y_validation.csv"</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=db8d6af0-158a-4a2f-a9a4-ffd1505b350a">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [121]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1">##################################</span>
+<span class="c1"># Saving the test data</span>
+<span class="c1"># to the DATASETS_FINAL_TEST_PATH</span>
+<span class="c1"># and DATASETS_FINAL_TEST_FEATURES_PATH</span>
+<span class="c1"># and DATASETS_FINAL_TEST_TARGET_PATH</span>
+<span class="c1">##################################</span>
+<span class="n">heart_failure_test</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">".."</span><span class="p">,</span> <span class="n">DATASETS_FINAL_TEST_PATH</span><span class="p">,</span> <span class="s2">"heart_failure_test.csv"</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">X_test</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">".."</span><span class="p">,</span> <span class="n">DATASETS_FINAL_TEST_FEATURES_PATH</span><span class="p">,</span> <span class="s2">"X_test.csv"</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">y_test</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">".."</span><span class="p">,</span> <span class="n">DATASETS_FINAL_TEST_TARGET_PATH</span><span class="p">,</span> <span class="s2">"y_test.csv"</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -12791,7 +13803,7 @@ dtype: object</pre>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [107]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [122]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
