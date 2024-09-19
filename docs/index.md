@@ -17,11 +17,14 @@
         * [1.6.1 Pre-Modelling Data Preparation](#1.6.1)
         * [1.6.2 Data Splitting](#1.6.2)
         * [1.6.3 Modelling Pipeline Development](#1.6.3)
-        * [1.6.4 Semi-Parametric Model Fitting | Hyperparameter Tuning | Validation](#1.6.4)
-        * [1.6.5 Parametric Model Fitting | Hyperparameter Tuning | Validation](#1.6.5)
-        * [1.6.6 Model Selection](#1.6.7)
-        * [1.6.7 Model Testing](#1.6.8)
-        * [1.6.8 Model Inference](#1.6.9)
+        * [1.6.4 Cox Proportional Hazards Regression Model Fitting | Hyperparameter Tuning | Validation](#1.6.4)
+        * [1.6.5 Cox Net Survival Analysis Model Fitting | Hyperparameter Tuning | Validation](#1.6.5)
+        * [1.6.6 Survival Tree Model Fitting | Hyperparameter Tuning | Validation](#1.6.6)
+        * [1.6.7 Random Survival Forest Model Fitting | Hyperparameter Tuning | Validation](#1.6.7)
+        * [1.6.8 Gradient Boosted Survival Model Fitting | Hyperparameter Tuning | Validation](#1.6.9)
+        * [1.6.9 Model Selection](#1.6.9)
+        * [1.6.10 Model Testing](#1.6.10)
+        * [1.6.11 Model Inference](#1.6.11)
     * [1.7 Predictive Model Deployment Using Streamlit and Streamlit Community Cloud](#1.7)
         * [1.7.1 Model Prediction Application Code Development](#1.7.1)
         * [1.7.2 Model Application Programming Interface Code Development](#1.7.2)
@@ -118,7 +121,7 @@ import joblib
 %matplotlib inline
 
 from operator import add,mul,truediv
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 from sklearn.linear_model import LinearRegression
@@ -128,6 +131,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import KFold
 from sklearn.inspection import permutation_importance
+from sklearn.feature_selection import SelectKBest
 
 from statsmodels.nonparametric.smoothers_lowess import lowess
 from scipy import stats
@@ -137,6 +141,13 @@ from scipy.stats import pointbiserialr
 from lifelines import KaplanMeierFitter, CoxPHFitter
 from lifelines.utils import concordance_index
 from lifelines.statistics import logrank_test
+
+from sksurv.linear_model import CoxPHSurvivalAnalysis, CoxnetSurvivalAnalysis
+from sksurv.ensemble import RandomSurvivalForest, GradientBoostingSurvivalAnalysis
+from sksurv.tree import SurvivalTree
+from sksurv.metrics import concordance_index_censored
+from sksurv.nonparametric import kaplan_meier_estimator
+
 import shap
 
 import warnings
@@ -4128,26 +4139,26 @@ heart_failure_train_initial, heart_failure_test = train_test_split(heart_failure
 # Performing a general exploration
 # of the initial training dataset
 ##################################
-X_train_initial = heart_failure_train_initial.drop('DEATH_EVENT', axis = 1)
-y_train_initial = heart_failure_train_initial['DEATH_EVENT']
+X_train_initial = heart_failure_train_initial.drop(['DEATH_EVENT', 'TIME'], axis=1)
+y_train_initial = heart_failure_train_initial[['DEATH_EVENT', 'TIME']]
 print('Initial Training Dataset Dimensions: ')
 display(X_train_initial.shape)
 display(y_train_initial.shape)
 print('Initial Training Target Variable Breakdown: ')
-display(y_train_initial.value_counts())
+display(y_train_initial['DEATH_EVENT'].value_counts())
 print('Initial Training Target Variable Proportion: ')
-display(y_train_initial.value_counts(normalize = True))
+display(y_train_initial['DEATH_EVENT'].value_counts(normalize = True))
 ```
 
     Initial Training Dataset Dimensions: 
     
 
 
-    (224, 6)
+    (224, 5)
 
 
 
-    (224,)
+    (224, 2)
 
 
     Initial Training Target Variable Breakdown: 
@@ -4176,26 +4187,26 @@ display(y_train_initial.value_counts(normalize = True))
 # Performing a general exploration
 # of the test dataset
 ##################################
-X_test = heart_failure_test.drop('DEATH_EVENT', axis = 1)
-y_test = heart_failure_test['DEATH_EVENT']
+X_test = heart_failure_test.drop(['DEATH_EVENT', 'TIME'], axis=1)
+y_test = heart_failure_test[['DEATH_EVENT', 'TIME']]
 print('Test Dataset Dimensions: ')
 display(X_test.shape)
 display(y_test.shape)
 print('Test Target Variable Breakdown: ')
-display(y_test.value_counts())
+display(y_test['DEATH_EVENT'].value_counts())
 print('Test Target Variable Proportion: ')
-display(y_test.value_counts(normalize = True))
+display(y_test['DEATH_EVENT'].value_counts(normalize = True))
 ```
 
     Test Dataset Dimensions: 
     
 
 
-    (75, 6)
+    (75, 5)
 
 
 
-    (75,)
+    (75, 2)
 
 
     Test Target Variable Breakdown: 
@@ -4238,26 +4249,26 @@ heart_failure_train, heart_failure_validation = train_test_split(heart_failure_t
 # Performing a general exploration
 # of the final training dataset
 ##################################
-X_train = heart_failure_train.drop('DEATH_EVENT', axis = 1)
-y_train = heart_failure_train['DEATH_EVENT']
+X_train = heart_failure_train.drop(columns=['DEATH_EVENT', 'TIME'], axis=1)
+y_train = heart_failure_train[['DEATH_EVENT', 'TIME']]
 print('Final Training Dataset Dimensions: ')
 display(X_train.shape)
 display(y_train.shape)
 print('Final Training Target Variable Breakdown: ')
-display(y_train.value_counts())
+display(y_train['DEATH_EVENT'].value_counts())
 print('Final Training Target Variable Proportion: ')
-display(y_train.value_counts(normalize = True))
+display(y_train['DEATH_EVENT'].value_counts(normalize = True))
 ```
 
     Final Training Dataset Dimensions: 
     
 
 
-    (168, 6)
+    (168, 5)
 
 
 
-    (168,)
+    (168, 2)
 
 
     Final Training Target Variable Breakdown: 
@@ -4286,26 +4297,26 @@ display(y_train.value_counts(normalize = True))
 # Performing a general exploration
 # of the validation dataset
 ##################################
-X_validation = heart_failure_validation.drop('DEATH_EVENT', axis = 1)
-y_validation = heart_failure_validation['DEATH_EVENT']
+X_validation = heart_failure_validation.drop(columns=['DEATH_EVENT', 'TIME'], axis = 1)
+y_validation = heart_failure_validation[['DEATH_EVENT', 'TIME']]
 print('Validation Dataset Dimensions: ')
 display(X_validation.shape)
 display(y_validation.shape)
 print('Validation Target Variable Breakdown: ')
-display(y_validation.value_counts())
+display(y_validation['DEATH_EVENT'].value_counts())
 print('Validation Target Variable Proportion: ')
-display(y_validation.value_counts(normalize = True))
+display(y_validation['DEATH_EVENT'].value_counts(normalize = True))
 ```
 
     Validation Dataset Dimensions: 
     
 
 
-    (56, 6)
+    (56, 5)
 
 
 
-    (56,)
+    (56, 2)
 
 
     Validation Target Variable Breakdown: 
@@ -4369,15 +4380,76 @@ y_test.to_csv(os.path.join("..", DATASETS_FINAL_TEST_TARGET_PATH, "y_test.csv"),
 
 ### 1.6.3 Modelling Pipeline Development <a class="anchor" id="1.6.3"></a>
 
-### 1.6.4 Semi-Parametric Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.4"></a>
 
-### 1.6.5 Model Fitting using Original Training Data | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.5"></a>
+```python
+##################################
+# Defining the modelling pipeline
+# using the cox proportional hazards regression model
+##################################
+coxph_pipeline = Pipeline([
+    ('yeo_johnson', PowerTransformer(method='yeo-johnson', standardize=True)),
+    ('coxph', CoxPHSurvivalAnalysis())])
+```
 
-### 1.6.6 Model Selection <a class="anchor" id="1.6.6"></a>
 
-### 1.6.7 Model Testing <a class="anchor" id="1.6.7"></a>
+```python
+##################################
+# Defining the modelling pipeline
+# using the cox net survival analysis model
+##################################
+coxns_pipeline = Pipeline([
+    ('yeo_johnson', PowerTransformer(method='yeo-johnson', standardize=True)),
+    ('coxns', CoxnetSurvivalAnalysis())])
+```
 
-### 1.6.8 Model Inference <a class="anchor" id="1.6.8"></a>
+
+```python
+##################################
+# Defining the modelling pipeline
+# using the survival tree model
+##################################
+stree_pipeline = Pipeline([
+    ('yeo_johnson', PowerTransformer(method='yeo-johnson', standardize=True)),
+    ('stree', SurvivalTree())])
+```
+
+
+```python
+##################################
+# Defining the modelling pipeline
+# using the random survival forest model
+##################################
+rsf_pipeline = Pipeline([
+    ('yeo_johnson', PowerTransformer(method='yeo-johnson', standardize=True)),
+    ('rsf', RandomSurvivalForest())])
+```
+
+
+```python
+##################################
+# Defining the modelling pipeline
+# using the gradient boosted survival model
+##################################
+rsf_pipeline = Pipeline([
+    ('yeo_johnson', PowerTransformer(method='yeo-johnson', standardize=True)),
+    ('gbs', GradientBoostingSurvivalAnalysis())])
+```
+
+### 1.6.4 Cox Proportional Hazards Regression Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.4"></a>
+
+### 1.6.5 Cox Net Survival Analysis Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.5"></a>
+
+### 1.6.6 Survival Tree Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.6"></a>
+
+### 1.6.7 Random Survival Forest Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.7"></a>
+
+### 1.6.8 Gradient Boosted Survival Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.8"></a>
+
+### 1.6.9 Model Selection <a class="anchor" id="1.6.9"></a>
+
+### 1.6.10 Model Testing <a class="anchor" id="1.6.10"></a>
+
+### 1.6.11 Model Inference <a class="anchor" id="1.6.11"></a>
 
 ## 1.7. Predictive Model Deployment Using Streamlit and Streamlit Community Cloud <a class="anchor" id="1.7"></a>
 
