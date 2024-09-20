@@ -2,7 +2,7 @@
 # Model Deployment : Estimating Heart Failure Survival Risk Profiles From Cardiovascular, Hematologic And Metabolic Markers
 
 ***
-### John Pauline Pineda <br> <br> *September 21, 2024*
+### John Pauline Pineda <br> <br> *September 28, 2024*
 ***
 
 * [**1. Table of Contents**](#TOC)
@@ -17,8 +17,13 @@
         * [1.6.1 Pre-Modelling Data Preparation](#1.6.1)
         * [1.6.2 Data Splitting](#1.6.2)
         * [1.6.3 Modelling Pipeline Development](#1.6.3)
+            * [1.6.3.1 Cox Proportional Hazards Regression](#1.6.3)
+            * [1.6.3.2 Cox Net Survival](#1.6.3)
+            * [1.6.3.3 Survival Tree](#1.6.3)
+            * [1.6.3.4 Random Survival Forest](#1.6.3)
+            * [1.6.3.5 Gradient Boosted Survival](#1.6.3)    
         * [1.6.4 Cox Proportional Hazards Regression Model Fitting | Hyperparameter Tuning | Validation](#1.6.4)
-        * [1.6.5 Cox Net Survival Analysis Model Fitting | Hyperparameter Tuning | Validation](#1.6.5)
+        * [1.6.5 Cox Net Survival Model Fitting | Hyperparameter Tuning | Validation](#1.6.5)
         * [1.6.6 Survival Tree Model Fitting | Hyperparameter Tuning | Validation](#1.6.6)
         * [1.6.7 Random Survival Forest Model Fitting | Hyperparameter Tuning | Validation](#1.6.7)
         * [1.6.8 Gradient Boosted Survival Model Fitting | Hyperparameter Tuning | Validation](#1.6.9)
@@ -4378,18 +4383,56 @@ X_test.to_csv(os.path.join("..", DATASETS_FINAL_TEST_FEATURES_PATH, "X_test.csv"
 y_test.to_csv(os.path.join("..", DATASETS_FINAL_TEST_TARGET_PATH, "y_test.csv"), index=False)
 ```
 
+
+```python
+##################################
+# Converting the event and duration variables
+# for the train, validation and test sets
+# to array as preparation for modeling
+##################################
+y_train_array = np.array([(row.DEATH_EVENT, row.TIME) for index, row in y_train.iterrows()], dtype=[('DEATH_EVENT', 'bool'), ('TIME', 'int')])
+y_validation_array = np.array([(row.DEATH_EVENT, row.TIME) for index, row in y_validation.iterrows()], dtype=[('DEATH_EVENT', 'bool'), ('TIME', 'int')])
+y_test_array = np.array([(row.DEATH_EVENT, row.TIME) for index, row in y_test.iterrows()], dtype=[('DEATH_EVENT', 'bool'), ('TIME', 'int')])
+```
+
 ### 1.6.3 Modelling Pipeline Development <a class="anchor" id="1.6.3"></a>
+
+### 1.6.3.1 Cox Proportional Hazards Regression <a class="anchor" id="1.6.3.1"></a>
 
 
 ```python
 ##################################
 # Defining the modelling pipeline
-# using the cox proportional hazards regression model
+# using the Cox Proportional Hazards Regression Model
 ##################################
 coxph_pipeline = Pipeline([
     ('yeo_johnson', PowerTransformer(method='yeo-johnson', standardize=True)),
     ('coxph', CoxPHSurvivalAnalysis())])
 ```
+
+
+```python
+##################################
+# Defining the hyperparameters for grid search
+##################################
+coxph_hyperparameter_grid = {'coxph__alpha': [0.01, 0.10, 1.00, 10.00]}
+```
+
+
+```python
+##################################
+# Setting up the GridSearchCV with 5-fold cross-validation
+# and using F1 score as the model evaluation metric
+##################################
+coxph_grid_search = GridSearchCV(estimator=coxph_pipeline,
+                                 param_grid=coxph_hyperparameter_grid,
+                                 cv=KFold(n_splits=5, shuffle=True, random_state=88888888),
+                                 return_train_score=True,
+                                 n_jobs=-1,
+                                 verbose=1)
+```
+
+### 1.6.3.2 Cox Net Survival <a class="anchor" id="1.6.3.2"></a>
 
 
 ```python
@@ -4402,6 +4445,8 @@ coxns_pipeline = Pipeline([
     ('coxns', CoxnetSurvivalAnalysis())])
 ```
 
+### 1.6.3.3 Survival Tree <a class="anchor" id="1.6.3.3"></a>
+
 
 ```python
 ##################################
@@ -4413,6 +4458,8 @@ stree_pipeline = Pipeline([
     ('stree', SurvivalTree())])
 ```
 
+### 1.6.3.4 Random Survival Forest <a class="anchor" id="1.6.3.4"></a>
+
 
 ```python
 ##################################
@@ -4423,6 +4470,8 @@ rsf_pipeline = Pipeline([
     ('yeo_johnson', PowerTransformer(method='yeo-johnson', standardize=True)),
     ('rsf', RandomSurvivalForest())])
 ```
+
+### 1.6.3.5 Gradient Boosted Survival <a class="anchor" id="1.6.3.5"></a>
 
 
 ```python
@@ -4437,7 +4486,1323 @@ rsf_pipeline = Pipeline([
 
 ### 1.6.4 Cox Proportional Hazards Regression Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.4"></a>
 
-### 1.6.5 Cox Net Survival Analysis Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.5"></a>
+
+```python
+##################################
+# Performing hyperparameter tuning
+# through K-fold cross-validation
+# using the Cox Proportional Hazards Regression Model
+##################################
+coxph_grid_search.fit(X_train, y_train_array)
+```
+
+    Fitting 5 folds for each of 4 candidates, totalling 20 fits
+    
+
+
+
+
+<style>#sk-container-id-1 {
+  /* Definition of color scheme common for light and dark mode */
+  --sklearn-color-text: black;
+  --sklearn-color-line: gray;
+  /* Definition of color scheme for unfitted estimators */
+  --sklearn-color-unfitted-level-0: #fff5e6;
+  --sklearn-color-unfitted-level-1: #f6e4d2;
+  --sklearn-color-unfitted-level-2: #ffe0b3;
+  --sklearn-color-unfitted-level-3: chocolate;
+  /* Definition of color scheme for fitted estimators */
+  --sklearn-color-fitted-level-0: #f0f8ff;
+  --sklearn-color-fitted-level-1: #d4ebff;
+  --sklearn-color-fitted-level-2: #b3dbfd;
+  --sklearn-color-fitted-level-3: cornflowerblue;
+
+  /* Specific color for light theme */
+  --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, white)));
+  --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-icon: #696969;
+
+  @media (prefers-color-scheme: dark) {
+    /* Redefinition of color scheme for dark theme */
+    --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, #111)));
+    --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-icon: #878787;
+  }
+}
+
+#sk-container-id-1 {
+  color: var(--sklearn-color-text);
+}
+
+#sk-container-id-1 pre {
+  padding: 0;
+}
+
+#sk-container-id-1 input.sk-hidden--visually {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+#sk-container-id-1 div.sk-dashed-wrapped {
+  border: 1px dashed var(--sklearn-color-line);
+  margin: 0 0.4em 0.5em 0.4em;
+  box-sizing: border-box;
+  padding-bottom: 0.4em;
+  background-color: var(--sklearn-color-background);
+}
+
+#sk-container-id-1 div.sk-container {
+  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
+     but bootstrap.min.css set `[hidden] { display: none !important; }`
+     so we also need the `!important` here to be able to override the
+     default hidden behavior on the sphinx rendered scikit-learn.org.
+     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
+  display: inline-block !important;
+  position: relative;
+}
+
+#sk-container-id-1 div.sk-text-repr-fallback {
+  display: none;
+}
+
+div.sk-parallel-item,
+div.sk-serial,
+div.sk-item {
+  /* draw centered vertical line to link estimators */
+  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Parallel-specific style estimator block */
+
+#sk-container-id-1 div.sk-parallel-item::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
+  flex-grow: 1;
+}
+
+#sk-container-id-1 div.sk-parallel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--sklearn-color-background);
+  position: relative;
+}
+
+#sk-container-id-1 div.sk-parallel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#sk-container-id-1 div.sk-parallel-item:first-child::after {
+  align-self: flex-end;
+  width: 50%;
+}
+
+#sk-container-id-1 div.sk-parallel-item:last-child::after {
+  align-self: flex-start;
+  width: 50%;
+}
+
+#sk-container-id-1 div.sk-parallel-item:only-child::after {
+  width: 0;
+}
+
+/* Serial-specific style estimator block */
+
+#sk-container-id-1 div.sk-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sklearn-color-background);
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+
+/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
+clickable and can be expanded/collapsed.
+- Pipeline and ColumnTransformer use this feature and define the default style
+- Estimators will overwrite some part of the style using the `sk-estimator` class
+*/
+
+/* Pipeline and ColumnTransformer style (default) */
+
+#sk-container-id-1 div.sk-toggleable {
+  /* Default theme specific background. It is overwritten whether we have a
+  specific estimator or a Pipeline/ColumnTransformer */
+  background-color: var(--sklearn-color-background);
+}
+
+/* Toggleable label */
+#sk-container-id-1 label.sk-toggleable__label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#sk-container-id-1 label.sk-toggleable__label-arrow:before {
+  /* Arrow on the left of the label */
+  content: "▸";
+  float: left;
+  margin-right: 0.25em;
+  color: var(--sklearn-color-icon);
+}
+
+#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {
+  color: var(--sklearn-color-text);
+}
+
+/* Toggleable content - dropdown */
+
+#sk-container-id-1 div.sk-toggleable__content {
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  text-align: left;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-1 div.sk-toggleable__content.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-1 div.sk-toggleable__content pre {
+  margin: 0.2em;
+  border-radius: 0.25em;
+  color: var(--sklearn-color-text);
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-1 div.sk-toggleable__content.fitted pre {
+  /* unfitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {
+  /* Expand drop-down */
+  max-height: 200px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
+  content: "▾";
+}
+
+/* Pipeline/ColumnTransformer-specific style */
+
+#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-1 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator-specific style */
+
+/* Colorize estimator box */
+#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-1 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+#sk-container-id-1 div.sk-label label.sk-toggleable__label,
+#sk-container-id-1 div.sk-label label {
+  /* The background is the default theme color */
+  color: var(--sklearn-color-text-on-default-background);
+}
+
+/* On hover, darken the color of the background */
+#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+/* Label box, darken color on hover, fitted */
+#sk-container-id-1 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator label */
+
+#sk-container-id-1 div.sk-label label {
+  font-family: monospace;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 1.2em;
+}
+
+#sk-container-id-1 div.sk-label-container {
+  text-align: center;
+}
+
+/* Estimator-specific */
+#sk-container-id-1 div.sk-estimator {
+  font-family: monospace;
+  border: 1px dotted var(--sklearn-color-border-box);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  margin-bottom: 0.5em;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-1 div.sk-estimator.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+/* on hover */
+#sk-container-id-1 div.sk-estimator:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-1 div.sk-estimator.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Specification for estimator info (e.g. "i" and "?") */
+
+/* Common style for "i" and "?" */
+
+.sk-estimator-doc-link,
+a:link.sk-estimator-doc-link,
+a:visited.sk-estimator-doc-link {
+  float: right;
+  font-size: smaller;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  text-decoration: none !important;
+  margin-left: 1ex;
+  /* unfitted */
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-1);
+}
+
+.sk-estimator-doc-link.fitted,
+a:link.sk-estimator-doc-link.fitted,
+a:visited.sk-estimator-doc-link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+div.sk-estimator:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover,
+div.sk-label-container:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover,
+div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+/* Span, style for the box shown on hovering the info icon */
+.sk-estimator-doc-link span {
+  display: none;
+  z-index: 9999;
+  position: relative;
+  font-weight: normal;
+  right: .2ex;
+  padding: .5ex;
+  margin: .5ex;
+  width: min-content;
+  min-width: 20ex;
+  max-width: 50ex;
+  color: var(--sklearn-color-text);
+  box-shadow: 2pt 2pt 4pt #999;
+  /* unfitted */
+  background: var(--sklearn-color-unfitted-level-0);
+  border: .5pt solid var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted span {
+  /* fitted */
+  background: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3);
+}
+
+.sk-estimator-doc-link:hover span {
+  display: block;
+}
+
+/* "?"-specific style due to the `<a>` HTML tag */
+
+#sk-container-id-1 a.estimator_doc_link {
+  float: right;
+  font-size: 1rem;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1rem;
+  height: 1rem;
+  width: 1rem;
+  text-decoration: none;
+  /* unfitted */
+  color: var(--sklearn-color-unfitted-level-1);
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+}
+
+#sk-container-id-1 a.estimator_doc_link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+#sk-container-id-1 a.estimator_doc_link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+#sk-container-id-1 a.estimator_doc_link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+}
+</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                                       (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis())]),
+             n_jobs=-1, param_grid={&#x27;coxph__alpha&#x27;: [0.01, 0.1, 1.0, 10.0]},
+             return_train_score=True, verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" ><label for="sk-estimator-id-1" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                                       (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis())]),
+             n_jobs=-1, param_grid={&#x27;coxph__alpha&#x27;: [0.01, 0.1, 1.0, 10.0]},
+             return_train_score=True, verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" ><label for="sk-estimator-id-2" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=1.0))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox" ><label for="sk-estimator-id-3" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-4" type="checkbox" ><label for="sk-estimator-id-4" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxPHSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxPHSurvivalAnalysis(alpha=1.0)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
+
+
+
+
+```python
+##################################
+# Summarizing the hyperparameter tuning 
+# results from K-fold cross-validation
+##################################
+coxph_grid_search_results = pd.DataFrame(coxph_grid_search.cv_results_).sort_values(by='mean_test_score', ascending=False)
+coxph_grid_search_results.loc[:, ~coxph_grid_search_results.columns.str.endswith('_time')]
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>param_coxph__alpha</th>
+      <th>params</th>
+      <th>split0_test_score</th>
+      <th>split1_test_score</th>
+      <th>split2_test_score</th>
+      <th>split3_test_score</th>
+      <th>split4_test_score</th>
+      <th>mean_test_score</th>
+      <th>std_test_score</th>
+      <th>rank_test_score</th>
+      <th>split0_train_score</th>
+      <th>split1_train_score</th>
+      <th>split2_train_score</th>
+      <th>split3_train_score</th>
+      <th>split4_train_score</th>
+      <th>mean_train_score</th>
+      <th>std_train_score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2</th>
+      <td>1.00</td>
+      <td>{'coxph__alpha': 1.0}</td>
+      <td>0.752294</td>
+      <td>0.653251</td>
+      <td>0.790816</td>
+      <td>0.848889</td>
+      <td>0.528571</td>
+      <td>0.714764</td>
+      <td>0.112813</td>
+      <td>1</td>
+      <td>0.742072</td>
+      <td>0.749187</td>
+      <td>0.737625</td>
+      <td>0.705557</td>
+      <td>0.765134</td>
+      <td>0.739915</td>
+      <td>0.019557</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>0.01</td>
+      <td>{'coxph__alpha': 0.01}</td>
+      <td>0.755352</td>
+      <td>0.650155</td>
+      <td>0.790816</td>
+      <td>0.848889</td>
+      <td>0.528571</td>
+      <td>0.714757</td>
+      <td>0.113369</td>
+      <td>2</td>
+      <td>0.742346</td>
+      <td>0.748644</td>
+      <td>0.738101</td>
+      <td>0.703836</td>
+      <td>0.765134</td>
+      <td>0.739612</td>
+      <td>0.020113</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.10</td>
+      <td>{'coxph__alpha': 0.1}</td>
+      <td>0.752294</td>
+      <td>0.650155</td>
+      <td>0.790816</td>
+      <td>0.848889</td>
+      <td>0.528571</td>
+      <td>0.714145</td>
+      <td>0.113157</td>
+      <td>3</td>
+      <td>0.742346</td>
+      <td>0.748373</td>
+      <td>0.737863</td>
+      <td>0.703590</td>
+      <td>0.765134</td>
+      <td>0.739461</td>
+      <td>0.020180</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>10.00</td>
+      <td>{'coxph__alpha': 10.0}</td>
+      <td>0.755352</td>
+      <td>0.656347</td>
+      <td>0.775510</td>
+      <td>0.840000</td>
+      <td>0.535714</td>
+      <td>0.712585</td>
+      <td>0.106272</td>
+      <td>4</td>
+      <td>0.740705</td>
+      <td>0.750000</td>
+      <td>0.735483</td>
+      <td>0.707278</td>
+      <td>0.762403</td>
+      <td>0.739174</td>
+      <td>0.018385</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Identifying the best model
+##################################
+coxph_best_model_train_cv = coxph_grid_search.best_estimator_
+print('Best Cox Proportional Hazards RegressionModel using the Cross-Validated Train Data: ')
+print(f"Best Model Parameters: {coxph_grid_search.best_params_}")
+```
+
+    Best Cox Proportional Hazards RegressionModel using the Cross-Validated Train Data: 
+    Best Model Parameters: {'coxph__alpha': 1.0}
+    
+
+
+```python
+##################################
+# Obtaining the cross-validation model performance of the 
+# optimal Cox Proportional Hazards Regression Model
+# on the train set
+##################################
+optimal_coxph_heart_failure_y_crossvalidation_ci = coxph_grid_search.best_score_
+print(f"Cross-Validation Concordance Index: {optimal_coxph_heart_failure_y_crossvalidation_ci}")
+```
+
+    Cross-Validation Concordance Index: 0.7147641991932778
+    
+
+
+```python
+##################################
+# Formulating a Cox Proportional Hazards Regression Model
+# with optimal hyperparameters
+##################################
+optimal_coxph_model = coxph_grid_search.best_estimator_
+optimal_coxph_model.fit(X_train, y_train_array)
+```
+
+
+
+
+<style>#sk-container-id-2 {
+  /* Definition of color scheme common for light and dark mode */
+  --sklearn-color-text: black;
+  --sklearn-color-line: gray;
+  /* Definition of color scheme for unfitted estimators */
+  --sklearn-color-unfitted-level-0: #fff5e6;
+  --sklearn-color-unfitted-level-1: #f6e4d2;
+  --sklearn-color-unfitted-level-2: #ffe0b3;
+  --sklearn-color-unfitted-level-3: chocolate;
+  /* Definition of color scheme for fitted estimators */
+  --sklearn-color-fitted-level-0: #f0f8ff;
+  --sklearn-color-fitted-level-1: #d4ebff;
+  --sklearn-color-fitted-level-2: #b3dbfd;
+  --sklearn-color-fitted-level-3: cornflowerblue;
+
+  /* Specific color for light theme */
+  --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, white)));
+  --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-icon: #696969;
+
+  @media (prefers-color-scheme: dark) {
+    /* Redefinition of color scheme for dark theme */
+    --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, #111)));
+    --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-icon: #878787;
+  }
+}
+
+#sk-container-id-2 {
+  color: var(--sklearn-color-text);
+}
+
+#sk-container-id-2 pre {
+  padding: 0;
+}
+
+#sk-container-id-2 input.sk-hidden--visually {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+#sk-container-id-2 div.sk-dashed-wrapped {
+  border: 1px dashed var(--sklearn-color-line);
+  margin: 0 0.4em 0.5em 0.4em;
+  box-sizing: border-box;
+  padding-bottom: 0.4em;
+  background-color: var(--sklearn-color-background);
+}
+
+#sk-container-id-2 div.sk-container {
+  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
+     but bootstrap.min.css set `[hidden] { display: none !important; }`
+     so we also need the `!important` here to be able to override the
+     default hidden behavior on the sphinx rendered scikit-learn.org.
+     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
+  display: inline-block !important;
+  position: relative;
+}
+
+#sk-container-id-2 div.sk-text-repr-fallback {
+  display: none;
+}
+
+div.sk-parallel-item,
+div.sk-serial,
+div.sk-item {
+  /* draw centered vertical line to link estimators */
+  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Parallel-specific style estimator block */
+
+#sk-container-id-2 div.sk-parallel-item::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
+  flex-grow: 1;
+}
+
+#sk-container-id-2 div.sk-parallel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--sklearn-color-background);
+  position: relative;
+}
+
+#sk-container-id-2 div.sk-parallel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#sk-container-id-2 div.sk-parallel-item:first-child::after {
+  align-self: flex-end;
+  width: 50%;
+}
+
+#sk-container-id-2 div.sk-parallel-item:last-child::after {
+  align-self: flex-start;
+  width: 50%;
+}
+
+#sk-container-id-2 div.sk-parallel-item:only-child::after {
+  width: 0;
+}
+
+/* Serial-specific style estimator block */
+
+#sk-container-id-2 div.sk-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sklearn-color-background);
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+
+/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
+clickable and can be expanded/collapsed.
+- Pipeline and ColumnTransformer use this feature and define the default style
+- Estimators will overwrite some part of the style using the `sk-estimator` class
+*/
+
+/* Pipeline and ColumnTransformer style (default) */
+
+#sk-container-id-2 div.sk-toggleable {
+  /* Default theme specific background. It is overwritten whether we have a
+  specific estimator or a Pipeline/ColumnTransformer */
+  background-color: var(--sklearn-color-background);
+}
+
+/* Toggleable label */
+#sk-container-id-2 label.sk-toggleable__label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#sk-container-id-2 label.sk-toggleable__label-arrow:before {
+  /* Arrow on the left of the label */
+  content: "▸";
+  float: left;
+  margin-right: 0.25em;
+  color: var(--sklearn-color-icon);
+}
+
+#sk-container-id-2 label.sk-toggleable__label-arrow:hover:before {
+  color: var(--sklearn-color-text);
+}
+
+/* Toggleable content - dropdown */
+
+#sk-container-id-2 div.sk-toggleable__content {
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  text-align: left;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-2 div.sk-toggleable__content.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-2 div.sk-toggleable__content pre {
+  margin: 0.2em;
+  border-radius: 0.25em;
+  color: var(--sklearn-color-text);
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-2 div.sk-toggleable__content.fitted pre {
+  /* unfitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-2 input.sk-toggleable__control:checked~div.sk-toggleable__content {
+  /* Expand drop-down */
+  max-height: 200px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+#sk-container-id-2 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
+  content: "▾";
+}
+
+/* Pipeline/ColumnTransformer-specific style */
+
+#sk-container-id-2 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-2 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator-specific style */
+
+/* Colorize estimator box */
+#sk-container-id-2 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-2 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+#sk-container-id-2 div.sk-label label.sk-toggleable__label,
+#sk-container-id-2 div.sk-label label {
+  /* The background is the default theme color */
+  color: var(--sklearn-color-text-on-default-background);
+}
+
+/* On hover, darken the color of the background */
+#sk-container-id-2 div.sk-label:hover label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+/* Label box, darken color on hover, fitted */
+#sk-container-id-2 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator label */
+
+#sk-container-id-2 div.sk-label label {
+  font-family: monospace;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 1.2em;
+}
+
+#sk-container-id-2 div.sk-label-container {
+  text-align: center;
+}
+
+/* Estimator-specific */
+#sk-container-id-2 div.sk-estimator {
+  font-family: monospace;
+  border: 1px dotted var(--sklearn-color-border-box);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  margin-bottom: 0.5em;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-2 div.sk-estimator.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+/* on hover */
+#sk-container-id-2 div.sk-estimator:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-2 div.sk-estimator.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Specification for estimator info (e.g. "i" and "?") */
+
+/* Common style for "i" and "?" */
+
+.sk-estimator-doc-link,
+a:link.sk-estimator-doc-link,
+a:visited.sk-estimator-doc-link {
+  float: right;
+  font-size: smaller;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  text-decoration: none !important;
+  margin-left: 1ex;
+  /* unfitted */
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-1);
+}
+
+.sk-estimator-doc-link.fitted,
+a:link.sk-estimator-doc-link.fitted,
+a:visited.sk-estimator-doc-link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+div.sk-estimator:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover,
+div.sk-label-container:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover,
+div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+/* Span, style for the box shown on hovering the info icon */
+.sk-estimator-doc-link span {
+  display: none;
+  z-index: 9999;
+  position: relative;
+  font-weight: normal;
+  right: .2ex;
+  padding: .5ex;
+  margin: .5ex;
+  width: min-content;
+  min-width: 20ex;
+  max-width: 50ex;
+  color: var(--sklearn-color-text);
+  box-shadow: 2pt 2pt 4pt #999;
+  /* unfitted */
+  background: var(--sklearn-color-unfitted-level-0);
+  border: .5pt solid var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted span {
+  /* fitted */
+  background: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3);
+}
+
+.sk-estimator-doc-link:hover span {
+  display: block;
+}
+
+/* "?"-specific style due to the `<a>` HTML tag */
+
+#sk-container-id-2 a.estimator_doc_link {
+  float: right;
+  font-size: 1rem;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1rem;
+  height: 1rem;
+  width: 1rem;
+  text-decoration: none;
+  /* unfitted */
+  color: var(--sklearn-color-unfitted-level-1);
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+}
+
+#sk-container-id-2 a.estimator_doc_link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+#sk-container-id-2 a.estimator_doc_link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+#sk-container-id-2 a.estimator_doc_link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+}
+</style><div id="sk-container-id-2" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=1.0))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-5" type="checkbox" ><label for="sk-estimator-id-5" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=1.0))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-6" type="checkbox" ><label for="sk-estimator-id-6" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-7" type="checkbox" ><label for="sk-estimator-id-7" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxPHSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxPHSurvivalAnalysis(alpha=1.0)</pre></div> </div></div></div></div></div></div>
+
+
+
+
+```python
+##################################
+# Measuring model performance of the 
+# optimal Cox Proportional Hazards Regression Model
+# on the train set
+##################################
+optimal_coxph_heart_failure_y_train_pred = optimal_coxph_model.predict(X_train)
+optimal_coxph_heart_failure_y_train_ci = concordance_index_censored(y_train_array['DEATH_EVENT'], 
+                                                                    y_train_array['TIME'], 
+                                                                    optimal_coxph_heart_failure_y_train_pred)[0]
+print(f"Apparent Concordance Index: {optimal_coxph_heart_failure_y_train_ci}")
+```
+
+    Apparent Concordance Index: 0.738509415895308
+    
+
+
+```python
+##################################
+# Measuring model performance of the 
+# optimal Cox Proportional Hazards Regression Model
+# on the validation set
+##################################
+optimal_coxph_heart_failure_y_validation_pred = optimal_coxph_model.predict(X_validation)
+optimal_coxph_heart_failure_y_validation_ci = concordance_index_censored(y_validation_array['DEATH_EVENT'], 
+                                                                         y_validation_array['TIME'], 
+                                                                         optimal_coxph_heart_failure_y_validation_pred)[0]
+print(f"Validation Concordance Index: {optimal_coxph_heart_failure_y_validation_ci}")
+```
+
+    Validation Concordance Index: 0.6568894952251023
+    
+
+
+```python
+##################################
+# Gathering the concordance indices
+# from the train and tests sets for 
+# Cox Proportional Hazards Regression Model
+##################################
+coxph_set = pd.DataFrame(["Train","Cross-Validation","Validation"])
+coxph_ci_values = pd.DataFrame([optimal_coxph_heart_failure_y_train_ci,
+                                optimal_coxph_heart_failure_y_crossvalidation_ci,
+                                optimal_coxph_heart_failure_y_validation_ci])
+coxph_method = pd.DataFrame(["COXPH"]*3)
+coxph_summary = pd.concat([coxph_set, 
+                           coxph_ci_values,
+                           coxph_method], axis=1)
+coxph_summary.columns = ['Set', 'Concordance.Index', 'Method']
+coxph_summary.reset_index(inplace=True, drop=True)
+display(coxph_summary)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Set</th>
+      <th>Concordance.Index</th>
+      <th>Method</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Train</td>
+      <td>0.738509</td>
+      <td>COXPH</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Cross-Validation</td>
+      <td>0.714764</td>
+      <td>COXPH</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Validation</td>
+      <td>0.656889</td>
+      <td>COXPH</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Binning the predicted risks
+# into dichotomous groups and
+# exploring the relationships with
+# survival event and duration
+##################################
+heart_failure_validation.reset_index(drop=True, inplace=True)
+kmf = KaplanMeierFitter()
+heart_failure_validation['Predicted_Risks_CoxPH'] = optimal_coxph_heart_failure_y_validation_pred
+heart_failure_validation['Predicted_RiskGroups_CoxPH'] = risk_groups = pd.qcut(heart_failure_validation['Predicted_Risks_CoxPH'], 2, labels=['Low-Risk', 'High-Risk'])
+
+plt.figure(figsize=(17, 8))
+for group in risk_groups.unique():
+    group_data = heart_failure_validation[risk_groups == group]
+    kmf.fit(group_data['TIME'], event_observed=group_data['DEATH_EVENT'], label=group)
+    kmf.plot_survival_function()
+
+plt.title('COXPH Survival Probabilities by Predicted Risk Groups on Validation Set')
+plt.xlabel('TIME')
+plt.ylabel('DEATH_EVENT Survival Probability')
+plt.show()
+```
+
+
+    
+![png](output_158_0.png)
+    
+
+
+
+```python
+##################################
+# Gathering the predictor information
+# for 5 test case samples
+##################################
+validation_case_details = X_validation.iloc[[5, 10, 15, 20, 25]]
+display(validation_case_details)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ANAEMIA</th>
+      <th>EJECTION_FRACTION</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>291</th>
+      <td>0</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>1.4</td>
+      <td>139.0</td>
+    </tr>
+    <tr>
+      <th>66</th>
+      <td>1</td>
+      <td>15.0</td>
+      <td>0</td>
+      <td>1.3</td>
+      <td>136.0</td>
+    </tr>
+    <tr>
+      <th>112</th>
+      <td>0</td>
+      <td>25.0</td>
+      <td>0</td>
+      <td>1.6</td>
+      <td>136.0</td>
+    </tr>
+    <tr>
+      <th>89</th>
+      <td>1</td>
+      <td>25.0</td>
+      <td>1</td>
+      <td>1.1</td>
+      <td>144.0</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>0</td>
+      <td>14.0</td>
+      <td>0</td>
+      <td>0.8</td>
+      <td>127.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Gathering the event and duration information
+# for 5 test case samples
+##################################
+print(y_validation_array[[5, 10, 15, 20, 25]])
+```
+
+    [(False, 258) ( True,  65) (False,  90) (False,  79) ( True,  14)]
+    
+
+
+```python
+##################################
+# Gathering the risk-groups
+# for 5 test case samples
+##################################
+print(heart_failure_validation.loc[[5, 10, 15, 20, 25]][['Predicted_RiskGroups_CoxPH']])
+```
+
+       Predicted_RiskGroups_CoxPH
+    5                    Low-Risk
+    10                  High-Risk
+    15                  High-Risk
+    20                  High-Risk
+    25                  High-Risk
+    
+
+
+```python
+##################################
+# Estimating the cumulative hazard
+# and survival functions
+# for 5 validation cases
+##################################
+validation_case = X_validation.iloc[[5, 10, 15, 20, 25]]
+validation_case_labels = ['Patient_5','Patient_10','Patient_15','Patient_20','Patient_25',]
+validation_case_cumulative_hazard_function = optimal_coxph_model.predict_cumulative_hazard_function(validation_case)
+validation_case_survival_function = optimal_coxph_model.predict_survival_function(validation_case)
+
+fig, ax = plt.subplots(1,2,figsize=(17, 8))
+for hazard_prediction, survival_prediction in zip(validation_case_cumulative_hazard_function, validation_case_survival_function):
+    ax[0].step(hazard_prediction.x,hazard_prediction(hazard_prediction.x),where='post')
+    ax[1].step(survival_prediction.x,survival_prediction(survival_prediction.x),where='post')
+ax[0].set_title('COXPH Cumulative Hazard for 5 Validation Cases')
+ax[0].set_xlabel('TIME')
+ax[0].set_ylim(0,2)
+ax[0].set_ylabel('Cumulative Hazard')
+ax[0].legend(validation_case_labels, loc="upper left")
+ax[1].set_title('COXPH Survival Function for 5 Validation Cases')
+ax[1].set_xlabel('TIME')
+ax[1].set_ylabel('DEATH_EVENT Survival Probability')
+ax[1].legend(validation_case_labels, loc="lower left")
+plt.show()
+```
+
+
+    
+![png](output_162_0.png)
+    
+
+
+
+```python
+##################################
+# Saving the best Cox Proportional Hazards Regression Model
+# developed from the original training data
+################################## 
+joblib.dump(coxph_best_model_train_cv, 
+            os.path.join("..", MODELS_PATH, "coxph_best_model.pkl"))
+```
+
+
+
+
+    ['..\\models\\coxph_best_model.pkl']
+
+
+
+### 1.6.5 Cox Net Survival Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.5"></a>
 
 ### 1.6.6 Survival Tree Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.6"></a>
 
