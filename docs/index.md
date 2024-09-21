@@ -4426,8 +4426,8 @@ coxph_hyperparameter_grid = {'coxph__alpha': [0.01, 0.10, 1.00, 10.00]}
 ##################################
 coxph_grid_search = GridSearchCV(estimator=coxph_pipeline,
                                  param_grid=coxph_hyperparameter_grid,
-                                 cv=KFold(n_splits=5, shuffle=True, random_state=88888888),
-                                 return_train_score=True,
+                                 cv=KFold(n_splits=10, shuffle=True, random_state=88888888),
+                                 return_train_score=False,
                                  n_jobs=-1,
                                  verbose=1)
 ```
@@ -4445,6 +4445,30 @@ coxns_pipeline = Pipeline([
     ('coxns', CoxnetSurvivalAnalysis())])
 ```
 
+
+```python
+##################################
+# Defining the hyperparameters for grid search
+##################################
+coxns_hyperparameter_grid = {'coxns__l1_ratio': [0.10, 0.50, 1.00],
+                             'coxns__alpha_min_ratio': [0.0001, 0.01],
+                             'coxns__fit_baseline_model': [True]}
+```
+
+
+```python
+##################################
+# Setting up the GridSearchCV with 5-fold cross-validation
+# and using F1 score as the model evaluation metric
+##################################
+coxns_grid_search = GridSearchCV(estimator=coxns_pipeline,
+                                 param_grid=coxns_hyperparameter_grid,
+                                 cv=KFold(n_splits=10, shuffle=True, random_state=88888888),
+                                 return_train_score=False,
+                                 n_jobs=-1,
+                                 verbose=1)
+```
+
 ### 1.6.3.3 Survival Tree <a class="anchor" id="1.6.3.3"></a>
 
 
@@ -4456,6 +4480,30 @@ coxns_pipeline = Pipeline([
 stree_pipeline = Pipeline([
     ('yeo_johnson', PowerTransformer(method='yeo-johnson', standardize=True)),
     ('stree', SurvivalTree())])
+```
+
+
+```python
+##################################
+# Defining the hyperparameters for grid search
+##################################
+stree_hyperparameter_grid = {'stree__min_samples_split': [10, 15, 20],
+                             'stree__min_samples_leaf': [3, 6],
+                             'stree__random_state': [88888888]}
+```
+
+
+```python
+##################################
+# Setting up the GridSearchCV with 5-fold cross-validation
+# and using F1 score as the model evaluation metric
+##################################
+stree_grid_search = GridSearchCV(estimator=stree_pipeline,
+                                 param_grid=stree_hyperparameter_grid,
+                                 cv=KFold(n_splits=10, shuffle=True, random_state=88888888),
+                                 return_train_score=False,
+                                 n_jobs=-1,
+                                 verbose=1)
 ```
 
 ### 1.6.3.4 Random Survival Forest <a class="anchor" id="1.6.3.4"></a>
@@ -4471,6 +4519,30 @@ rsf_pipeline = Pipeline([
     ('rsf', RandomSurvivalForest())])
 ```
 
+
+```python
+##################################
+# Defining the hyperparameters for grid search
+##################################
+rsf_hyperparameter_grid = {'rsf__n_estimators': [100, 200, 300],
+                           'rsf__min_samples_split': [10, 15, 20],
+                           'rsf__random_state': [88888888]}
+```
+
+
+```python
+##################################
+# Setting up the GridSearchCV with 5-fold cross-validation
+# and using F1 score as the model evaluation metric
+##################################
+rsf_grid_search = GridSearchCV(estimator=rsf_pipeline,
+                               param_grid=rsf_hyperparameter_grid,
+                               cv=KFold(n_splits=10, shuffle=True, random_state=88888888),
+                               return_train_score=False,
+                               n_jobs=-1,
+                               verbose=1)
+```
+
 ### 1.6.3.5 Gradient Boosted Survival <a class="anchor" id="1.6.3.5"></a>
 
 
@@ -4479,9 +4551,33 @@ rsf_pipeline = Pipeline([
 # Defining the modelling pipeline
 # using the gradient boosted survival model
 ##################################
-rsf_pipeline = Pipeline([
+gbs_pipeline = Pipeline([
     ('yeo_johnson', PowerTransformer(method='yeo-johnson', standardize=True)),
     ('gbs', GradientBoostingSurvivalAnalysis())])
+```
+
+
+```python
+##################################
+# Defining the hyperparameters for grid search
+##################################
+gbs_hyperparameter_grid = {'gbs__n_estimators': [100, 200, 300],
+                           'gbs__learning_rate': [0.05, 0.10, 0.15],
+                           'gbs__random_state': [88888888]}
+```
+
+
+```python
+##################################
+# Setting up the GridSearchCV with 5-fold cross-validation
+# and using F1 score as the model evaluation metric
+##################################
+gbs_grid_search = GridSearchCV(estimator=gbs_pipeline,
+                               param_grid=gbs_hyperparameter_grid,
+                               cv=KFold(n_splits=10, shuffle=True, random_state=88888888),
+                               return_train_score=False,
+                               n_jobs=-1,
+                               verbose=1)
 ```
 
 ### 1.6.4 Cox Proportional Hazards Regression Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.4"></a>
@@ -4496,7 +4592,7 @@ rsf_pipeline = Pipeline([
 coxph_grid_search.fit(X_train, y_train_array)
 ```
 
-    Fitting 5 folds for each of 4 candidates, totalling 20 fits
+    Fitting 10 folds for each of 4 candidates, totalling 40 fits
     
 
 
@@ -4906,16 +5002,16 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                                        (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis())]),
              n_jobs=-1, param_grid={&#x27;coxph__alpha&#x27;: [0.01, 0.1, 1.0, 10.0]},
-             return_train_score=True, verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" ><label for="sk-estimator-id-1" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" ><label for="sk-estimator-id-1" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                                        (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis())]),
              n_jobs=-1, param_grid={&#x27;coxph__alpha&#x27;: [0.01, 0.1, 1.0, 10.0]},
-             return_train_score=True, verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" ><label for="sk-estimator-id-2" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
-                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=1.0))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox" ><label for="sk-estimator-id-3" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-4" type="checkbox" ><label for="sk-estimator-id-4" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxPHSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxPHSurvivalAnalysis(alpha=1.0)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
+             verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" ><label for="sk-estimator-id-2" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=10.0))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox" ><label for="sk-estimator-id-3" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-4" type="checkbox" ><label for="sk-estimator-id-4" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxPHSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxPHSurvivalAnalysis(alpha=10.0)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
 
 
 
@@ -4957,98 +5053,88 @@ coxph_grid_search_results.loc[:, ~coxph_grid_search_results.columns.str.endswith
       <th>split2_test_score</th>
       <th>split3_test_score</th>
       <th>split4_test_score</th>
+      <th>split5_test_score</th>
+      <th>split6_test_score</th>
+      <th>split7_test_score</th>
+      <th>split8_test_score</th>
+      <th>split9_test_score</th>
       <th>mean_test_score</th>
       <th>std_test_score</th>
       <th>rank_test_score</th>
-      <th>split0_train_score</th>
-      <th>split1_train_score</th>
-      <th>split2_train_score</th>
-      <th>split3_train_score</th>
-      <th>split4_train_score</th>
-      <th>mean_train_score</th>
-      <th>std_train_score</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>2</th>
-      <td>1.00</td>
-      <td>{'coxph__alpha': 1.0}</td>
-      <td>0.752294</td>
-      <td>0.653251</td>
-      <td>0.790816</td>
-      <td>0.848889</td>
-      <td>0.528571</td>
-      <td>0.714764</td>
-      <td>0.112813</td>
+      <th>3</th>
+      <td>10.00</td>
+      <td>{'coxph__alpha': 10.0}</td>
+      <td>0.8125</td>
+      <td>0.6875</td>
+      <td>0.703704</td>
+      <td>0.567568</td>
+      <td>0.71875</td>
+      <td>0.835821</td>
+      <td>0.977778</td>
+      <td>0.727273</td>
+      <td>0.384615</td>
+      <td>0.714286</td>
+      <td>0.712979</td>
+      <td>0.150018</td>
       <td>1</td>
-      <td>0.742072</td>
-      <td>0.749187</td>
-      <td>0.737625</td>
-      <td>0.705557</td>
-      <td>0.765134</td>
-      <td>0.739915</td>
-      <td>0.019557</td>
     </tr>
     <tr>
       <th>0</th>
       <td>0.01</td>
       <td>{'coxph__alpha': 0.01}</td>
-      <td>0.755352</td>
-      <td>0.650155</td>
-      <td>0.790816</td>
-      <td>0.848889</td>
-      <td>0.528571</td>
-      <td>0.714757</td>
-      <td>0.113369</td>
+      <td>0.8000</td>
+      <td>0.6625</td>
+      <td>0.716049</td>
+      <td>0.567568</td>
+      <td>0.71875</td>
+      <td>0.820896</td>
+      <td>0.977778</td>
+      <td>0.727273</td>
+      <td>0.384615</td>
+      <td>0.714286</td>
+      <td>0.708971</td>
+      <td>0.148641</td>
       <td>2</td>
-      <td>0.742346</td>
-      <td>0.748644</td>
-      <td>0.738101</td>
-      <td>0.703836</td>
-      <td>0.765134</td>
-      <td>0.739612</td>
-      <td>0.020113</td>
     </tr>
     <tr>
       <th>1</th>
       <td>0.10</td>
       <td>{'coxph__alpha': 0.1}</td>
-      <td>0.752294</td>
-      <td>0.650155</td>
-      <td>0.790816</td>
-      <td>0.848889</td>
-      <td>0.528571</td>
-      <td>0.714145</td>
-      <td>0.113157</td>
-      <td>3</td>
-      <td>0.742346</td>
-      <td>0.748373</td>
-      <td>0.737863</td>
-      <td>0.703590</td>
-      <td>0.765134</td>
-      <td>0.739461</td>
-      <td>0.020180</td>
+      <td>0.8000</td>
+      <td>0.6625</td>
+      <td>0.716049</td>
+      <td>0.567568</td>
+      <td>0.71875</td>
+      <td>0.820896</td>
+      <td>0.977778</td>
+      <td>0.727273</td>
+      <td>0.384615</td>
+      <td>0.714286</td>
+      <td>0.708971</td>
+      <td>0.148641</td>
+      <td>2</td>
     </tr>
     <tr>
-      <th>3</th>
-      <td>10.00</td>
-      <td>{'coxph__alpha': 10.0}</td>
-      <td>0.755352</td>
-      <td>0.656347</td>
-      <td>0.775510</td>
-      <td>0.840000</td>
-      <td>0.535714</td>
-      <td>0.712585</td>
-      <td>0.106272</td>
-      <td>4</td>
-      <td>0.740705</td>
-      <td>0.750000</td>
-      <td>0.735483</td>
-      <td>0.707278</td>
-      <td>0.762403</td>
-      <td>0.739174</td>
-      <td>0.018385</td>
+      <th>2</th>
+      <td>1.00</td>
+      <td>{'coxph__alpha': 1.0}</td>
+      <td>0.8000</td>
+      <td>0.6625</td>
+      <td>0.716049</td>
+      <td>0.567568</td>
+      <td>0.71875</td>
+      <td>0.820896</td>
+      <td>0.977778</td>
+      <td>0.727273</td>
+      <td>0.384615</td>
+      <td>0.714286</td>
+      <td>0.708971</td>
+      <td>0.148641</td>
+      <td>2</td>
     </tr>
   </tbody>
 </table>
@@ -5062,12 +5148,12 @@ coxph_grid_search_results.loc[:, ~coxph_grid_search_results.columns.str.endswith
 # Identifying the best model
 ##################################
 coxph_best_model_train_cv = coxph_grid_search.best_estimator_
-print('Best Cox Proportional Hazards RegressionModel using the Cross-Validated Train Data: ')
+print('Best Cox Proportional Hazards Regression Model using the Cross-Validated Train Data: ')
 print(f"Best Model Parameters: {coxph_grid_search.best_params_}")
 ```
 
-    Best Cox Proportional Hazards RegressionModel using the Cross-Validated Train Data: 
-    Best Model Parameters: {'coxph__alpha': 1.0}
+    Best Cox Proportional Hazards Regression Model using the Cross-Validated Train Data: 
+    Best Model Parameters: {'coxph__alpha': 10.0}
     
 
 
@@ -5081,7 +5167,7 @@ optimal_coxph_heart_failure_y_crossvalidation_ci = coxph_grid_search.best_score_
 print(f"Cross-Validation Concordance Index: {optimal_coxph_heart_failure_y_crossvalidation_ci}")
 ```
 
-    Cross-Validation Concordance Index: 0.7147641991932778
+    Cross-Validation Concordance Index: 0.7129793770745263
     
 
 
@@ -5502,8 +5588,8 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   background-color: var(--sklearn-color-fitted-level-3);
 }
 </style><div id="sk-container-id-2" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
-                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=1.0))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-5" type="checkbox" ><label for="sk-estimator-id-5" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
-                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=1.0))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-6" type="checkbox" ><label for="sk-estimator-id-6" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-7" type="checkbox" ><label for="sk-estimator-id-7" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxPHSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxPHSurvivalAnalysis(alpha=1.0)</pre></div> </div></div></div></div></div></div>
+                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=10.0))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-5" type="checkbox" ><label for="sk-estimator-id-5" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=10.0))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-6" type="checkbox" ><label for="sk-estimator-id-6" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-7" type="checkbox" ><label for="sk-estimator-id-7" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxPHSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxPHSurvivalAnalysis(alpha=10.0)</pre></div> </div></div></div></div></div></div>
 
 
 
@@ -5521,7 +5607,7 @@ optimal_coxph_heart_failure_y_train_ci = concordance_index_censored(y_train_arra
 print(f"Apparent Concordance Index: {optimal_coxph_heart_failure_y_train_ci}")
 ```
 
-    Apparent Concordance Index: 0.738509415895308
+    Apparent Concordance Index: 0.738828598787105
     
 
 
@@ -5538,7 +5624,7 @@ optimal_coxph_heart_failure_y_validation_ci = concordance_index_censored(y_valid
 print(f"Validation Concordance Index: {optimal_coxph_heart_failure_y_validation_ci}")
 ```
 
-    Validation Concordance Index: 0.6568894952251023
+    Validation Concordance Index: 0.6664392905866303
     
 
 
@@ -5589,19 +5675,19 @@ display(coxph_summary)
     <tr>
       <th>0</th>
       <td>Train</td>
-      <td>0.738509</td>
+      <td>0.738829</td>
       <td>COXPH</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Cross-Validation</td>
-      <td>0.714764</td>
+      <td>0.712979</td>
       <td>COXPH</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Validation</td>
-      <td>0.656889</td>
+      <td>0.666439</td>
       <td>COXPH</td>
     </tr>
   </tbody>
@@ -5636,7 +5722,7 @@ plt.show()
 
 
     
-![png](output_158_0.png)
+![png](output_166_0.png)
     
 
 
@@ -5781,7 +5867,7 @@ plt.show()
 
 
     
-![png](output_162_0.png)
+![png](output_170_0.png)
     
 
 
@@ -5804,15 +5890,5860 @@ joblib.dump(coxph_best_model_train_cv,
 
 ### 1.6.5 Cox Net Survival Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.5"></a>
 
+
+```python
+##################################
+# Performing hyperparameter tuning
+# through K-fold cross-validation
+# using the Cox Proportional Hazards Regression Model
+##################################
+coxns_grid_search.fit(X_train, y_train_array)
+```
+
+    Fitting 10 folds for each of 6 candidates, totalling 60 fits
+    
+
+
+
+
+<style>#sk-container-id-3 {
+  /* Definition of color scheme common for light and dark mode */
+  --sklearn-color-text: black;
+  --sklearn-color-line: gray;
+  /* Definition of color scheme for unfitted estimators */
+  --sklearn-color-unfitted-level-0: #fff5e6;
+  --sklearn-color-unfitted-level-1: #f6e4d2;
+  --sklearn-color-unfitted-level-2: #ffe0b3;
+  --sklearn-color-unfitted-level-3: chocolate;
+  /* Definition of color scheme for fitted estimators */
+  --sklearn-color-fitted-level-0: #f0f8ff;
+  --sklearn-color-fitted-level-1: #d4ebff;
+  --sklearn-color-fitted-level-2: #b3dbfd;
+  --sklearn-color-fitted-level-3: cornflowerblue;
+
+  /* Specific color for light theme */
+  --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, white)));
+  --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-icon: #696969;
+
+  @media (prefers-color-scheme: dark) {
+    /* Redefinition of color scheme for dark theme */
+    --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, #111)));
+    --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-icon: #878787;
+  }
+}
+
+#sk-container-id-3 {
+  color: var(--sklearn-color-text);
+}
+
+#sk-container-id-3 pre {
+  padding: 0;
+}
+
+#sk-container-id-3 input.sk-hidden--visually {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+#sk-container-id-3 div.sk-dashed-wrapped {
+  border: 1px dashed var(--sklearn-color-line);
+  margin: 0 0.4em 0.5em 0.4em;
+  box-sizing: border-box;
+  padding-bottom: 0.4em;
+  background-color: var(--sklearn-color-background);
+}
+
+#sk-container-id-3 div.sk-container {
+  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
+     but bootstrap.min.css set `[hidden] { display: none !important; }`
+     so we also need the `!important` here to be able to override the
+     default hidden behavior on the sphinx rendered scikit-learn.org.
+     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
+  display: inline-block !important;
+  position: relative;
+}
+
+#sk-container-id-3 div.sk-text-repr-fallback {
+  display: none;
+}
+
+div.sk-parallel-item,
+div.sk-serial,
+div.sk-item {
+  /* draw centered vertical line to link estimators */
+  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Parallel-specific style estimator block */
+
+#sk-container-id-3 div.sk-parallel-item::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
+  flex-grow: 1;
+}
+
+#sk-container-id-3 div.sk-parallel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--sklearn-color-background);
+  position: relative;
+}
+
+#sk-container-id-3 div.sk-parallel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#sk-container-id-3 div.sk-parallel-item:first-child::after {
+  align-self: flex-end;
+  width: 50%;
+}
+
+#sk-container-id-3 div.sk-parallel-item:last-child::after {
+  align-self: flex-start;
+  width: 50%;
+}
+
+#sk-container-id-3 div.sk-parallel-item:only-child::after {
+  width: 0;
+}
+
+/* Serial-specific style estimator block */
+
+#sk-container-id-3 div.sk-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sklearn-color-background);
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+
+/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
+clickable and can be expanded/collapsed.
+- Pipeline and ColumnTransformer use this feature and define the default style
+- Estimators will overwrite some part of the style using the `sk-estimator` class
+*/
+
+/* Pipeline and ColumnTransformer style (default) */
+
+#sk-container-id-3 div.sk-toggleable {
+  /* Default theme specific background. It is overwritten whether we have a
+  specific estimator or a Pipeline/ColumnTransformer */
+  background-color: var(--sklearn-color-background);
+}
+
+/* Toggleable label */
+#sk-container-id-3 label.sk-toggleable__label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#sk-container-id-3 label.sk-toggleable__label-arrow:before {
+  /* Arrow on the left of the label */
+  content: "▸";
+  float: left;
+  margin-right: 0.25em;
+  color: var(--sklearn-color-icon);
+}
+
+#sk-container-id-3 label.sk-toggleable__label-arrow:hover:before {
+  color: var(--sklearn-color-text);
+}
+
+/* Toggleable content - dropdown */
+
+#sk-container-id-3 div.sk-toggleable__content {
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  text-align: left;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-3 div.sk-toggleable__content.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-3 div.sk-toggleable__content pre {
+  margin: 0.2em;
+  border-radius: 0.25em;
+  color: var(--sklearn-color-text);
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-3 div.sk-toggleable__content.fitted pre {
+  /* unfitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-3 input.sk-toggleable__control:checked~div.sk-toggleable__content {
+  /* Expand drop-down */
+  max-height: 200px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+#sk-container-id-3 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
+  content: "▾";
+}
+
+/* Pipeline/ColumnTransformer-specific style */
+
+#sk-container-id-3 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-3 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator-specific style */
+
+/* Colorize estimator box */
+#sk-container-id-3 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-3 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+#sk-container-id-3 div.sk-label label.sk-toggleable__label,
+#sk-container-id-3 div.sk-label label {
+  /* The background is the default theme color */
+  color: var(--sklearn-color-text-on-default-background);
+}
+
+/* On hover, darken the color of the background */
+#sk-container-id-3 div.sk-label:hover label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+/* Label box, darken color on hover, fitted */
+#sk-container-id-3 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator label */
+
+#sk-container-id-3 div.sk-label label {
+  font-family: monospace;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 1.2em;
+}
+
+#sk-container-id-3 div.sk-label-container {
+  text-align: center;
+}
+
+/* Estimator-specific */
+#sk-container-id-3 div.sk-estimator {
+  font-family: monospace;
+  border: 1px dotted var(--sklearn-color-border-box);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  margin-bottom: 0.5em;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-3 div.sk-estimator.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+/* on hover */
+#sk-container-id-3 div.sk-estimator:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-3 div.sk-estimator.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Specification for estimator info (e.g. "i" and "?") */
+
+/* Common style for "i" and "?" */
+
+.sk-estimator-doc-link,
+a:link.sk-estimator-doc-link,
+a:visited.sk-estimator-doc-link {
+  float: right;
+  font-size: smaller;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  text-decoration: none !important;
+  margin-left: 1ex;
+  /* unfitted */
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-1);
+}
+
+.sk-estimator-doc-link.fitted,
+a:link.sk-estimator-doc-link.fitted,
+a:visited.sk-estimator-doc-link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+div.sk-estimator:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover,
+div.sk-label-container:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover,
+div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+/* Span, style for the box shown on hovering the info icon */
+.sk-estimator-doc-link span {
+  display: none;
+  z-index: 9999;
+  position: relative;
+  font-weight: normal;
+  right: .2ex;
+  padding: .5ex;
+  margin: .5ex;
+  width: min-content;
+  min-width: 20ex;
+  max-width: 50ex;
+  color: var(--sklearn-color-text);
+  box-shadow: 2pt 2pt 4pt #999;
+  /* unfitted */
+  background: var(--sklearn-color-unfitted-level-0);
+  border: .5pt solid var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted span {
+  /* fitted */
+  background: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3);
+}
+
+.sk-estimator-doc-link:hover span {
+  display: block;
+}
+
+/* "?"-specific style due to the `<a>` HTML tag */
+
+#sk-container-id-3 a.estimator_doc_link {
+  float: right;
+  font-size: 1rem;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1rem;
+  height: 1rem;
+  width: 1rem;
+  text-decoration: none;
+  /* unfitted */
+  color: var(--sklearn-color-unfitted-level-1);
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+}
+
+#sk-container-id-3 a.estimator_doc_link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+#sk-container-id-3 a.estimator_doc_link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+#sk-container-id-3 a.estimator_doc_link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+}
+</style><div id="sk-container-id-3" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                                       (&#x27;coxns&#x27;, CoxnetSurvivalAnalysis())]),
+             n_jobs=-1,
+             param_grid={&#x27;coxns__alpha_min_ratio&#x27;: [0.0001, 0.01],
+                         &#x27;coxns__fit_baseline_model&#x27;: [True],
+                         &#x27;coxns__l1_ratio&#x27;: [0.1, 0.5, 1.0]},
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-8" type="checkbox" ><label for="sk-estimator-id-8" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                                       (&#x27;coxns&#x27;, CoxnetSurvivalAnalysis())]),
+             n_jobs=-1,
+             param_grid={&#x27;coxns__alpha_min_ratio&#x27;: [0.0001, 0.01],
+                         &#x27;coxns__fit_baseline_model&#x27;: [True],
+                         &#x27;coxns__l1_ratio&#x27;: [0.1, 0.5, 1.0]},
+             verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-9" type="checkbox" ><label for="sk-estimator-id-9" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;coxns&#x27;,
+                 CoxnetSurvivalAnalysis(alpha_min_ratio=0.01,
+                                        fit_baseline_model=True,
+                                        l1_ratio=0.1))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-10" type="checkbox" ><label for="sk-estimator-id-10" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-11" type="checkbox" ><label for="sk-estimator-id-11" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxnetSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxnetSurvivalAnalysis(alpha_min_ratio=0.01, fit_baseline_model=True,
+                       l1_ratio=0.1)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
+
+
+
+
+```python
+##################################
+# Summarizing the hyperparameter tuning 
+# results from K-fold cross-validation
+##################################
+coxns_grid_search_results = pd.DataFrame(coxns_grid_search.cv_results_).sort_values(by='mean_test_score', ascending=False)
+coxns_grid_search_results.loc[:, ~coxns_grid_search_results.columns.str.endswith('_time')]
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>param_coxns__alpha_min_ratio</th>
+      <th>param_coxns__fit_baseline_model</th>
+      <th>param_coxns__l1_ratio</th>
+      <th>params</th>
+      <th>split0_test_score</th>
+      <th>split1_test_score</th>
+      <th>split2_test_score</th>
+      <th>split3_test_score</th>
+      <th>split4_test_score</th>
+      <th>split5_test_score</th>
+      <th>split6_test_score</th>
+      <th>split7_test_score</th>
+      <th>split8_test_score</th>
+      <th>split9_test_score</th>
+      <th>mean_test_score</th>
+      <th>std_test_score</th>
+      <th>rank_test_score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>3</th>
+      <td>0.0100</td>
+      <td>True</td>
+      <td>0.1</td>
+      <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
+      <td>0.8125</td>
+      <td>0.6625</td>
+      <td>0.703704</td>
+      <td>0.567568</td>
+      <td>0.71875</td>
+      <td>0.835821</td>
+      <td>0.977778</td>
+      <td>0.727273</td>
+      <td>0.384615</td>
+      <td>0.714286</td>
+      <td>0.710479</td>
+      <td>0.150629</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0100</td>
+      <td>True</td>
+      <td>0.5</td>
+      <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
+      <td>0.8125</td>
+      <td>0.6625</td>
+      <td>0.703704</td>
+      <td>0.567568</td>
+      <td>0.71875</td>
+      <td>0.835821</td>
+      <td>0.977778</td>
+      <td>0.727273</td>
+      <td>0.384615</td>
+      <td>0.714286</td>
+      <td>0.710479</td>
+      <td>0.150629</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.0100</td>
+      <td>True</td>
+      <td>1.0</td>
+      <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
+      <td>0.8125</td>
+      <td>0.6625</td>
+      <td>0.703704</td>
+      <td>0.567568</td>
+      <td>0.71875</td>
+      <td>0.835821</td>
+      <td>0.977778</td>
+      <td>0.727273</td>
+      <td>0.384615</td>
+      <td>0.714286</td>
+      <td>0.710479</td>
+      <td>0.150629</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.0001</td>
+      <td>True</td>
+      <td>0.5</td>
+      <td>{'coxns__alpha_min_ratio': 0.0001, 'coxns__fit...</td>
+      <td>0.8000</td>
+      <td>0.6625</td>
+      <td>0.716049</td>
+      <td>0.567568</td>
+      <td>0.71875</td>
+      <td>0.835821</td>
+      <td>0.977778</td>
+      <td>0.727273</td>
+      <td>0.384615</td>
+      <td>0.714286</td>
+      <td>0.710464</td>
+      <td>0.149827</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.0001</td>
+      <td>True</td>
+      <td>1.0</td>
+      <td>{'coxns__alpha_min_ratio': 0.0001, 'coxns__fit...</td>
+      <td>0.8000</td>
+      <td>0.6625</td>
+      <td>0.703704</td>
+      <td>0.567568</td>
+      <td>0.71875</td>
+      <td>0.835821</td>
+      <td>0.977778</td>
+      <td>0.727273</td>
+      <td>0.384615</td>
+      <td>0.714286</td>
+      <td>0.709229</td>
+      <td>0.149827</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>0.0001</td>
+      <td>True</td>
+      <td>0.1</td>
+      <td>{'coxns__alpha_min_ratio': 0.0001, 'coxns__fit...</td>
+      <td>0.8000</td>
+      <td>0.6625</td>
+      <td>0.716049</td>
+      <td>0.567568</td>
+      <td>0.71875</td>
+      <td>0.820896</td>
+      <td>0.977778</td>
+      <td>0.727273</td>
+      <td>0.384615</td>
+      <td>0.714286</td>
+      <td>0.708971</td>
+      <td>0.148641</td>
+      <td>6</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Identifying the best model
+##################################
+coxns_best_model_train_cv = coxns_grid_search.best_estimator_
+print('Best Cox Proportional Hazards Regression Model using the Cross-Validated Train Data: ')
+print(f"Best Model Parameters: {coxns_grid_search.best_params_}")
+```
+
+    Best Cox Proportional Hazards Regression Model using the Cross-Validated Train Data: 
+    Best Model Parameters: {'coxns__alpha_min_ratio': 0.01, 'coxns__fit_baseline_model': True, 'coxns__l1_ratio': 0.1}
+    
+
+
+```python
+##################################
+# Obtaining the cross-validation model performance of the 
+# optimal Cox Net Survival Model
+# on the train set
+##################################
+optimal_coxns_heart_failure_y_crossvalidation_ci = coxns_grid_search.best_score_
+print(f"Cross-Validation Concordance Index: {optimal_coxns_heart_failure_y_crossvalidation_ci}")
+```
+
+    Cross-Validation Concordance Index: 0.7104793770745264
+    
+
+
+```python
+##################################
+# Formulating a Cox Net Survival Model
+# with optimal hyperparameters
+##################################
+optimal_coxns_model = coxns_grid_search.best_estimator_
+optimal_coxns_model.fit(X_train, y_train_array)
+```
+
+
+
+
+<style>#sk-container-id-4 {
+  /* Definition of color scheme common for light and dark mode */
+  --sklearn-color-text: black;
+  --sklearn-color-line: gray;
+  /* Definition of color scheme for unfitted estimators */
+  --sklearn-color-unfitted-level-0: #fff5e6;
+  --sklearn-color-unfitted-level-1: #f6e4d2;
+  --sklearn-color-unfitted-level-2: #ffe0b3;
+  --sklearn-color-unfitted-level-3: chocolate;
+  /* Definition of color scheme for fitted estimators */
+  --sklearn-color-fitted-level-0: #f0f8ff;
+  --sklearn-color-fitted-level-1: #d4ebff;
+  --sklearn-color-fitted-level-2: #b3dbfd;
+  --sklearn-color-fitted-level-3: cornflowerblue;
+
+  /* Specific color for light theme */
+  --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, white)));
+  --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-icon: #696969;
+
+  @media (prefers-color-scheme: dark) {
+    /* Redefinition of color scheme for dark theme */
+    --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, #111)));
+    --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-icon: #878787;
+  }
+}
+
+#sk-container-id-4 {
+  color: var(--sklearn-color-text);
+}
+
+#sk-container-id-4 pre {
+  padding: 0;
+}
+
+#sk-container-id-4 input.sk-hidden--visually {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+#sk-container-id-4 div.sk-dashed-wrapped {
+  border: 1px dashed var(--sklearn-color-line);
+  margin: 0 0.4em 0.5em 0.4em;
+  box-sizing: border-box;
+  padding-bottom: 0.4em;
+  background-color: var(--sklearn-color-background);
+}
+
+#sk-container-id-4 div.sk-container {
+  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
+     but bootstrap.min.css set `[hidden] { display: none !important; }`
+     so we also need the `!important` here to be able to override the
+     default hidden behavior on the sphinx rendered scikit-learn.org.
+     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
+  display: inline-block !important;
+  position: relative;
+}
+
+#sk-container-id-4 div.sk-text-repr-fallback {
+  display: none;
+}
+
+div.sk-parallel-item,
+div.sk-serial,
+div.sk-item {
+  /* draw centered vertical line to link estimators */
+  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Parallel-specific style estimator block */
+
+#sk-container-id-4 div.sk-parallel-item::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
+  flex-grow: 1;
+}
+
+#sk-container-id-4 div.sk-parallel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--sklearn-color-background);
+  position: relative;
+}
+
+#sk-container-id-4 div.sk-parallel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#sk-container-id-4 div.sk-parallel-item:first-child::after {
+  align-self: flex-end;
+  width: 50%;
+}
+
+#sk-container-id-4 div.sk-parallel-item:last-child::after {
+  align-self: flex-start;
+  width: 50%;
+}
+
+#sk-container-id-4 div.sk-parallel-item:only-child::after {
+  width: 0;
+}
+
+/* Serial-specific style estimator block */
+
+#sk-container-id-4 div.sk-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sklearn-color-background);
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+
+/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
+clickable and can be expanded/collapsed.
+- Pipeline and ColumnTransformer use this feature and define the default style
+- Estimators will overwrite some part of the style using the `sk-estimator` class
+*/
+
+/* Pipeline and ColumnTransformer style (default) */
+
+#sk-container-id-4 div.sk-toggleable {
+  /* Default theme specific background. It is overwritten whether we have a
+  specific estimator or a Pipeline/ColumnTransformer */
+  background-color: var(--sklearn-color-background);
+}
+
+/* Toggleable label */
+#sk-container-id-4 label.sk-toggleable__label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#sk-container-id-4 label.sk-toggleable__label-arrow:before {
+  /* Arrow on the left of the label */
+  content: "▸";
+  float: left;
+  margin-right: 0.25em;
+  color: var(--sklearn-color-icon);
+}
+
+#sk-container-id-4 label.sk-toggleable__label-arrow:hover:before {
+  color: var(--sklearn-color-text);
+}
+
+/* Toggleable content - dropdown */
+
+#sk-container-id-4 div.sk-toggleable__content {
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  text-align: left;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-4 div.sk-toggleable__content.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-4 div.sk-toggleable__content pre {
+  margin: 0.2em;
+  border-radius: 0.25em;
+  color: var(--sklearn-color-text);
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-4 div.sk-toggleable__content.fitted pre {
+  /* unfitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-4 input.sk-toggleable__control:checked~div.sk-toggleable__content {
+  /* Expand drop-down */
+  max-height: 200px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+#sk-container-id-4 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
+  content: "▾";
+}
+
+/* Pipeline/ColumnTransformer-specific style */
+
+#sk-container-id-4 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-4 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator-specific style */
+
+/* Colorize estimator box */
+#sk-container-id-4 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-4 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+#sk-container-id-4 div.sk-label label.sk-toggleable__label,
+#sk-container-id-4 div.sk-label label {
+  /* The background is the default theme color */
+  color: var(--sklearn-color-text-on-default-background);
+}
+
+/* On hover, darken the color of the background */
+#sk-container-id-4 div.sk-label:hover label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+/* Label box, darken color on hover, fitted */
+#sk-container-id-4 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator label */
+
+#sk-container-id-4 div.sk-label label {
+  font-family: monospace;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 1.2em;
+}
+
+#sk-container-id-4 div.sk-label-container {
+  text-align: center;
+}
+
+/* Estimator-specific */
+#sk-container-id-4 div.sk-estimator {
+  font-family: monospace;
+  border: 1px dotted var(--sklearn-color-border-box);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  margin-bottom: 0.5em;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-4 div.sk-estimator.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+/* on hover */
+#sk-container-id-4 div.sk-estimator:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-4 div.sk-estimator.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Specification for estimator info (e.g. "i" and "?") */
+
+/* Common style for "i" and "?" */
+
+.sk-estimator-doc-link,
+a:link.sk-estimator-doc-link,
+a:visited.sk-estimator-doc-link {
+  float: right;
+  font-size: smaller;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  text-decoration: none !important;
+  margin-left: 1ex;
+  /* unfitted */
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-1);
+}
+
+.sk-estimator-doc-link.fitted,
+a:link.sk-estimator-doc-link.fitted,
+a:visited.sk-estimator-doc-link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+div.sk-estimator:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover,
+div.sk-label-container:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover,
+div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+/* Span, style for the box shown on hovering the info icon */
+.sk-estimator-doc-link span {
+  display: none;
+  z-index: 9999;
+  position: relative;
+  font-weight: normal;
+  right: .2ex;
+  padding: .5ex;
+  margin: .5ex;
+  width: min-content;
+  min-width: 20ex;
+  max-width: 50ex;
+  color: var(--sklearn-color-text);
+  box-shadow: 2pt 2pt 4pt #999;
+  /* unfitted */
+  background: var(--sklearn-color-unfitted-level-0);
+  border: .5pt solid var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted span {
+  /* fitted */
+  background: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3);
+}
+
+.sk-estimator-doc-link:hover span {
+  display: block;
+}
+
+/* "?"-specific style due to the `<a>` HTML tag */
+
+#sk-container-id-4 a.estimator_doc_link {
+  float: right;
+  font-size: 1rem;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1rem;
+  height: 1rem;
+  width: 1rem;
+  text-decoration: none;
+  /* unfitted */
+  color: var(--sklearn-color-unfitted-level-1);
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+}
+
+#sk-container-id-4 a.estimator_doc_link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+#sk-container-id-4 a.estimator_doc_link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+#sk-container-id-4 a.estimator_doc_link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+}
+</style><div id="sk-container-id-4" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;coxns&#x27;,
+                 CoxnetSurvivalAnalysis(alpha_min_ratio=0.01,
+                                        fit_baseline_model=True,
+                                        l1_ratio=0.1))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-12" type="checkbox" ><label for="sk-estimator-id-12" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;coxns&#x27;,
+                 CoxnetSurvivalAnalysis(alpha_min_ratio=0.01,
+                                        fit_baseline_model=True,
+                                        l1_ratio=0.1))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-13" type="checkbox" ><label for="sk-estimator-id-13" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-14" type="checkbox" ><label for="sk-estimator-id-14" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxnetSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxnetSurvivalAnalysis(alpha_min_ratio=0.01, fit_baseline_model=True,
+                       l1_ratio=0.1)</pre></div> </div></div></div></div></div></div>
+
+
+
+
+```python
+##################################
+# Measuring model performance of the 
+# optimal Cox Net Survival Model
+# on the train set
+##################################
+optimal_coxns_heart_failure_y_train_pred = optimal_coxns_model.predict(X_train)
+optimal_coxns_heart_failure_y_train_ci = concordance_index_censored(y_train_array['DEATH_EVENT'], 
+                                                                    y_train_array['TIME'], 
+                                                                    optimal_coxns_heart_failure_y_train_pred)[0]
+print(f"Apparent Concordance Index: {optimal_coxns_heart_failure_y_train_ci}")
+```
+
+    Apparent Concordance Index: 0.738509415895308
+    
+
+
+```python
+##################################
+# Measuring model performance of the 
+# optimal Cox Net Survival Model
+# on the validation set
+##################################
+optimal_coxns_heart_failure_y_validation_pred = optimal_coxns_model.predict(X_validation)
+optimal_coxns_heart_failure_y_validation_ci = concordance_index_censored(y_validation_array['DEATH_EVENT'], 
+                                                                         y_validation_array['TIME'], 
+                                                                         optimal_coxns_heart_failure_y_validation_pred)[0]
+print(f"Validation Concordance Index: {optimal_coxns_heart_failure_y_validation_ci}")
+```
+
+    Validation Concordance Index: 0.665075034106412
+    
+
+
+```python
+##################################
+# Gathering the concordance indices
+# from the train and tests sets for 
+# Cox Net Survival Model
+##################################
+coxns_set = pd.DataFrame(["Train","Cross-Validation","Validation"])
+coxns_ci_values = pd.DataFrame([optimal_coxns_heart_failure_y_train_ci,
+                                optimal_coxns_heart_failure_y_crossvalidation_ci,
+                                optimal_coxns_heart_failure_y_validation_ci])
+coxns_method = pd.DataFrame(["COXNS"]*3)
+coxns_summary = pd.concat([coxns_set, 
+                           coxns_ci_values,
+                           coxns_method], axis=1)
+coxns_summary.columns = ['Set', 'Concordance.Index', 'Method']
+coxns_summary.reset_index(inplace=True, drop=True)
+display(coxns_summary)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Set</th>
+      <th>Concordance.Index</th>
+      <th>Method</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Train</td>
+      <td>0.738509</td>
+      <td>COXNS</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Cross-Validation</td>
+      <td>0.710479</td>
+      <td>COXNS</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Validation</td>
+      <td>0.665075</td>
+      <td>COXNS</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Binning the predicted risks
+# into dichotomous groups and
+# exploring the relationships with
+# survival event and duration
+##################################
+heart_failure_validation.reset_index(drop=True, inplace=True)
+kmf = KaplanMeierFitter()
+heart_failure_validation['Predicted_Risks_CoxNS'] = optimal_coxns_heart_failure_y_validation_pred
+heart_failure_validation['Predicted_RiskGroups_CoxNS'] = risk_groups = pd.qcut(heart_failure_validation['Predicted_Risks_CoxNS'], 2, labels=['Low-Risk', 'High-Risk'])
+
+plt.figure(figsize=(17, 8))
+for group in risk_groups.unique():
+    group_data = heart_failure_validation[risk_groups == group]
+    kmf.fit(group_data['TIME'], event_observed=group_data['DEATH_EVENT'], label=group)
+    kmf.plot_survival_function()
+
+plt.title('COXNS Survival Probabilities by Predicted Risk Groups on Validation Set')
+plt.xlabel('TIME')
+plt.ylabel('DEATH_EVENT Survival Probability')
+plt.show()
+```
+
+
+    
+![png](output_181_0.png)
+    
+
+
+
+```python
+##################################
+# Gathering the predictor information
+# for 5 test case samples
+##################################
+validation_case_details = X_validation.iloc[[5, 10, 15, 20, 25]]
+display(validation_case_details)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ANAEMIA</th>
+      <th>EJECTION_FRACTION</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>291</th>
+      <td>0</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>1.4</td>
+      <td>139.0</td>
+    </tr>
+    <tr>
+      <th>66</th>
+      <td>1</td>
+      <td>15.0</td>
+      <td>0</td>
+      <td>1.3</td>
+      <td>136.0</td>
+    </tr>
+    <tr>
+      <th>112</th>
+      <td>0</td>
+      <td>25.0</td>
+      <td>0</td>
+      <td>1.6</td>
+      <td>136.0</td>
+    </tr>
+    <tr>
+      <th>89</th>
+      <td>1</td>
+      <td>25.0</td>
+      <td>1</td>
+      <td>1.1</td>
+      <td>144.0</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>0</td>
+      <td>14.0</td>
+      <td>0</td>
+      <td>0.8</td>
+      <td>127.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Gathering the event and duration information
+# for 5 test case samples
+##################################
+print(y_validation_array[[5, 10, 15, 20, 25]])
+```
+
+    [(False, 258) ( True,  65) (False,  90) (False,  79) ( True,  14)]
+    
+
+
+```python
+##################################
+# Gathering the risk-groups
+# for 5 test case samples
+##################################
+print(heart_failure_validation.loc[[5, 10, 15, 20, 25]][['Predicted_RiskGroups_CoxNS']])
+```
+
+       Predicted_RiskGroups_CoxNS
+    5                    Low-Risk
+    10                  High-Risk
+    15                  High-Risk
+    20                  High-Risk
+    25                  High-Risk
+    
+
+
+```python
+##################################
+# Estimating the cumulative hazard
+# and survival functions
+# for 5 validation cases
+##################################
+validation_case = X_validation.iloc[[5, 10, 15, 20, 25]]
+validation_case_labels = ['Patient_5','Patient_10','Patient_15','Patient_20','Patient_25',]
+validation_case_cumulative_hazard_function = optimal_coxns_model.predict_cumulative_hazard_function(validation_case)
+validation_case_survival_function = optimal_coxns_model.predict_survival_function(validation_case)
+
+fig, ax = plt.subplots(1,2,figsize=(17, 8))
+for hazard_prediction, survival_prediction in zip(validation_case_cumulative_hazard_function, validation_case_survival_function):
+    ax[0].step(hazard_prediction.x,hazard_prediction(hazard_prediction.x),where='post')
+    ax[1].step(survival_prediction.x,survival_prediction(survival_prediction.x),where='post')
+ax[0].set_title('COXNS Cumulative Hazard for 5 Validation Cases')
+ax[0].set_xlabel('TIME')
+ax[0].set_ylim(0,2)
+ax[0].set_ylabel('Cumulative Hazard')
+ax[0].legend(validation_case_labels, loc="upper left")
+ax[1].set_title('COXNS Survival Function for 5 Validation Cases')
+ax[1].set_xlabel('TIME')
+ax[1].set_ylabel('DEATH_EVENT Survival Probability')
+ax[1].legend(validation_case_labels, loc="lower left")
+plt.show()
+```
+
+
+    
+![png](output_185_0.png)
+    
+
+
+
+```python
+##################################
+# Saving the best Cox Proportional Hazards Regression Model
+# developed from the original training data
+################################## 
+joblib.dump(coxns_best_model_train_cv, 
+            os.path.join("..", MODELS_PATH, "coxns_best_model.pkl"))
+```
+
+
+
+
+    ['..\\models\\coxns_best_model.pkl']
+
+
+
 ### 1.6.6 Survival Tree Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.6"></a>
+
+
+```python
+##################################
+# Performing hyperparameter tuning
+# through K-fold cross-validation
+# using the Survival Tree Model
+##################################
+stree_grid_search.fit(X_train, y_train_array)
+```
+
+    Fitting 10 folds for each of 6 candidates, totalling 60 fits
+    
+
+
+
+
+<style>#sk-container-id-5 {
+  /* Definition of color scheme common for light and dark mode */
+  --sklearn-color-text: black;
+  --sklearn-color-line: gray;
+  /* Definition of color scheme for unfitted estimators */
+  --sklearn-color-unfitted-level-0: #fff5e6;
+  --sklearn-color-unfitted-level-1: #f6e4d2;
+  --sklearn-color-unfitted-level-2: #ffe0b3;
+  --sklearn-color-unfitted-level-3: chocolate;
+  /* Definition of color scheme for fitted estimators */
+  --sklearn-color-fitted-level-0: #f0f8ff;
+  --sklearn-color-fitted-level-1: #d4ebff;
+  --sklearn-color-fitted-level-2: #b3dbfd;
+  --sklearn-color-fitted-level-3: cornflowerblue;
+
+  /* Specific color for light theme */
+  --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, white)));
+  --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-icon: #696969;
+
+  @media (prefers-color-scheme: dark) {
+    /* Redefinition of color scheme for dark theme */
+    --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, #111)));
+    --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-icon: #878787;
+  }
+}
+
+#sk-container-id-5 {
+  color: var(--sklearn-color-text);
+}
+
+#sk-container-id-5 pre {
+  padding: 0;
+}
+
+#sk-container-id-5 input.sk-hidden--visually {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+#sk-container-id-5 div.sk-dashed-wrapped {
+  border: 1px dashed var(--sklearn-color-line);
+  margin: 0 0.4em 0.5em 0.4em;
+  box-sizing: border-box;
+  padding-bottom: 0.4em;
+  background-color: var(--sklearn-color-background);
+}
+
+#sk-container-id-5 div.sk-container {
+  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
+     but bootstrap.min.css set `[hidden] { display: none !important; }`
+     so we also need the `!important` here to be able to override the
+     default hidden behavior on the sphinx rendered scikit-learn.org.
+     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
+  display: inline-block !important;
+  position: relative;
+}
+
+#sk-container-id-5 div.sk-text-repr-fallback {
+  display: none;
+}
+
+div.sk-parallel-item,
+div.sk-serial,
+div.sk-item {
+  /* draw centered vertical line to link estimators */
+  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Parallel-specific style estimator block */
+
+#sk-container-id-5 div.sk-parallel-item::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
+  flex-grow: 1;
+}
+
+#sk-container-id-5 div.sk-parallel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--sklearn-color-background);
+  position: relative;
+}
+
+#sk-container-id-5 div.sk-parallel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#sk-container-id-5 div.sk-parallel-item:first-child::after {
+  align-self: flex-end;
+  width: 50%;
+}
+
+#sk-container-id-5 div.sk-parallel-item:last-child::after {
+  align-self: flex-start;
+  width: 50%;
+}
+
+#sk-container-id-5 div.sk-parallel-item:only-child::after {
+  width: 0;
+}
+
+/* Serial-specific style estimator block */
+
+#sk-container-id-5 div.sk-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sklearn-color-background);
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+
+/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
+clickable and can be expanded/collapsed.
+- Pipeline and ColumnTransformer use this feature and define the default style
+- Estimators will overwrite some part of the style using the `sk-estimator` class
+*/
+
+/* Pipeline and ColumnTransformer style (default) */
+
+#sk-container-id-5 div.sk-toggleable {
+  /* Default theme specific background. It is overwritten whether we have a
+  specific estimator or a Pipeline/ColumnTransformer */
+  background-color: var(--sklearn-color-background);
+}
+
+/* Toggleable label */
+#sk-container-id-5 label.sk-toggleable__label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#sk-container-id-5 label.sk-toggleable__label-arrow:before {
+  /* Arrow on the left of the label */
+  content: "▸";
+  float: left;
+  margin-right: 0.25em;
+  color: var(--sklearn-color-icon);
+}
+
+#sk-container-id-5 label.sk-toggleable__label-arrow:hover:before {
+  color: var(--sklearn-color-text);
+}
+
+/* Toggleable content - dropdown */
+
+#sk-container-id-5 div.sk-toggleable__content {
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  text-align: left;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-5 div.sk-toggleable__content.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-5 div.sk-toggleable__content pre {
+  margin: 0.2em;
+  border-radius: 0.25em;
+  color: var(--sklearn-color-text);
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-5 div.sk-toggleable__content.fitted pre {
+  /* unfitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-5 input.sk-toggleable__control:checked~div.sk-toggleable__content {
+  /* Expand drop-down */
+  max-height: 200px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+#sk-container-id-5 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
+  content: "▾";
+}
+
+/* Pipeline/ColumnTransformer-specific style */
+
+#sk-container-id-5 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-5 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator-specific style */
+
+/* Colorize estimator box */
+#sk-container-id-5 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-5 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+#sk-container-id-5 div.sk-label label.sk-toggleable__label,
+#sk-container-id-5 div.sk-label label {
+  /* The background is the default theme color */
+  color: var(--sklearn-color-text-on-default-background);
+}
+
+/* On hover, darken the color of the background */
+#sk-container-id-5 div.sk-label:hover label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+/* Label box, darken color on hover, fitted */
+#sk-container-id-5 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator label */
+
+#sk-container-id-5 div.sk-label label {
+  font-family: monospace;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 1.2em;
+}
+
+#sk-container-id-5 div.sk-label-container {
+  text-align: center;
+}
+
+/* Estimator-specific */
+#sk-container-id-5 div.sk-estimator {
+  font-family: monospace;
+  border: 1px dotted var(--sklearn-color-border-box);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  margin-bottom: 0.5em;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-5 div.sk-estimator.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+/* on hover */
+#sk-container-id-5 div.sk-estimator:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-5 div.sk-estimator.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Specification for estimator info (e.g. "i" and "?") */
+
+/* Common style for "i" and "?" */
+
+.sk-estimator-doc-link,
+a:link.sk-estimator-doc-link,
+a:visited.sk-estimator-doc-link {
+  float: right;
+  font-size: smaller;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  text-decoration: none !important;
+  margin-left: 1ex;
+  /* unfitted */
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-1);
+}
+
+.sk-estimator-doc-link.fitted,
+a:link.sk-estimator-doc-link.fitted,
+a:visited.sk-estimator-doc-link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+div.sk-estimator:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover,
+div.sk-label-container:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover,
+div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+/* Span, style for the box shown on hovering the info icon */
+.sk-estimator-doc-link span {
+  display: none;
+  z-index: 9999;
+  position: relative;
+  font-weight: normal;
+  right: .2ex;
+  padding: .5ex;
+  margin: .5ex;
+  width: min-content;
+  min-width: 20ex;
+  max-width: 50ex;
+  color: var(--sklearn-color-text);
+  box-shadow: 2pt 2pt 4pt #999;
+  /* unfitted */
+  background: var(--sklearn-color-unfitted-level-0);
+  border: .5pt solid var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted span {
+  /* fitted */
+  background: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3);
+}
+
+.sk-estimator-doc-link:hover span {
+  display: block;
+}
+
+/* "?"-specific style due to the `<a>` HTML tag */
+
+#sk-container-id-5 a.estimator_doc_link {
+  float: right;
+  font-size: 1rem;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1rem;
+  height: 1rem;
+  width: 1rem;
+  text-decoration: none;
+  /* unfitted */
+  color: var(--sklearn-color-unfitted-level-1);
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+}
+
+#sk-container-id-5 a.estimator_doc_link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+#sk-container-id-5 a.estimator_doc_link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+#sk-container-id-5 a.estimator_doc_link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+}
+</style><div id="sk-container-id-5" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                                       (&#x27;stree&#x27;, SurvivalTree())]),
+             n_jobs=-1,
+             param_grid={&#x27;stree__min_samples_leaf&#x27;: [3, 6],
+                         &#x27;stree__min_samples_split&#x27;: [10, 15, 20],
+                         &#x27;stree__random_state&#x27;: [88888888]},
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-15" type="checkbox" ><label for="sk-estimator-id-15" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                                       (&#x27;stree&#x27;, SurvivalTree())]),
+             n_jobs=-1,
+             param_grid={&#x27;stree__min_samples_leaf&#x27;: [3, 6],
+                         &#x27;stree__min_samples_split&#x27;: [10, 15, 20],
+                         &#x27;stree__random_state&#x27;: [88888888]},
+             verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-16" type="checkbox" ><label for="sk-estimator-id-16" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;stree&#x27;,
+                 SurvivalTree(min_samples_split=15, random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-17" type="checkbox" ><label for="sk-estimator-id-17" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-18" type="checkbox" ><label for="sk-estimator-id-18" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">SurvivalTree</label><div class="sk-toggleable__content fitted"><pre>SurvivalTree(min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
+
+
+
+
+```python
+##################################
+# Summarizing the hyperparameter tuning 
+# results from K-fold cross-validation
+##################################
+stree_grid_search_results = pd.DataFrame(stree_grid_search.cv_results_).sort_values(by='mean_test_score', ascending=False)
+stree_grid_search_results.loc[:, ~stree_grid_search_results.columns.str.endswith('_time')]
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>param_stree__min_samples_leaf</th>
+      <th>param_stree__min_samples_split</th>
+      <th>param_stree__random_state</th>
+      <th>params</th>
+      <th>split0_test_score</th>
+      <th>split1_test_score</th>
+      <th>split2_test_score</th>
+      <th>split3_test_score</th>
+      <th>split4_test_score</th>
+      <th>split5_test_score</th>
+      <th>split6_test_score</th>
+      <th>split7_test_score</th>
+      <th>split8_test_score</th>
+      <th>split9_test_score</th>
+      <th>mean_test_score</th>
+      <th>std_test_score</th>
+      <th>rank_test_score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>3</td>
+      <td>15</td>
+      <td>88888888</td>
+      <td>{'stree__min_samples_leaf': 3, 'stree__min_sam...</td>
+      <td>0.65000</td>
+      <td>0.63125</td>
+      <td>0.611111</td>
+      <td>0.716216</td>
+      <td>0.734375</td>
+      <td>0.671642</td>
+      <td>0.900000</td>
+      <td>0.623377</td>
+      <td>0.358974</td>
+      <td>0.714286</td>
+      <td>0.661123</td>
+      <td>0.128311</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>20</td>
+      <td>88888888</td>
+      <td>{'stree__min_samples_leaf': 3, 'stree__min_sam...</td>
+      <td>0.70000</td>
+      <td>0.55625</td>
+      <td>0.703704</td>
+      <td>0.648649</td>
+      <td>0.765625</td>
+      <td>0.679104</td>
+      <td>0.811111</td>
+      <td>0.551948</td>
+      <td>0.294872</td>
+      <td>0.714286</td>
+      <td>0.642555</td>
+      <td>0.139161</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>6</td>
+      <td>20</td>
+      <td>88888888</td>
+      <td>{'stree__min_samples_leaf': 6, 'stree__min_sam...</td>
+      <td>0.68125</td>
+      <td>0.56875</td>
+      <td>0.765432</td>
+      <td>0.628378</td>
+      <td>0.703125</td>
+      <td>0.679104</td>
+      <td>0.766667</td>
+      <td>0.623377</td>
+      <td>0.294872</td>
+      <td>0.714286</td>
+      <td>0.642524</td>
+      <td>0.130019</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>6</td>
+      <td>15</td>
+      <td>88888888</td>
+      <td>{'stree__min_samples_leaf': 6, 'stree__min_sam...</td>
+      <td>0.65000</td>
+      <td>0.56875</td>
+      <td>0.765432</td>
+      <td>0.594595</td>
+      <td>0.671875</td>
+      <td>0.671642</td>
+      <td>0.766667</td>
+      <td>0.649351</td>
+      <td>0.333333</td>
+      <td>0.714286</td>
+      <td>0.638593</td>
+      <td>0.118602</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>3</td>
+      <td>10</td>
+      <td>88888888</td>
+      <td>{'stree__min_samples_leaf': 3, 'stree__min_sam...</td>
+      <td>0.66250</td>
+      <td>0.56250</td>
+      <td>0.722222</td>
+      <td>0.655405</td>
+      <td>0.796875</td>
+      <td>0.701493</td>
+      <td>0.833333</td>
+      <td>0.636364</td>
+      <td>0.435897</td>
+      <td>0.285714</td>
+      <td>0.629230</td>
+      <td>0.156623</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>6</td>
+      <td>10</td>
+      <td>88888888</td>
+      <td>{'stree__min_samples_leaf': 6, 'stree__min_sam...</td>
+      <td>0.65000</td>
+      <td>0.56875</td>
+      <td>0.765432</td>
+      <td>0.594595</td>
+      <td>0.671875</td>
+      <td>0.671642</td>
+      <td>0.822222</td>
+      <td>0.623377</td>
+      <td>0.371795</td>
+      <td>0.500000</td>
+      <td>0.623969</td>
+      <td>0.121422</td>
+      <td>6</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Identifying the best model
+##################################
+stree_best_model_train_cv = stree_grid_search.best_estimator_
+print('Best Survival Tree Model using the Cross-Validated Train Data: ')
+print(f"Best Model Parameters: {stree_grid_search.best_params_}")
+```
+
+    Best Survival Tree Model using the Cross-Validated Train Data: 
+    Best Model Parameters: {'stree__min_samples_leaf': 3, 'stree__min_samples_split': 15, 'stree__random_state': 88888888}
+    
+
+
+```python
+##################################
+# Obtaining the cross-validation model performance of the 
+# optimal Survival Tree Model
+# on the train set
+##################################
+optimal_stree_heart_failure_y_crossvalidation_ci = stree_grid_search.best_score_
+print(f"Cross-Validation Concordance Index: {optimal_stree_heart_failure_y_crossvalidation_ci}")
+```
+
+    Cross-Validation Concordance Index: 0.66112308150088
+    
+
+
+```python
+##################################
+# Formulating a Survival Tree Model
+# with optimal hyperparameters
+##################################
+optimal_stree_model = stree_grid_search.best_estimator_
+optimal_stree_model.fit(X_train, y_train_array)
+```
+
+
+
+
+<style>#sk-container-id-6 {
+  /* Definition of color scheme common for light and dark mode */
+  --sklearn-color-text: black;
+  --sklearn-color-line: gray;
+  /* Definition of color scheme for unfitted estimators */
+  --sklearn-color-unfitted-level-0: #fff5e6;
+  --sklearn-color-unfitted-level-1: #f6e4d2;
+  --sklearn-color-unfitted-level-2: #ffe0b3;
+  --sklearn-color-unfitted-level-3: chocolate;
+  /* Definition of color scheme for fitted estimators */
+  --sklearn-color-fitted-level-0: #f0f8ff;
+  --sklearn-color-fitted-level-1: #d4ebff;
+  --sklearn-color-fitted-level-2: #b3dbfd;
+  --sklearn-color-fitted-level-3: cornflowerblue;
+
+  /* Specific color for light theme */
+  --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, white)));
+  --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-icon: #696969;
+
+  @media (prefers-color-scheme: dark) {
+    /* Redefinition of color scheme for dark theme */
+    --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, #111)));
+    --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-icon: #878787;
+  }
+}
+
+#sk-container-id-6 {
+  color: var(--sklearn-color-text);
+}
+
+#sk-container-id-6 pre {
+  padding: 0;
+}
+
+#sk-container-id-6 input.sk-hidden--visually {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+#sk-container-id-6 div.sk-dashed-wrapped {
+  border: 1px dashed var(--sklearn-color-line);
+  margin: 0 0.4em 0.5em 0.4em;
+  box-sizing: border-box;
+  padding-bottom: 0.4em;
+  background-color: var(--sklearn-color-background);
+}
+
+#sk-container-id-6 div.sk-container {
+  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
+     but bootstrap.min.css set `[hidden] { display: none !important; }`
+     so we also need the `!important` here to be able to override the
+     default hidden behavior on the sphinx rendered scikit-learn.org.
+     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
+  display: inline-block !important;
+  position: relative;
+}
+
+#sk-container-id-6 div.sk-text-repr-fallback {
+  display: none;
+}
+
+div.sk-parallel-item,
+div.sk-serial,
+div.sk-item {
+  /* draw centered vertical line to link estimators */
+  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Parallel-specific style estimator block */
+
+#sk-container-id-6 div.sk-parallel-item::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
+  flex-grow: 1;
+}
+
+#sk-container-id-6 div.sk-parallel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--sklearn-color-background);
+  position: relative;
+}
+
+#sk-container-id-6 div.sk-parallel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#sk-container-id-6 div.sk-parallel-item:first-child::after {
+  align-self: flex-end;
+  width: 50%;
+}
+
+#sk-container-id-6 div.sk-parallel-item:last-child::after {
+  align-self: flex-start;
+  width: 50%;
+}
+
+#sk-container-id-6 div.sk-parallel-item:only-child::after {
+  width: 0;
+}
+
+/* Serial-specific style estimator block */
+
+#sk-container-id-6 div.sk-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sklearn-color-background);
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+
+/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
+clickable and can be expanded/collapsed.
+- Pipeline and ColumnTransformer use this feature and define the default style
+- Estimators will overwrite some part of the style using the `sk-estimator` class
+*/
+
+/* Pipeline and ColumnTransformer style (default) */
+
+#sk-container-id-6 div.sk-toggleable {
+  /* Default theme specific background. It is overwritten whether we have a
+  specific estimator or a Pipeline/ColumnTransformer */
+  background-color: var(--sklearn-color-background);
+}
+
+/* Toggleable label */
+#sk-container-id-6 label.sk-toggleable__label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#sk-container-id-6 label.sk-toggleable__label-arrow:before {
+  /* Arrow on the left of the label */
+  content: "▸";
+  float: left;
+  margin-right: 0.25em;
+  color: var(--sklearn-color-icon);
+}
+
+#sk-container-id-6 label.sk-toggleable__label-arrow:hover:before {
+  color: var(--sklearn-color-text);
+}
+
+/* Toggleable content - dropdown */
+
+#sk-container-id-6 div.sk-toggleable__content {
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  text-align: left;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-6 div.sk-toggleable__content.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-6 div.sk-toggleable__content pre {
+  margin: 0.2em;
+  border-radius: 0.25em;
+  color: var(--sklearn-color-text);
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-6 div.sk-toggleable__content.fitted pre {
+  /* unfitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-6 input.sk-toggleable__control:checked~div.sk-toggleable__content {
+  /* Expand drop-down */
+  max-height: 200px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+#sk-container-id-6 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
+  content: "▾";
+}
+
+/* Pipeline/ColumnTransformer-specific style */
+
+#sk-container-id-6 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-6 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator-specific style */
+
+/* Colorize estimator box */
+#sk-container-id-6 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-6 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+#sk-container-id-6 div.sk-label label.sk-toggleable__label,
+#sk-container-id-6 div.sk-label label {
+  /* The background is the default theme color */
+  color: var(--sklearn-color-text-on-default-background);
+}
+
+/* On hover, darken the color of the background */
+#sk-container-id-6 div.sk-label:hover label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+/* Label box, darken color on hover, fitted */
+#sk-container-id-6 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator label */
+
+#sk-container-id-6 div.sk-label label {
+  font-family: monospace;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 1.2em;
+}
+
+#sk-container-id-6 div.sk-label-container {
+  text-align: center;
+}
+
+/* Estimator-specific */
+#sk-container-id-6 div.sk-estimator {
+  font-family: monospace;
+  border: 1px dotted var(--sklearn-color-border-box);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  margin-bottom: 0.5em;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-6 div.sk-estimator.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+/* on hover */
+#sk-container-id-6 div.sk-estimator:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-6 div.sk-estimator.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Specification for estimator info (e.g. "i" and "?") */
+
+/* Common style for "i" and "?" */
+
+.sk-estimator-doc-link,
+a:link.sk-estimator-doc-link,
+a:visited.sk-estimator-doc-link {
+  float: right;
+  font-size: smaller;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  text-decoration: none !important;
+  margin-left: 1ex;
+  /* unfitted */
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-1);
+}
+
+.sk-estimator-doc-link.fitted,
+a:link.sk-estimator-doc-link.fitted,
+a:visited.sk-estimator-doc-link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+div.sk-estimator:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover,
+div.sk-label-container:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover,
+div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+/* Span, style for the box shown on hovering the info icon */
+.sk-estimator-doc-link span {
+  display: none;
+  z-index: 9999;
+  position: relative;
+  font-weight: normal;
+  right: .2ex;
+  padding: .5ex;
+  margin: .5ex;
+  width: min-content;
+  min-width: 20ex;
+  max-width: 50ex;
+  color: var(--sklearn-color-text);
+  box-shadow: 2pt 2pt 4pt #999;
+  /* unfitted */
+  background: var(--sklearn-color-unfitted-level-0);
+  border: .5pt solid var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted span {
+  /* fitted */
+  background: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3);
+}
+
+.sk-estimator-doc-link:hover span {
+  display: block;
+}
+
+/* "?"-specific style due to the `<a>` HTML tag */
+
+#sk-container-id-6 a.estimator_doc_link {
+  float: right;
+  font-size: 1rem;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1rem;
+  height: 1rem;
+  width: 1rem;
+  text-decoration: none;
+  /* unfitted */
+  color: var(--sklearn-color-unfitted-level-1);
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+}
+
+#sk-container-id-6 a.estimator_doc_link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+#sk-container-id-6 a.estimator_doc_link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+#sk-container-id-6 a.estimator_doc_link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+}
+</style><div id="sk-container-id-6" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;stree&#x27;,
+                 SurvivalTree(min_samples_split=15, random_state=88888888))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-19" type="checkbox" ><label for="sk-estimator-id-19" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;stree&#x27;,
+                 SurvivalTree(min_samples_split=15, random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-20" type="checkbox" ><label for="sk-estimator-id-20" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-21" type="checkbox" ><label for="sk-estimator-id-21" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">SurvivalTree</label><div class="sk-toggleable__content fitted"><pre>SurvivalTree(min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div>
+
+
+
+
+```python
+##################################
+# Measuring model performance of the 
+# optimal Survival Tree Model
+# on the train set
+##################################
+optimal_stree_heart_failure_y_train_pred = optimal_stree_model.predict(X_train)
+optimal_stree_heart_failure_y_train_ci = concordance_index_censored(y_train_array['DEATH_EVENT'], 
+                                                                    y_train_array['TIME'], 
+                                                                    optimal_stree_heart_failure_y_train_pred)[0]
+print(f"Apparent Concordance Index: {optimal_stree_heart_failure_y_train_ci}")
+```
+
+    Apparent Concordance Index: 0.8412065113309927
+    
+
+
+```python
+##################################
+# Measuring model performance of the 
+# optimal Survival Tree Model
+# on the validation set
+##################################
+optimal_stree_heart_failure_y_validation_pred = optimal_stree_model.predict(X_validation)
+optimal_stree_heart_failure_y_validation_ci = concordance_index_censored(y_validation_array['DEATH_EVENT'], 
+                                                                         y_validation_array['TIME'], 
+                                                                         optimal_stree_heart_failure_y_validation_pred)[0]
+print(f"Validation Concordance Index: {optimal_stree_heart_failure_y_validation_ci}")
+```
+
+    Validation Concordance Index: 0.6336971350613916
+    
+
+
+```python
+##################################
+# Gathering the concordance indices
+# from the train and tests sets for 
+# Survival Tree Model
+##################################
+stree_set = pd.DataFrame(["Train","Cross-Validation","Validation"])
+stree_ci_values = pd.DataFrame([optimal_stree_heart_failure_y_train_ci,
+                                optimal_stree_heart_failure_y_crossvalidation_ci,
+                                optimal_stree_heart_failure_y_validation_ci])
+stree_method = pd.DataFrame(["STREE"]*3)
+stree_summary = pd.concat([stree_set, 
+                           stree_ci_values,
+                           stree_method], axis=1)
+stree_summary.columns = ['Set', 'Concordance.Index', 'Method']
+stree_summary.reset_index(inplace=True, drop=True)
+display(stree_summary)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Set</th>
+      <th>Concordance.Index</th>
+      <th>Method</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Train</td>
+      <td>0.841207</td>
+      <td>STREE</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Cross-Validation</td>
+      <td>0.661123</td>
+      <td>STREE</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Validation</td>
+      <td>0.633697</td>
+      <td>STREE</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Binning the predicted risks
+# into dichotomous groups and
+# exploring the relationships with
+# survival event and duration
+##################################
+heart_failure_validation.reset_index(drop=True, inplace=True)
+kmf = KaplanMeierFitter()
+heart_failure_validation['Predicted_Risks_STree'] = optimal_stree_heart_failure_y_validation_pred
+heart_failure_validation['Predicted_RiskGroups_STree'] = risk_groups = pd.qcut(heart_failure_validation['Predicted_Risks_STree'], 2, labels=['Low-Risk', 'High-Risk'])
+
+plt.figure(figsize=(17, 8))
+for group in risk_groups.unique():
+    group_data = heart_failure_validation[risk_groups == group]
+    kmf.fit(group_data['TIME'], event_observed=group_data['DEATH_EVENT'], label=group)
+    kmf.plot_survival_function()
+
+plt.title('STREE Survival Probabilities by Predicted Risk Groups on Validation Set')
+plt.xlabel('TIME')
+plt.ylabel('DEATH_EVENT Survival Probability')
+plt.show()
+```
+
+
+    
+![png](output_196_0.png)
+    
+
+
+
+```python
+##################################
+# Gathering the predictor information
+# for 5 test case samples
+##################################
+validation_case_details = X_validation.iloc[[5, 10, 15, 20, 25]]
+display(validation_case_details)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ANAEMIA</th>
+      <th>EJECTION_FRACTION</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>291</th>
+      <td>0</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>1.4</td>
+      <td>139.0</td>
+    </tr>
+    <tr>
+      <th>66</th>
+      <td>1</td>
+      <td>15.0</td>
+      <td>0</td>
+      <td>1.3</td>
+      <td>136.0</td>
+    </tr>
+    <tr>
+      <th>112</th>
+      <td>0</td>
+      <td>25.0</td>
+      <td>0</td>
+      <td>1.6</td>
+      <td>136.0</td>
+    </tr>
+    <tr>
+      <th>89</th>
+      <td>1</td>
+      <td>25.0</td>
+      <td>1</td>
+      <td>1.1</td>
+      <td>144.0</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>0</td>
+      <td>14.0</td>
+      <td>0</td>
+      <td>0.8</td>
+      <td>127.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Gathering the event and duration information
+# for 5 test case samples
+##################################
+print(y_validation_array[[5, 10, 15, 20, 25]])
+```
+
+    [(False, 258) ( True,  65) (False,  90) (False,  79) ( True,  14)]
+    
+
+
+```python
+##################################
+# Gathering the risk-groups
+# for 5 test case samples
+##################################
+print(heart_failure_validation.loc[[5, 10, 15, 20, 25]][['Predicted_RiskGroups_STree']])
+```
+
+       Predicted_RiskGroups_STree
+    5                    Low-Risk
+    10                  High-Risk
+    15                   Low-Risk
+    20                  High-Risk
+    25                  High-Risk
+    
+
+
+```python
+##################################
+# Estimating the cumulative hazard
+# and survival functions
+# for 5 validation cases
+##################################
+validation_case = X_validation.iloc[[5, 10, 15, 20, 25]]
+validation_case_labels = ['Patient_5','Patient_10','Patient_15','Patient_20','Patient_25',]
+validation_case_cumulative_hazard_function = optimal_stree_model.predict_cumulative_hazard_function(validation_case)
+validation_case_survival_function = optimal_stree_model.predict_survival_function(validation_case)
+
+fig, ax = plt.subplots(1,2,figsize=(17, 8))
+for hazard_prediction, survival_prediction in zip(validation_case_cumulative_hazard_function, validation_case_survival_function):
+    ax[0].step(hazard_prediction.x,hazard_prediction(hazard_prediction.x),where='post')
+    ax[1].step(survival_prediction.x,survival_prediction(survival_prediction.x),where='post')
+ax[0].set_title('STREE Cumulative Hazard for 5 Validation Cases')
+ax[0].set_xlabel('TIME')
+ax[0].set_ylim(0,2)
+ax[0].set_ylabel('Cumulative Hazard')
+ax[0].legend(validation_case_labels, loc="upper left")
+ax[1].set_title('STREE Survival Function for 5 Validation Cases')
+ax[1].set_xlabel('TIME')
+ax[1].set_ylabel('DEATH_EVENT Survival Probability')
+ax[1].legend(validation_case_labels, loc="lower left")
+plt.show()
+```
+
+
+    
+![png](output_200_0.png)
+    
+
+
+
+```python
+##################################
+# Saving the best Survival Tree Model
+# developed from the original training data
+################################## 
+joblib.dump(stree_best_model_train_cv, 
+            os.path.join("..", MODELS_PATH, "stree_best_model.pkl"))
+```
+
+
+
+
+    ['..\\models\\stree_best_model.pkl']
+
+
 
 ### 1.6.7 Random Survival Forest Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.7"></a>
 
+
+```python
+##################################
+# Performing hyperparameter tuning
+# through K-fold cross-validation
+# using the Random Survival Forest Model
+##################################
+rsf_grid_search.fit(X_train, y_train_array)
+```
+
+    Fitting 10 folds for each of 9 candidates, totalling 90 fits
+    
+
+
+
+
+<style>#sk-container-id-7 {
+  /* Definition of color scheme common for light and dark mode */
+  --sklearn-color-text: black;
+  --sklearn-color-line: gray;
+  /* Definition of color scheme for unfitted estimators */
+  --sklearn-color-unfitted-level-0: #fff5e6;
+  --sklearn-color-unfitted-level-1: #f6e4d2;
+  --sklearn-color-unfitted-level-2: #ffe0b3;
+  --sklearn-color-unfitted-level-3: chocolate;
+  /* Definition of color scheme for fitted estimators */
+  --sklearn-color-fitted-level-0: #f0f8ff;
+  --sklearn-color-fitted-level-1: #d4ebff;
+  --sklearn-color-fitted-level-2: #b3dbfd;
+  --sklearn-color-fitted-level-3: cornflowerblue;
+
+  /* Specific color for light theme */
+  --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, white)));
+  --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-icon: #696969;
+
+  @media (prefers-color-scheme: dark) {
+    /* Redefinition of color scheme for dark theme */
+    --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, #111)));
+    --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-icon: #878787;
+  }
+}
+
+#sk-container-id-7 {
+  color: var(--sklearn-color-text);
+}
+
+#sk-container-id-7 pre {
+  padding: 0;
+}
+
+#sk-container-id-7 input.sk-hidden--visually {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+#sk-container-id-7 div.sk-dashed-wrapped {
+  border: 1px dashed var(--sklearn-color-line);
+  margin: 0 0.4em 0.5em 0.4em;
+  box-sizing: border-box;
+  padding-bottom: 0.4em;
+  background-color: var(--sklearn-color-background);
+}
+
+#sk-container-id-7 div.sk-container {
+  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
+     but bootstrap.min.css set `[hidden] { display: none !important; }`
+     so we also need the `!important` here to be able to override the
+     default hidden behavior on the sphinx rendered scikit-learn.org.
+     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
+  display: inline-block !important;
+  position: relative;
+}
+
+#sk-container-id-7 div.sk-text-repr-fallback {
+  display: none;
+}
+
+div.sk-parallel-item,
+div.sk-serial,
+div.sk-item {
+  /* draw centered vertical line to link estimators */
+  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Parallel-specific style estimator block */
+
+#sk-container-id-7 div.sk-parallel-item::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
+  flex-grow: 1;
+}
+
+#sk-container-id-7 div.sk-parallel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--sklearn-color-background);
+  position: relative;
+}
+
+#sk-container-id-7 div.sk-parallel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#sk-container-id-7 div.sk-parallel-item:first-child::after {
+  align-self: flex-end;
+  width: 50%;
+}
+
+#sk-container-id-7 div.sk-parallel-item:last-child::after {
+  align-self: flex-start;
+  width: 50%;
+}
+
+#sk-container-id-7 div.sk-parallel-item:only-child::after {
+  width: 0;
+}
+
+/* Serial-specific style estimator block */
+
+#sk-container-id-7 div.sk-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sklearn-color-background);
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+
+/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
+clickable and can be expanded/collapsed.
+- Pipeline and ColumnTransformer use this feature and define the default style
+- Estimators will overwrite some part of the style using the `sk-estimator` class
+*/
+
+/* Pipeline and ColumnTransformer style (default) */
+
+#sk-container-id-7 div.sk-toggleable {
+  /* Default theme specific background. It is overwritten whether we have a
+  specific estimator or a Pipeline/ColumnTransformer */
+  background-color: var(--sklearn-color-background);
+}
+
+/* Toggleable label */
+#sk-container-id-7 label.sk-toggleable__label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#sk-container-id-7 label.sk-toggleable__label-arrow:before {
+  /* Arrow on the left of the label */
+  content: "▸";
+  float: left;
+  margin-right: 0.25em;
+  color: var(--sklearn-color-icon);
+}
+
+#sk-container-id-7 label.sk-toggleable__label-arrow:hover:before {
+  color: var(--sklearn-color-text);
+}
+
+/* Toggleable content - dropdown */
+
+#sk-container-id-7 div.sk-toggleable__content {
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  text-align: left;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-7 div.sk-toggleable__content.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-7 div.sk-toggleable__content pre {
+  margin: 0.2em;
+  border-radius: 0.25em;
+  color: var(--sklearn-color-text);
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-7 div.sk-toggleable__content.fitted pre {
+  /* unfitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-7 input.sk-toggleable__control:checked~div.sk-toggleable__content {
+  /* Expand drop-down */
+  max-height: 200px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+#sk-container-id-7 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
+  content: "▾";
+}
+
+/* Pipeline/ColumnTransformer-specific style */
+
+#sk-container-id-7 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-7 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator-specific style */
+
+/* Colorize estimator box */
+#sk-container-id-7 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-7 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+#sk-container-id-7 div.sk-label label.sk-toggleable__label,
+#sk-container-id-7 div.sk-label label {
+  /* The background is the default theme color */
+  color: var(--sklearn-color-text-on-default-background);
+}
+
+/* On hover, darken the color of the background */
+#sk-container-id-7 div.sk-label:hover label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+/* Label box, darken color on hover, fitted */
+#sk-container-id-7 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator label */
+
+#sk-container-id-7 div.sk-label label {
+  font-family: monospace;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 1.2em;
+}
+
+#sk-container-id-7 div.sk-label-container {
+  text-align: center;
+}
+
+/* Estimator-specific */
+#sk-container-id-7 div.sk-estimator {
+  font-family: monospace;
+  border: 1px dotted var(--sklearn-color-border-box);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  margin-bottom: 0.5em;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-7 div.sk-estimator.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+/* on hover */
+#sk-container-id-7 div.sk-estimator:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-7 div.sk-estimator.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Specification for estimator info (e.g. "i" and "?") */
+
+/* Common style for "i" and "?" */
+
+.sk-estimator-doc-link,
+a:link.sk-estimator-doc-link,
+a:visited.sk-estimator-doc-link {
+  float: right;
+  font-size: smaller;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  text-decoration: none !important;
+  margin-left: 1ex;
+  /* unfitted */
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-1);
+}
+
+.sk-estimator-doc-link.fitted,
+a:link.sk-estimator-doc-link.fitted,
+a:visited.sk-estimator-doc-link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+div.sk-estimator:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover,
+div.sk-label-container:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover,
+div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+/* Span, style for the box shown on hovering the info icon */
+.sk-estimator-doc-link span {
+  display: none;
+  z-index: 9999;
+  position: relative;
+  font-weight: normal;
+  right: .2ex;
+  padding: .5ex;
+  margin: .5ex;
+  width: min-content;
+  min-width: 20ex;
+  max-width: 50ex;
+  color: var(--sklearn-color-text);
+  box-shadow: 2pt 2pt 4pt #999;
+  /* unfitted */
+  background: var(--sklearn-color-unfitted-level-0);
+  border: .5pt solid var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted span {
+  /* fitted */
+  background: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3);
+}
+
+.sk-estimator-doc-link:hover span {
+  display: block;
+}
+
+/* "?"-specific style due to the `<a>` HTML tag */
+
+#sk-container-id-7 a.estimator_doc_link {
+  float: right;
+  font-size: 1rem;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1rem;
+  height: 1rem;
+  width: 1rem;
+  text-decoration: none;
+  /* unfitted */
+  color: var(--sklearn-color-unfitted-level-1);
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+}
+
+#sk-container-id-7 a.estimator_doc_link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+#sk-container-id-7 a.estimator_doc_link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+#sk-container-id-7 a.estimator_doc_link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+}
+</style><div id="sk-container-id-7" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                                       (&#x27;rsf&#x27;, RandomSurvivalForest())]),
+             n_jobs=-1,
+             param_grid={&#x27;rsf__min_samples_split&#x27;: [10, 15, 20],
+                         &#x27;rsf__n_estimators&#x27;: [100, 200, 300],
+                         &#x27;rsf__random_state&#x27;: [88888888]},
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-22" type="checkbox" ><label for="sk-estimator-id-22" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                                       (&#x27;rsf&#x27;, RandomSurvivalForest())]),
+             n_jobs=-1,
+             param_grid={&#x27;rsf__min_samples_split&#x27;: [10, 15, 20],
+                         &#x27;rsf__n_estimators&#x27;: [100, 200, 300],
+                         &#x27;rsf__random_state&#x27;: [88888888]},
+             verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-23" type="checkbox" ><label for="sk-estimator-id-23" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;rsf&#x27;,
+                 RandomSurvivalForest(min_samples_split=10,
+                                      random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-24" type="checkbox" ><label for="sk-estimator-id-24" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-25" type="checkbox" ><label for="sk-estimator-id-25" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">RandomSurvivalForest</label><div class="sk-toggleable__content fitted"><pre>RandomSurvivalForest(min_samples_split=10, random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
+
+
+
+
+```python
+##################################
+# Summarizing the hyperparameter tuning 
+# results from K-fold cross-validation
+##################################
+rsf_grid_search_results = pd.DataFrame(rsf_grid_search.cv_results_).sort_values(by='mean_test_score', ascending=False)
+rsf_grid_search_results.loc[:, ~rsf_grid_search_results.columns.str.endswith('_time')]
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>param_rsf__min_samples_split</th>
+      <th>param_rsf__n_estimators</th>
+      <th>param_rsf__random_state</th>
+      <th>params</th>
+      <th>split0_test_score</th>
+      <th>split1_test_score</th>
+      <th>split2_test_score</th>
+      <th>split3_test_score</th>
+      <th>split4_test_score</th>
+      <th>split5_test_score</th>
+      <th>split6_test_score</th>
+      <th>split7_test_score</th>
+      <th>split8_test_score</th>
+      <th>split9_test_score</th>
+      <th>mean_test_score</th>
+      <th>std_test_score</th>
+      <th>rank_test_score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>10</td>
+      <td>100</td>
+      <td>88888888</td>
+      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
+      <td>0.8875</td>
+      <td>0.6250</td>
+      <td>0.728395</td>
+      <td>0.608108</td>
+      <td>0.75000</td>
+      <td>0.761194</td>
+      <td>0.977778</td>
+      <td>0.727273</td>
+      <td>0.410256</td>
+      <td>0.857143</td>
+      <td>0.733265</td>
+      <td>0.152237</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>10</td>
+      <td>200</td>
+      <td>88888888</td>
+      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
+      <td>0.9000</td>
+      <td>0.6000</td>
+      <td>0.728395</td>
+      <td>0.608108</td>
+      <td>0.71875</td>
+      <td>0.776119</td>
+      <td>0.977778</td>
+      <td>0.727273</td>
+      <td>0.410256</td>
+      <td>0.857143</td>
+      <td>0.730382</td>
+      <td>0.155793</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>10</td>
+      <td>300</td>
+      <td>88888888</td>
+      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
+      <td>0.8875</td>
+      <td>0.6000</td>
+      <td>0.728395</td>
+      <td>0.608108</td>
+      <td>0.68750</td>
+      <td>0.791045</td>
+      <td>0.977778</td>
+      <td>0.727273</td>
+      <td>0.410256</td>
+      <td>0.857143</td>
+      <td>0.727500</td>
+      <td>0.155512</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>20</td>
+      <td>100</td>
+      <td>88888888</td>
+      <td>{'rsf__min_samples_split': 20, 'rsf__n_estimat...</td>
+      <td>0.8375</td>
+      <td>0.6000</td>
+      <td>0.740741</td>
+      <td>0.594595</td>
+      <td>0.65625</td>
+      <td>0.761194</td>
+      <td>0.977778</td>
+      <td>0.753247</td>
+      <td>0.435897</td>
+      <td>0.857143</td>
+      <td>0.721434</td>
+      <td>0.147370</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>15</td>
+      <td>200</td>
+      <td>88888888</td>
+      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
+      <td>0.8750</td>
+      <td>0.6000</td>
+      <td>0.728395</td>
+      <td>0.608108</td>
+      <td>0.59375</td>
+      <td>0.776119</td>
+      <td>0.977778</td>
+      <td>0.753247</td>
+      <td>0.435897</td>
+      <td>0.857143</td>
+      <td>0.720544</td>
+      <td>0.154006</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>20</td>
+      <td>200</td>
+      <td>88888888</td>
+      <td>{'rsf__min_samples_split': 20, 'rsf__n_estimat...</td>
+      <td>0.8375</td>
+      <td>0.6125</td>
+      <td>0.740741</td>
+      <td>0.608108</td>
+      <td>0.59375</td>
+      <td>0.776119</td>
+      <td>0.977778</td>
+      <td>0.753247</td>
+      <td>0.435897</td>
+      <td>0.857143</td>
+      <td>0.719278</td>
+      <td>0.149824</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>15</td>
+      <td>300</td>
+      <td>88888888</td>
+      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
+      <td>0.8750</td>
+      <td>0.6125</td>
+      <td>0.728395</td>
+      <td>0.594595</td>
+      <td>0.59375</td>
+      <td>0.761194</td>
+      <td>0.977778</td>
+      <td>0.753247</td>
+      <td>0.435897</td>
+      <td>0.857143</td>
+      <td>0.718950</td>
+      <td>0.153649</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>15</td>
+      <td>100</td>
+      <td>88888888</td>
+      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
+      <td>0.8500</td>
+      <td>0.6000</td>
+      <td>0.728395</td>
+      <td>0.567568</td>
+      <td>0.65625</td>
+      <td>0.761194</td>
+      <td>0.977778</td>
+      <td>0.740260</td>
+      <td>0.435897</td>
+      <td>0.857143</td>
+      <td>0.717448</td>
+      <td>0.150560</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>20</td>
+      <td>300</td>
+      <td>88888888</td>
+      <td>{'rsf__min_samples_split': 20, 'rsf__n_estimat...</td>
+      <td>0.8375</td>
+      <td>0.6125</td>
+      <td>0.728395</td>
+      <td>0.594595</td>
+      <td>0.59375</td>
+      <td>0.776119</td>
+      <td>0.977778</td>
+      <td>0.753247</td>
+      <td>0.435897</td>
+      <td>0.857143</td>
+      <td>0.716692</td>
+      <td>0.150737</td>
+      <td>9</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Identifying the best model
+##################################
+rsf_best_model_train_cv = rsf_grid_search.best_estimator_
+print('Best Random Survival Forest Model using the Cross-Validated Train Data: ')
+print(f"Best Model Parameters: {rsf_grid_search.best_params_}")
+```
+
+    Best Random Survival Forest Model using the Cross-Validated Train Data: 
+    Best Model Parameters: {'rsf__min_samples_split': 10, 'rsf__n_estimators': 100, 'rsf__random_state': 88888888}
+    
+
+
+```python
+##################################
+# Obtaining the cross-validation model performance of the 
+# optimal Random Survival Forest Model
+# on the train set
+##################################
+optimal_rsf_heart_failure_y_crossvalidation_ci = rsf_grid_search.best_score_
+print(f"Cross-Validation Concordance Index: {optimal_rsf_heart_failure_y_crossvalidation_ci}")
+```
+
+    Cross-Validation Concordance Index: 0.7332646972137021
+    
+
+
+```python
+##################################
+# Formulating a Random Survival Forest Model
+# with optimal hyperparameters
+##################################
+optimal_rsf_model = rsf_grid_search.best_estimator_
+optimal_rsf_model.fit(X_train, y_train_array)
+```
+
+
+
+
+<style>#sk-container-id-8 {
+  /* Definition of color scheme common for light and dark mode */
+  --sklearn-color-text: black;
+  --sklearn-color-line: gray;
+  /* Definition of color scheme for unfitted estimators */
+  --sklearn-color-unfitted-level-0: #fff5e6;
+  --sklearn-color-unfitted-level-1: #f6e4d2;
+  --sklearn-color-unfitted-level-2: #ffe0b3;
+  --sklearn-color-unfitted-level-3: chocolate;
+  /* Definition of color scheme for fitted estimators */
+  --sklearn-color-fitted-level-0: #f0f8ff;
+  --sklearn-color-fitted-level-1: #d4ebff;
+  --sklearn-color-fitted-level-2: #b3dbfd;
+  --sklearn-color-fitted-level-3: cornflowerblue;
+
+  /* Specific color for light theme */
+  --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, white)));
+  --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-icon: #696969;
+
+  @media (prefers-color-scheme: dark) {
+    /* Redefinition of color scheme for dark theme */
+    --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, #111)));
+    --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-icon: #878787;
+  }
+}
+
+#sk-container-id-8 {
+  color: var(--sklearn-color-text);
+}
+
+#sk-container-id-8 pre {
+  padding: 0;
+}
+
+#sk-container-id-8 input.sk-hidden--visually {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+#sk-container-id-8 div.sk-dashed-wrapped {
+  border: 1px dashed var(--sklearn-color-line);
+  margin: 0 0.4em 0.5em 0.4em;
+  box-sizing: border-box;
+  padding-bottom: 0.4em;
+  background-color: var(--sklearn-color-background);
+}
+
+#sk-container-id-8 div.sk-container {
+  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
+     but bootstrap.min.css set `[hidden] { display: none !important; }`
+     so we also need the `!important` here to be able to override the
+     default hidden behavior on the sphinx rendered scikit-learn.org.
+     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
+  display: inline-block !important;
+  position: relative;
+}
+
+#sk-container-id-8 div.sk-text-repr-fallback {
+  display: none;
+}
+
+div.sk-parallel-item,
+div.sk-serial,
+div.sk-item {
+  /* draw centered vertical line to link estimators */
+  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Parallel-specific style estimator block */
+
+#sk-container-id-8 div.sk-parallel-item::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
+  flex-grow: 1;
+}
+
+#sk-container-id-8 div.sk-parallel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--sklearn-color-background);
+  position: relative;
+}
+
+#sk-container-id-8 div.sk-parallel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#sk-container-id-8 div.sk-parallel-item:first-child::after {
+  align-self: flex-end;
+  width: 50%;
+}
+
+#sk-container-id-8 div.sk-parallel-item:last-child::after {
+  align-self: flex-start;
+  width: 50%;
+}
+
+#sk-container-id-8 div.sk-parallel-item:only-child::after {
+  width: 0;
+}
+
+/* Serial-specific style estimator block */
+
+#sk-container-id-8 div.sk-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sklearn-color-background);
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+
+/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
+clickable and can be expanded/collapsed.
+- Pipeline and ColumnTransformer use this feature and define the default style
+- Estimators will overwrite some part of the style using the `sk-estimator` class
+*/
+
+/* Pipeline and ColumnTransformer style (default) */
+
+#sk-container-id-8 div.sk-toggleable {
+  /* Default theme specific background. It is overwritten whether we have a
+  specific estimator or a Pipeline/ColumnTransformer */
+  background-color: var(--sklearn-color-background);
+}
+
+/* Toggleable label */
+#sk-container-id-8 label.sk-toggleable__label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#sk-container-id-8 label.sk-toggleable__label-arrow:before {
+  /* Arrow on the left of the label */
+  content: "▸";
+  float: left;
+  margin-right: 0.25em;
+  color: var(--sklearn-color-icon);
+}
+
+#sk-container-id-8 label.sk-toggleable__label-arrow:hover:before {
+  color: var(--sklearn-color-text);
+}
+
+/* Toggleable content - dropdown */
+
+#sk-container-id-8 div.sk-toggleable__content {
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  text-align: left;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-8 div.sk-toggleable__content.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-8 div.sk-toggleable__content pre {
+  margin: 0.2em;
+  border-radius: 0.25em;
+  color: var(--sklearn-color-text);
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-8 div.sk-toggleable__content.fitted pre {
+  /* unfitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-8 input.sk-toggleable__control:checked~div.sk-toggleable__content {
+  /* Expand drop-down */
+  max-height: 200px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+#sk-container-id-8 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
+  content: "▾";
+}
+
+/* Pipeline/ColumnTransformer-specific style */
+
+#sk-container-id-8 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-8 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator-specific style */
+
+/* Colorize estimator box */
+#sk-container-id-8 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-8 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+#sk-container-id-8 div.sk-label label.sk-toggleable__label,
+#sk-container-id-8 div.sk-label label {
+  /* The background is the default theme color */
+  color: var(--sklearn-color-text-on-default-background);
+}
+
+/* On hover, darken the color of the background */
+#sk-container-id-8 div.sk-label:hover label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+/* Label box, darken color on hover, fitted */
+#sk-container-id-8 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator label */
+
+#sk-container-id-8 div.sk-label label {
+  font-family: monospace;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 1.2em;
+}
+
+#sk-container-id-8 div.sk-label-container {
+  text-align: center;
+}
+
+/* Estimator-specific */
+#sk-container-id-8 div.sk-estimator {
+  font-family: monospace;
+  border: 1px dotted var(--sklearn-color-border-box);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  margin-bottom: 0.5em;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-8 div.sk-estimator.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+/* on hover */
+#sk-container-id-8 div.sk-estimator:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-8 div.sk-estimator.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Specification for estimator info (e.g. "i" and "?") */
+
+/* Common style for "i" and "?" */
+
+.sk-estimator-doc-link,
+a:link.sk-estimator-doc-link,
+a:visited.sk-estimator-doc-link {
+  float: right;
+  font-size: smaller;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  text-decoration: none !important;
+  margin-left: 1ex;
+  /* unfitted */
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-1);
+}
+
+.sk-estimator-doc-link.fitted,
+a:link.sk-estimator-doc-link.fitted,
+a:visited.sk-estimator-doc-link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+div.sk-estimator:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover,
+div.sk-label-container:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover,
+div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+/* Span, style for the box shown on hovering the info icon */
+.sk-estimator-doc-link span {
+  display: none;
+  z-index: 9999;
+  position: relative;
+  font-weight: normal;
+  right: .2ex;
+  padding: .5ex;
+  margin: .5ex;
+  width: min-content;
+  min-width: 20ex;
+  max-width: 50ex;
+  color: var(--sklearn-color-text);
+  box-shadow: 2pt 2pt 4pt #999;
+  /* unfitted */
+  background: var(--sklearn-color-unfitted-level-0);
+  border: .5pt solid var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted span {
+  /* fitted */
+  background: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3);
+}
+
+.sk-estimator-doc-link:hover span {
+  display: block;
+}
+
+/* "?"-specific style due to the `<a>` HTML tag */
+
+#sk-container-id-8 a.estimator_doc_link {
+  float: right;
+  font-size: 1rem;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1rem;
+  height: 1rem;
+  width: 1rem;
+  text-decoration: none;
+  /* unfitted */
+  color: var(--sklearn-color-unfitted-level-1);
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+}
+
+#sk-container-id-8 a.estimator_doc_link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+#sk-container-id-8 a.estimator_doc_link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+#sk-container-id-8 a.estimator_doc_link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+}
+</style><div id="sk-container-id-8" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;rsf&#x27;,
+                 RandomSurvivalForest(min_samples_split=10,
+                                      random_state=88888888))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-26" type="checkbox" ><label for="sk-estimator-id-26" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;rsf&#x27;,
+                 RandomSurvivalForest(min_samples_split=10,
+                                      random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-27" type="checkbox" ><label for="sk-estimator-id-27" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-28" type="checkbox" ><label for="sk-estimator-id-28" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">RandomSurvivalForest</label><div class="sk-toggleable__content fitted"><pre>RandomSurvivalForest(min_samples_split=10, random_state=88888888)</pre></div> </div></div></div></div></div></div>
+
+
+
+
+```python
+##################################
+# Measuring model performance of the 
+# optimal Random Survival Forest Model
+# on the train set
+##################################
+optimal_rsf_heart_failure_y_train_pred = optimal_rsf_model.predict(X_train)
+optimal_rsf_heart_failure_y_train_ci = concordance_index_censored(y_train_array['DEATH_EVENT'],
+                                                                  y_train_array['TIME'], 
+                                                                  optimal_rsf_heart_failure_y_train_pred)[0]
+print(f"Apparent Concordance Index: {optimal_rsf_heart_failure_y_train_ci}")
+```
+
+    Apparent Concordance Index: 0.8599585062240664
+    
+
+
+```python
+##################################
+# Measuring model performance of the 
+# optimal Random Survival Forest Model
+# on the validation set
+##################################
+optimal_rsf_heart_failure_y_validation_pred = optimal_rsf_model.predict(X_validation)
+optimal_rsf_heart_failure_y_validation_ci = concordance_index_censored(y_validation_array['DEATH_EVENT'], 
+                                                                       y_validation_array['TIME'], 
+                                                                       optimal_rsf_heart_failure_y_validation_pred)[0]
+print(f"Validation Concordance Index: {optimal_rsf_heart_failure_y_validation_ci}")
+```
+
+    Validation Concordance Index: 0.6255115961800819
+    
+
+
+```python
+##################################
+# Gathering the concordance indices
+# from the train and tests sets for 
+# Random Survival Forest Model
+##################################
+rsf_set = pd.DataFrame(["Train","Cross-Validation","Validation"])
+rsf_ci_values = pd.DataFrame([optimal_rsf_heart_failure_y_train_ci,
+                              optimal_rsf_heart_failure_y_crossvalidation_ci,
+                              optimal_rsf_heart_failure_y_validation_ci])
+rsf_method = pd.DataFrame(["RSF"]*3)
+rsf_summary = pd.concat([rsf_set, 
+                         rsf_ci_values,
+                         rsf_method], axis=1)
+rsf_summary.columns = ['Set', 'Concordance.Index', 'Method']
+rsf_summary.reset_index(inplace=True, drop=True)
+display(rsf_summary)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Set</th>
+      <th>Concordance.Index</th>
+      <th>Method</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Train</td>
+      <td>0.859959</td>
+      <td>RSF</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Cross-Validation</td>
+      <td>0.733265</td>
+      <td>RSF</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Validation</td>
+      <td>0.625512</td>
+      <td>RSF</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Binning the predicted risks
+# into dichotomous groups and
+# exploring the relationships with
+# survival event and duration
+##################################
+heart_failure_validation.reset_index(drop=True, inplace=True)
+kmf = KaplanMeierFitter()
+heart_failure_validation['Predicted_Risks_RSF'] = optimal_rsf_heart_failure_y_validation_pred
+heart_failure_validation['Predicted_RiskGroups_RSF'] = risk_groups = pd.qcut(heart_failure_validation['Predicted_Risks_RSF'], 2, labels=['Low-Risk', 'High-Risk'])
+
+plt.figure(figsize=(17, 8))
+for group in risk_groups.unique():
+    group_data = heart_failure_validation[risk_groups == group]
+    kmf.fit(group_data['TIME'], event_observed=group_data['DEATH_EVENT'], label=group)
+    kmf.plot_survival_function()
+
+plt.title('RSF Survival Probabilities by Predicted Risk Groups on Validation Set')
+plt.xlabel('TIME')
+plt.ylabel('DEATH_EVENT Survival Probability')
+plt.show()
+```
+
+
+    
+![png](output_211_0.png)
+    
+
+
+
+```python
+##################################
+# Gathering the predictor information
+# for 5 test case samples
+##################################
+validation_case_details = X_validation.iloc[[5, 10, 15, 20, 25]]
+display(validation_case_details)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ANAEMIA</th>
+      <th>EJECTION_FRACTION</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>291</th>
+      <td>0</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>1.4</td>
+      <td>139.0</td>
+    </tr>
+    <tr>
+      <th>66</th>
+      <td>1</td>
+      <td>15.0</td>
+      <td>0</td>
+      <td>1.3</td>
+      <td>136.0</td>
+    </tr>
+    <tr>
+      <th>112</th>
+      <td>0</td>
+      <td>25.0</td>
+      <td>0</td>
+      <td>1.6</td>
+      <td>136.0</td>
+    </tr>
+    <tr>
+      <th>89</th>
+      <td>1</td>
+      <td>25.0</td>
+      <td>1</td>
+      <td>1.1</td>
+      <td>144.0</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>0</td>
+      <td>14.0</td>
+      <td>0</td>
+      <td>0.8</td>
+      <td>127.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Gathering the event and duration information
+# for 5 test case samples
+##################################
+print(y_validation_array[[5, 10, 15, 20, 25]])
+```
+
+    [(False, 258) ( True,  65) (False,  90) (False,  79) ( True,  14)]
+    
+
+
+```python
+##################################
+# Gathering the risk-groups
+# for 5 test case samples
+##################################
+print(heart_failure_validation.loc[[5, 10, 15, 20, 25]][['Predicted_RiskGroups_RSF']])
+```
+
+       Predicted_RiskGroups_RSF
+    5                  Low-Risk
+    10                High-Risk
+    15                High-Risk
+    20                High-Risk
+    25                High-Risk
+    
+
+
+```python
+##################################
+# Estimating the cumulative hazard
+# and survival functions
+# for 5 validation cases
+##################################
+validation_case = X_validation.iloc[[5, 10, 15, 20, 25]]
+validation_case_labels = ['Patient_5','Patient_10','Patient_15','Patient_20','Patient_25',]
+validation_case_cumulative_hazard_function = optimal_rsf_model.predict_cumulative_hazard_function(validation_case)
+validation_case_survival_function = optimal_rsf_model.predict_survival_function(validation_case)
+
+fig, ax = plt.subplots(1,2,figsize=(17, 8))
+for hazard_prediction, survival_prediction in zip(validation_case_cumulative_hazard_function, validation_case_survival_function):
+    ax[0].step(hazard_prediction.x,hazard_prediction(hazard_prediction.x),where='post')
+    ax[1].step(survival_prediction.x,survival_prediction(survival_prediction.x),where='post')
+ax[0].set_title('RSF Cumulative Hazard for 5 Validation Cases')
+ax[0].set_xlabel('TIME')
+ax[0].set_ylim(0,2)
+ax[0].set_ylabel('Cumulative Hazard')
+ax[0].legend(validation_case_labels, loc="upper left")
+ax[1].set_title('RSF Survival Function for 5 Validation Cases')
+ax[1].set_xlabel('TIME')
+ax[1].set_ylabel('DEATH_EVENT Survival Probability')
+ax[1].legend(validation_case_labels, loc="lower left")
+plt.show()
+```
+
+
+    
+![png](output_215_0.png)
+    
+
+
+
+```python
+##################################
+# Saving the best Random Survival Forest Model
+# developed from the original training data
+################################## 
+joblib.dump(rsf_best_model_train_cv, 
+            os.path.join("..", MODELS_PATH, "rsf_best_model.pkl"))
+```
+
+
+
+
+    ['..\\models\\rsf_best_model.pkl']
+
+
+
 ### 1.6.8 Gradient Boosted Survival Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.8"></a>
+
+
+```python
+##################################
+# Performing hyperparameter tuning
+# through K-fold cross-validation
+# using the Gradient Boosted Survival Model
+##################################
+gbs_grid_search.fit(X_train, y_train_array)
+```
+
+    Fitting 10 folds for each of 9 candidates, totalling 90 fits
+    
+
+
+
+
+<style>#sk-container-id-9 {
+  /* Definition of color scheme common for light and dark mode */
+  --sklearn-color-text: black;
+  --sklearn-color-line: gray;
+  /* Definition of color scheme for unfitted estimators */
+  --sklearn-color-unfitted-level-0: #fff5e6;
+  --sklearn-color-unfitted-level-1: #f6e4d2;
+  --sklearn-color-unfitted-level-2: #ffe0b3;
+  --sklearn-color-unfitted-level-3: chocolate;
+  /* Definition of color scheme for fitted estimators */
+  --sklearn-color-fitted-level-0: #f0f8ff;
+  --sklearn-color-fitted-level-1: #d4ebff;
+  --sklearn-color-fitted-level-2: #b3dbfd;
+  --sklearn-color-fitted-level-3: cornflowerblue;
+
+  /* Specific color for light theme */
+  --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, white)));
+  --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-icon: #696969;
+
+  @media (prefers-color-scheme: dark) {
+    /* Redefinition of color scheme for dark theme */
+    --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, #111)));
+    --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-icon: #878787;
+  }
+}
+
+#sk-container-id-9 {
+  color: var(--sklearn-color-text);
+}
+
+#sk-container-id-9 pre {
+  padding: 0;
+}
+
+#sk-container-id-9 input.sk-hidden--visually {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+#sk-container-id-9 div.sk-dashed-wrapped {
+  border: 1px dashed var(--sklearn-color-line);
+  margin: 0 0.4em 0.5em 0.4em;
+  box-sizing: border-box;
+  padding-bottom: 0.4em;
+  background-color: var(--sklearn-color-background);
+}
+
+#sk-container-id-9 div.sk-container {
+  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
+     but bootstrap.min.css set `[hidden] { display: none !important; }`
+     so we also need the `!important` here to be able to override the
+     default hidden behavior on the sphinx rendered scikit-learn.org.
+     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
+  display: inline-block !important;
+  position: relative;
+}
+
+#sk-container-id-9 div.sk-text-repr-fallback {
+  display: none;
+}
+
+div.sk-parallel-item,
+div.sk-serial,
+div.sk-item {
+  /* draw centered vertical line to link estimators */
+  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Parallel-specific style estimator block */
+
+#sk-container-id-9 div.sk-parallel-item::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
+  flex-grow: 1;
+}
+
+#sk-container-id-9 div.sk-parallel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--sklearn-color-background);
+  position: relative;
+}
+
+#sk-container-id-9 div.sk-parallel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#sk-container-id-9 div.sk-parallel-item:first-child::after {
+  align-self: flex-end;
+  width: 50%;
+}
+
+#sk-container-id-9 div.sk-parallel-item:last-child::after {
+  align-self: flex-start;
+  width: 50%;
+}
+
+#sk-container-id-9 div.sk-parallel-item:only-child::after {
+  width: 0;
+}
+
+/* Serial-specific style estimator block */
+
+#sk-container-id-9 div.sk-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sklearn-color-background);
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+
+/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
+clickable and can be expanded/collapsed.
+- Pipeline and ColumnTransformer use this feature and define the default style
+- Estimators will overwrite some part of the style using the `sk-estimator` class
+*/
+
+/* Pipeline and ColumnTransformer style (default) */
+
+#sk-container-id-9 div.sk-toggleable {
+  /* Default theme specific background. It is overwritten whether we have a
+  specific estimator or a Pipeline/ColumnTransformer */
+  background-color: var(--sklearn-color-background);
+}
+
+/* Toggleable label */
+#sk-container-id-9 label.sk-toggleable__label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#sk-container-id-9 label.sk-toggleable__label-arrow:before {
+  /* Arrow on the left of the label */
+  content: "▸";
+  float: left;
+  margin-right: 0.25em;
+  color: var(--sklearn-color-icon);
+}
+
+#sk-container-id-9 label.sk-toggleable__label-arrow:hover:before {
+  color: var(--sklearn-color-text);
+}
+
+/* Toggleable content - dropdown */
+
+#sk-container-id-9 div.sk-toggleable__content {
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  text-align: left;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-9 div.sk-toggleable__content.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-9 div.sk-toggleable__content pre {
+  margin: 0.2em;
+  border-radius: 0.25em;
+  color: var(--sklearn-color-text);
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-9 div.sk-toggleable__content.fitted pre {
+  /* unfitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-9 input.sk-toggleable__control:checked~div.sk-toggleable__content {
+  /* Expand drop-down */
+  max-height: 200px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+#sk-container-id-9 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
+  content: "▾";
+}
+
+/* Pipeline/ColumnTransformer-specific style */
+
+#sk-container-id-9 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-9 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator-specific style */
+
+/* Colorize estimator box */
+#sk-container-id-9 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-9 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+#sk-container-id-9 div.sk-label label.sk-toggleable__label,
+#sk-container-id-9 div.sk-label label {
+  /* The background is the default theme color */
+  color: var(--sklearn-color-text-on-default-background);
+}
+
+/* On hover, darken the color of the background */
+#sk-container-id-9 div.sk-label:hover label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+/* Label box, darken color on hover, fitted */
+#sk-container-id-9 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator label */
+
+#sk-container-id-9 div.sk-label label {
+  font-family: monospace;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 1.2em;
+}
+
+#sk-container-id-9 div.sk-label-container {
+  text-align: center;
+}
+
+/* Estimator-specific */
+#sk-container-id-9 div.sk-estimator {
+  font-family: monospace;
+  border: 1px dotted var(--sklearn-color-border-box);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  margin-bottom: 0.5em;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-9 div.sk-estimator.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+/* on hover */
+#sk-container-id-9 div.sk-estimator:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-9 div.sk-estimator.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Specification for estimator info (e.g. "i" and "?") */
+
+/* Common style for "i" and "?" */
+
+.sk-estimator-doc-link,
+a:link.sk-estimator-doc-link,
+a:visited.sk-estimator-doc-link {
+  float: right;
+  font-size: smaller;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  text-decoration: none !important;
+  margin-left: 1ex;
+  /* unfitted */
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-1);
+}
+
+.sk-estimator-doc-link.fitted,
+a:link.sk-estimator-doc-link.fitted,
+a:visited.sk-estimator-doc-link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+div.sk-estimator:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover,
+div.sk-label-container:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover,
+div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+/* Span, style for the box shown on hovering the info icon */
+.sk-estimator-doc-link span {
+  display: none;
+  z-index: 9999;
+  position: relative;
+  font-weight: normal;
+  right: .2ex;
+  padding: .5ex;
+  margin: .5ex;
+  width: min-content;
+  min-width: 20ex;
+  max-width: 50ex;
+  color: var(--sklearn-color-text);
+  box-shadow: 2pt 2pt 4pt #999;
+  /* unfitted */
+  background: var(--sklearn-color-unfitted-level-0);
+  border: .5pt solid var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted span {
+  /* fitted */
+  background: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3);
+}
+
+.sk-estimator-doc-link:hover span {
+  display: block;
+}
+
+/* "?"-specific style due to the `<a>` HTML tag */
+
+#sk-container-id-9 a.estimator_doc_link {
+  float: right;
+  font-size: 1rem;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1rem;
+  height: 1rem;
+  width: 1rem;
+  text-decoration: none;
+  /* unfitted */
+  color: var(--sklearn-color-unfitted-level-1);
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+}
+
+#sk-container-id-9 a.estimator_doc_link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+#sk-container-id-9 a.estimator_doc_link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+#sk-container-id-9 a.estimator_doc_link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+}
+</style><div id="sk-container-id-9" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                                       (&#x27;gbs&#x27;,
+                                        GradientBoostingSurvivalAnalysis())]),
+             n_jobs=-1,
+             param_grid={&#x27;gbs__learning_rate&#x27;: [0.05, 0.1, 0.15],
+                         &#x27;gbs__n_estimators&#x27;: [100, 200, 300],
+                         &#x27;gbs__random_state&#x27;: [88888888]},
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-29" type="checkbox" ><label for="sk-estimator-id-29" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                                       (&#x27;gbs&#x27;,
+                                        GradientBoostingSurvivalAnalysis())]),
+             n_jobs=-1,
+             param_grid={&#x27;gbs__learning_rate&#x27;: [0.05, 0.1, 0.15],
+                         &#x27;gbs__n_estimators&#x27;: [100, 200, 300],
+                         &#x27;gbs__random_state&#x27;: [88888888]},
+             verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-30" type="checkbox" ><label for="sk-estimator-id-30" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;gbs&#x27;,
+                 GradientBoostingSurvivalAnalysis(learning_rate=0.15,
+                                                  n_estimators=300,
+                                                  random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-31" type="checkbox" ><label for="sk-estimator-id-31" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-32" type="checkbox" ><label for="sk-estimator-id-32" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">GradientBoostingSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>GradientBoostingSurvivalAnalysis(learning_rate=0.15, n_estimators=300,
+                                 random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
+
+
+
+
+```python
+##################################
+# Summarizing the hyperparameter tuning 
+# results from K-fold cross-validation
+##################################
+gbs_grid_search_results = pd.DataFrame(gbs_grid_search.cv_results_).sort_values(by='mean_test_score', ascending=False)
+gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_time')]
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>param_gbs__learning_rate</th>
+      <th>param_gbs__n_estimators</th>
+      <th>param_gbs__random_state</th>
+      <th>params</th>
+      <th>split0_test_score</th>
+      <th>split1_test_score</th>
+      <th>split2_test_score</th>
+      <th>split3_test_score</th>
+      <th>split4_test_score</th>
+      <th>split5_test_score</th>
+      <th>split6_test_score</th>
+      <th>split7_test_score</th>
+      <th>split8_test_score</th>
+      <th>split9_test_score</th>
+      <th>mean_test_score</th>
+      <th>std_test_score</th>
+      <th>rank_test_score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>8</th>
+      <td>0.15</td>
+      <td>300</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.15, 'gbs__n_estimator...</td>
+      <td>0.77500</td>
+      <td>0.63750</td>
+      <td>0.814815</td>
+      <td>0.675676</td>
+      <td>0.78125</td>
+      <td>0.805970</td>
+      <td>1.000000</td>
+      <td>0.500000</td>
+      <td>0.538462</td>
+      <td>1.000000</td>
+      <td>0.752867</td>
+      <td>0.161022</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>0.15</td>
+      <td>200</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.15, 'gbs__n_estimator...</td>
+      <td>0.75000</td>
+      <td>0.63750</td>
+      <td>0.802469</td>
+      <td>0.662162</td>
+      <td>0.75000</td>
+      <td>0.776119</td>
+      <td>0.977778</td>
+      <td>0.512987</td>
+      <td>0.512821</td>
+      <td>1.000000</td>
+      <td>0.738184</td>
+      <td>0.157868</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.10</td>
+      <td>200</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.1, 'gbs__n_estimators...</td>
+      <td>0.77500</td>
+      <td>0.66250</td>
+      <td>0.765432</td>
+      <td>0.675676</td>
+      <td>0.71875</td>
+      <td>0.791045</td>
+      <td>0.977778</td>
+      <td>0.551948</td>
+      <td>0.410256</td>
+      <td>1.000000</td>
+      <td>0.732838</td>
+      <td>0.168164</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.10</td>
+      <td>300</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.1, 'gbs__n_estimators...</td>
+      <td>0.73750</td>
+      <td>0.65000</td>
+      <td>0.790123</td>
+      <td>0.648649</td>
+      <td>0.75000</td>
+      <td>0.776119</td>
+      <td>0.977778</td>
+      <td>0.525974</td>
+      <td>0.435897</td>
+      <td>1.000000</td>
+      <td>0.729204</td>
+      <td>0.167817</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.05</td>
+      <td>300</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.05, 'gbs__n_estimator...</td>
+      <td>0.80000</td>
+      <td>0.65000</td>
+      <td>0.703704</td>
+      <td>0.635135</td>
+      <td>0.68750</td>
+      <td>0.791045</td>
+      <td>0.955556</td>
+      <td>0.564935</td>
+      <td>0.333333</td>
+      <td>1.000000</td>
+      <td>0.712121</td>
+      <td>0.182124</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.10</td>
+      <td>100</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.1, 'gbs__n_estimators...</td>
+      <td>0.85000</td>
+      <td>0.65000</td>
+      <td>0.666667</td>
+      <td>0.621622</td>
+      <td>0.65625</td>
+      <td>0.776119</td>
+      <td>0.955556</td>
+      <td>0.564935</td>
+      <td>0.333333</td>
+      <td>1.000000</td>
+      <td>0.707448</td>
+      <td>0.186388</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.05</td>
+      <td>200</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.05, 'gbs__n_estimator...</td>
+      <td>0.83750</td>
+      <td>0.62500</td>
+      <td>0.666667</td>
+      <td>0.594595</td>
+      <td>0.65625</td>
+      <td>0.805970</td>
+      <td>0.955556</td>
+      <td>0.564935</td>
+      <td>0.307692</td>
+      <td>1.000000</td>
+      <td>0.701416</td>
+      <td>0.194251</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>0.15</td>
+      <td>100</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.15, 'gbs__n_estimator...</td>
+      <td>0.83750</td>
+      <td>0.66250</td>
+      <td>0.679012</td>
+      <td>0.648649</td>
+      <td>0.68750</td>
+      <td>0.716418</td>
+      <td>0.977778</td>
+      <td>0.564935</td>
+      <td>0.230769</td>
+      <td>1.000000</td>
+      <td>0.700506</td>
+      <td>0.207218</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>0.05</td>
+      <td>100</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.05, 'gbs__n_estimator...</td>
+      <td>0.84375</td>
+      <td>0.60625</td>
+      <td>0.672840</td>
+      <td>0.540541</td>
+      <td>0.65625</td>
+      <td>0.791045</td>
+      <td>0.955556</td>
+      <td>0.616883</td>
+      <td>0.282051</td>
+      <td>0.857143</td>
+      <td>0.682231</td>
+      <td>0.182827</td>
+      <td>9</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Identifying the best model
+##################################
+gbs_best_model_train_cv = gbs_grid_search.best_estimator_
+print('Best Gradient Boosted Survival Model using the Cross-Validated Train Data: ')
+print(f"Best Model Parameters: {gbs_grid_search.best_params_}")
+```
+
+    Best Gradient Boosted Survival Model using the Cross-Validated Train Data: 
+    Best Model Parameters: {'gbs__learning_rate': 0.15, 'gbs__n_estimators': 300, 'gbs__random_state': 88888888}
+    
+
+
+```python
+##################################
+# Obtaining the cross-validation model performance of the 
+# optimal Gradient Boosted Survival Model
+# on the train set
+##################################
+optimal_gbs_heart_failure_y_crossvalidation_ci = gbs_grid_search.best_score_
+print(f"Cross-Validation Concordance Index: {optimal_gbs_heart_failure_y_crossvalidation_ci}")
+```
+
+    Cross-Validation Concordance Index: 0.752867217820576
+    
+
+
+```python
+##################################
+# Formulating a Gradient Boosted Survival Model
+# with optimal hyperparameters
+##################################
+optimal_gbs_model = gbs_grid_search.best_estimator_
+optimal_gbs_model.fit(X_train, y_train_array)
+```
+
+
+
+
+<style>#sk-container-id-10 {
+  /* Definition of color scheme common for light and dark mode */
+  --sklearn-color-text: black;
+  --sklearn-color-line: gray;
+  /* Definition of color scheme for unfitted estimators */
+  --sklearn-color-unfitted-level-0: #fff5e6;
+  --sklearn-color-unfitted-level-1: #f6e4d2;
+  --sklearn-color-unfitted-level-2: #ffe0b3;
+  --sklearn-color-unfitted-level-3: chocolate;
+  /* Definition of color scheme for fitted estimators */
+  --sklearn-color-fitted-level-0: #f0f8ff;
+  --sklearn-color-fitted-level-1: #d4ebff;
+  --sklearn-color-fitted-level-2: #b3dbfd;
+  --sklearn-color-fitted-level-3: cornflowerblue;
+
+  /* Specific color for light theme */
+  --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, white)));
+  --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-icon: #696969;
+
+  @media (prefers-color-scheme: dark) {
+    /* Redefinition of color scheme for dark theme */
+    --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, #111)));
+    --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-icon: #878787;
+  }
+}
+
+#sk-container-id-10 {
+  color: var(--sklearn-color-text);
+}
+
+#sk-container-id-10 pre {
+  padding: 0;
+}
+
+#sk-container-id-10 input.sk-hidden--visually {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+#sk-container-id-10 div.sk-dashed-wrapped {
+  border: 1px dashed var(--sklearn-color-line);
+  margin: 0 0.4em 0.5em 0.4em;
+  box-sizing: border-box;
+  padding-bottom: 0.4em;
+  background-color: var(--sklearn-color-background);
+}
+
+#sk-container-id-10 div.sk-container {
+  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
+     but bootstrap.min.css set `[hidden] { display: none !important; }`
+     so we also need the `!important` here to be able to override the
+     default hidden behavior on the sphinx rendered scikit-learn.org.
+     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
+  display: inline-block !important;
+  position: relative;
+}
+
+#sk-container-id-10 div.sk-text-repr-fallback {
+  display: none;
+}
+
+div.sk-parallel-item,
+div.sk-serial,
+div.sk-item {
+  /* draw centered vertical line to link estimators */
+  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Parallel-specific style estimator block */
+
+#sk-container-id-10 div.sk-parallel-item::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
+  flex-grow: 1;
+}
+
+#sk-container-id-10 div.sk-parallel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--sklearn-color-background);
+  position: relative;
+}
+
+#sk-container-id-10 div.sk-parallel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#sk-container-id-10 div.sk-parallel-item:first-child::after {
+  align-self: flex-end;
+  width: 50%;
+}
+
+#sk-container-id-10 div.sk-parallel-item:last-child::after {
+  align-self: flex-start;
+  width: 50%;
+}
+
+#sk-container-id-10 div.sk-parallel-item:only-child::after {
+  width: 0;
+}
+
+/* Serial-specific style estimator block */
+
+#sk-container-id-10 div.sk-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sklearn-color-background);
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+
+/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
+clickable and can be expanded/collapsed.
+- Pipeline and ColumnTransformer use this feature and define the default style
+- Estimators will overwrite some part of the style using the `sk-estimator` class
+*/
+
+/* Pipeline and ColumnTransformer style (default) */
+
+#sk-container-id-10 div.sk-toggleable {
+  /* Default theme specific background. It is overwritten whether we have a
+  specific estimator or a Pipeline/ColumnTransformer */
+  background-color: var(--sklearn-color-background);
+}
+
+/* Toggleable label */
+#sk-container-id-10 label.sk-toggleable__label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#sk-container-id-10 label.sk-toggleable__label-arrow:before {
+  /* Arrow on the left of the label */
+  content: "▸";
+  float: left;
+  margin-right: 0.25em;
+  color: var(--sklearn-color-icon);
+}
+
+#sk-container-id-10 label.sk-toggleable__label-arrow:hover:before {
+  color: var(--sklearn-color-text);
+}
+
+/* Toggleable content - dropdown */
+
+#sk-container-id-10 div.sk-toggleable__content {
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  text-align: left;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-10 div.sk-toggleable__content.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-10 div.sk-toggleable__content pre {
+  margin: 0.2em;
+  border-radius: 0.25em;
+  color: var(--sklearn-color-text);
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-10 div.sk-toggleable__content.fitted pre {
+  /* unfitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-10 input.sk-toggleable__control:checked~div.sk-toggleable__content {
+  /* Expand drop-down */
+  max-height: 200px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+#sk-container-id-10 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
+  content: "▾";
+}
+
+/* Pipeline/ColumnTransformer-specific style */
+
+#sk-container-id-10 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-10 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator-specific style */
+
+/* Colorize estimator box */
+#sk-container-id-10 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-10 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+#sk-container-id-10 div.sk-label label.sk-toggleable__label,
+#sk-container-id-10 div.sk-label label {
+  /* The background is the default theme color */
+  color: var(--sklearn-color-text-on-default-background);
+}
+
+/* On hover, darken the color of the background */
+#sk-container-id-10 div.sk-label:hover label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+/* Label box, darken color on hover, fitted */
+#sk-container-id-10 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator label */
+
+#sk-container-id-10 div.sk-label label {
+  font-family: monospace;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 1.2em;
+}
+
+#sk-container-id-10 div.sk-label-container {
+  text-align: center;
+}
+
+/* Estimator-specific */
+#sk-container-id-10 div.sk-estimator {
+  font-family: monospace;
+  border: 1px dotted var(--sklearn-color-border-box);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  margin-bottom: 0.5em;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-10 div.sk-estimator.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+/* on hover */
+#sk-container-id-10 div.sk-estimator:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-10 div.sk-estimator.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Specification for estimator info (e.g. "i" and "?") */
+
+/* Common style for "i" and "?" */
+
+.sk-estimator-doc-link,
+a:link.sk-estimator-doc-link,
+a:visited.sk-estimator-doc-link {
+  float: right;
+  font-size: smaller;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  text-decoration: none !important;
+  margin-left: 1ex;
+  /* unfitted */
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-1);
+}
+
+.sk-estimator-doc-link.fitted,
+a:link.sk-estimator-doc-link.fitted,
+a:visited.sk-estimator-doc-link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+div.sk-estimator:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover,
+div.sk-label-container:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover,
+div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+/* Span, style for the box shown on hovering the info icon */
+.sk-estimator-doc-link span {
+  display: none;
+  z-index: 9999;
+  position: relative;
+  font-weight: normal;
+  right: .2ex;
+  padding: .5ex;
+  margin: .5ex;
+  width: min-content;
+  min-width: 20ex;
+  max-width: 50ex;
+  color: var(--sklearn-color-text);
+  box-shadow: 2pt 2pt 4pt #999;
+  /* unfitted */
+  background: var(--sklearn-color-unfitted-level-0);
+  border: .5pt solid var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted span {
+  /* fitted */
+  background: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3);
+}
+
+.sk-estimator-doc-link:hover span {
+  display: block;
+}
+
+/* "?"-specific style due to the `<a>` HTML tag */
+
+#sk-container-id-10 a.estimator_doc_link {
+  float: right;
+  font-size: 1rem;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1rem;
+  height: 1rem;
+  width: 1rem;
+  text-decoration: none;
+  /* unfitted */
+  color: var(--sklearn-color-unfitted-level-1);
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+}
+
+#sk-container-id-10 a.estimator_doc_link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+#sk-container-id-10 a.estimator_doc_link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+#sk-container-id-10 a.estimator_doc_link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+}
+</style><div id="sk-container-id-10" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;gbs&#x27;,
+                 GradientBoostingSurvivalAnalysis(learning_rate=0.15,
+                                                  n_estimators=300,
+                                                  random_state=88888888))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-33" type="checkbox" ><label for="sk-estimator-id-33" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                (&#x27;gbs&#x27;,
+                 GradientBoostingSurvivalAnalysis(learning_rate=0.15,
+                                                  n_estimators=300,
+                                                  random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-34" type="checkbox" ><label for="sk-estimator-id-34" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-35" type="checkbox" ><label for="sk-estimator-id-35" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">GradientBoostingSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>GradientBoostingSurvivalAnalysis(learning_rate=0.15, n_estimators=300,
+                                 random_state=88888888)</pre></div> </div></div></div></div></div></div>
+
+
+
+
+```python
+##################################
+# Measuring model performance of the 
+# optimal Gradient Boosted Survival Model
+# on the train set
+##################################
+optimal_gbs_heart_failure_y_train_pred = optimal_gbs_model.predict(X_train)
+optimal_gbs_heart_failure_y_train_ci = concordance_index_censored(y_train_array['DEATH_EVENT'], 
+                                                                    y_train_array['TIME'], 
+                                                                    optimal_gbs_heart_failure_y_train_pred)[0]
+print(f"Apparent Concordance Index: {optimal_gbs_heart_failure_y_train_ci}")
+```
+
+    Apparent Concordance Index: 0.9449409511650175
+    
+
+
+```python
+##################################
+# Measuring model performance of the 
+# optimal Gradient Boosted Survival Model
+# on the validation set
+##################################
+optimal_gbs_heart_failure_y_validation_pred = optimal_gbs_model.predict(X_validation)
+optimal_gbs_heart_failure_y_validation_ci = concordance_index_censored(y_validation_array['DEATH_EVENT'], 
+                                                                         y_validation_array['TIME'], 
+                                                                         optimal_gbs_heart_failure_y_validation_pred)[0]
+print(f"Validation Concordance Index: {optimal_gbs_heart_failure_y_validation_ci}")
+```
+
+    Validation Concordance Index: 0.650068212824011
+    
+
+
+```python
+##################################
+# Gathering the concordance indices
+# from the train and tests sets for 
+# Gradient Boosted Survival Model
+##################################
+gbs_set = pd.DataFrame(["Train","Cross-Validation","Validation"])
+gbs_ci_values = pd.DataFrame([optimal_gbs_heart_failure_y_train_ci,
+                              optimal_gbs_heart_failure_y_crossvalidation_ci,
+                              optimal_gbs_heart_failure_y_validation_ci])
+gbs_method = pd.DataFrame(["GBS"]*3)
+gbs_summary = pd.concat([gbs_set, 
+                           gbs_ci_values,
+                           gbs_method], axis=1)
+gbs_summary.columns = ['Set', 'Concordance.Index', 'Method']
+gbs_summary.reset_index(inplace=True, drop=True)
+display(gbs_summary)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Set</th>
+      <th>Concordance.Index</th>
+      <th>Method</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Train</td>
+      <td>0.944941</td>
+      <td>GBS</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Cross-Validation</td>
+      <td>0.752867</td>
+      <td>GBS</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Validation</td>
+      <td>0.650068</td>
+      <td>GBS</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Binning the predicted risks
+# into dichotomous groups and
+# exploring the relationships with
+# survival event and duration
+##################################
+heart_failure_validation.reset_index(drop=True, inplace=True)
+kmf = KaplanMeierFitter()
+heart_failure_validation['Predicted_Risks_GBS'] = optimal_gbs_heart_failure_y_validation_pred
+heart_failure_validation['Predicted_RiskGroups_GBS'] = risk_groups = pd.qcut(heart_failure_validation['Predicted_Risks_GBS'], 2, labels=['Low-Risk', 'High-Risk'])
+
+plt.figure(figsize=(17, 8))
+for group in risk_groups.unique():
+    group_data = heart_failure_validation[risk_groups == group]
+    kmf.fit(group_data['TIME'], event_observed=group_data['DEATH_EVENT'], label=group)
+    kmf.plot_survival_function()
+
+plt.title('GBS Survival Probabilities by Predicted Risk Groups on Validation Set')
+plt.xlabel('TIME')
+plt.ylabel('DEATH_EVENT Survival Probability')
+plt.show()
+```
+
+
+    
+![png](output_226_0.png)
+    
+
+
+
+```python
+##################################
+# Gathering the predictor information
+# for 5 test case samples
+##################################
+validation_case_details = X_validation.iloc[[5, 10, 15, 20, 25]]
+display(validation_case_details)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ANAEMIA</th>
+      <th>EJECTION_FRACTION</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>291</th>
+      <td>0</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>1.4</td>
+      <td>139.0</td>
+    </tr>
+    <tr>
+      <th>66</th>
+      <td>1</td>
+      <td>15.0</td>
+      <td>0</td>
+      <td>1.3</td>
+      <td>136.0</td>
+    </tr>
+    <tr>
+      <th>112</th>
+      <td>0</td>
+      <td>25.0</td>
+      <td>0</td>
+      <td>1.6</td>
+      <td>136.0</td>
+    </tr>
+    <tr>
+      <th>89</th>
+      <td>1</td>
+      <td>25.0</td>
+      <td>1</td>
+      <td>1.1</td>
+      <td>144.0</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>0</td>
+      <td>14.0</td>
+      <td>0</td>
+      <td>0.8</td>
+      <td>127.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Gathering the event and duration information
+# for 5 test case samples
+##################################
+print(y_validation_array[[5, 10, 15, 20, 25]])
+```
+
+    [(False, 258) ( True,  65) (False,  90) (False,  79) ( True,  14)]
+    
+
+
+```python
+##################################
+# Gathering the risk-groups
+# for 5 test case samples
+##################################
+print(heart_failure_validation.loc[[5, 10, 15, 20, 25]][['Predicted_RiskGroups_GBS']])
+```
+
+       Predicted_RiskGroups_GBS
+    5                  Low-Risk
+    10                High-Risk
+    15                High-Risk
+    20                High-Risk
+    25                High-Risk
+    
+
+
+```python
+##################################
+# Estimating the cumulative hazard
+# and survival functions
+# for 5 validation cases
+##################################
+validation_case = X_validation.iloc[[5, 10, 15, 20, 25]]
+validation_case_labels = ['Patient_5','Patient_10','Patient_15','Patient_20','Patient_25',]
+validation_case_cumulative_hazard_function = optimal_gbs_model.predict_cumulative_hazard_function(validation_case)
+validation_case_survival_function = optimal_gbs_model.predict_survival_function(validation_case)
+
+fig, ax = plt.subplots(1,2,figsize=(17, 8))
+for hazard_prediction, survival_prediction in zip(validation_case_cumulative_hazard_function, validation_case_survival_function):
+    ax[0].step(hazard_prediction.x,hazard_prediction(hazard_prediction.x),where='post')
+    ax[1].step(survival_prediction.x,survival_prediction(survival_prediction.x),where='post')
+ax[0].set_title('GBS Cumulative Hazard for 5 Validation Cases')
+ax[0].set_xlabel('TIME')
+ax[0].set_ylim(0,2)
+ax[0].set_ylabel('Cumulative Hazard')
+ax[0].legend(validation_case_labels, loc="upper left")
+ax[1].set_title('GBS Survival Function for 5 Validation Cases')
+ax[1].set_xlabel('TIME')
+ax[1].set_ylabel('DEATH_EVENT Survival Probability')
+ax[1].legend(validation_case_labels, loc="lower left")
+plt.show()
+```
+
+
+    
+![png](output_230_0.png)
+    
+
+
+
+```python
+##################################
+# Saving the best Gradient Boosted Survival Model
+# developed from the original training data
+################################## 
+joblib.dump(gbs_best_model_train_cv, 
+            os.path.join("..", MODELS_PATH, "gbs_best_model.pkl"))
+```
+
+
+
+
+    ['..\\models\\gbs_best_model.pkl']
+
+
 
 ### 1.6.9 Model Selection <a class="anchor" id="1.6.9"></a>
 
+
+```python
+##################################
+# Gathering the concordance indices from 
+# training, cross-validation and validation
+##################################
+set_labels = ['Train','Cross-Validation','Validation']
+ci_plot = pd.DataFrame({'COXPH': list([optimal_coxph_heart_failure_y_train_ci,
+                                       optimal_coxph_heart_failure_y_crossvalidation_ci,
+                                       optimal_coxph_heart_failure_y_validation_ci]),
+                        'COXNS': list([optimal_coxns_heart_failure_y_train_ci,
+                                       optimal_coxns_heart_failure_y_crossvalidation_ci,
+                                       optimal_coxns_heart_failure_y_validation_ci]),
+                        'STREE': list([optimal_stree_heart_failure_y_train_ci,
+                                       optimal_stree_heart_failure_y_crossvalidation_ci,
+                                       optimal_stree_heart_failure_y_validation_ci]),
+                        'RSF': list([optimal_rsf_heart_failure_y_train_ci,
+                                     optimal_rsf_heart_failure_y_crossvalidation_ci,
+                                     optimal_rsf_heart_failure_y_validation_ci]),
+                        'GBS': list([optimal_gbs_heart_failure_y_train_ci,
+                                     optimal_gbs_heart_failure_y_crossvalidation_ci,
+                                     optimal_gbs_heart_failure_y_validation_ci])}, index = set_labels)
+display(ci_plot)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>COXPH</th>
+      <th>COXNS</th>
+      <th>STREE</th>
+      <th>RSF</th>
+      <th>GBS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Train</th>
+      <td>0.738829</td>
+      <td>0.738509</td>
+      <td>0.841207</td>
+      <td>0.859959</td>
+      <td>0.944941</td>
+    </tr>
+    <tr>
+      <th>Cross-Validation</th>
+      <td>0.712979</td>
+      <td>0.710479</td>
+      <td>0.661123</td>
+      <td>0.733265</td>
+      <td>0.752867</td>
+    </tr>
+    <tr>
+      <th>Validation</th>
+      <td>0.666439</td>
+      <td>0.665075</td>
+      <td>0.633697</td>
+      <td>0.625512</td>
+      <td>0.650068</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Plotting all the concordance indices
+# for all models
+##################################
+ci_plot = ci_plot.plot.barh(figsize=(10, 6), width=0.90)
+ci_plot.set_xlim(0.00,1.00)
+ci_plot.set_title("Survival Prediction Model Comparison by Concordance Index")
+ci_plot.set_xlabel("Concordance Index")
+ci_plot.set_ylabel("Data Set")
+ci_plot.grid(False)
+ci_plot.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+for container in ci_plot.containers:
+    ci_plot.bar_label(container, fmt='%.5f', padding=-50, color='white', fontweight='bold')
+```
+
+
+    
+![png](output_234_0.png)
+    
+
+
 ### 1.6.10 Model Testing <a class="anchor" id="1.6.10"></a>
+
+
+```python
+##################################
+# Evaluating the F1 scores
+# on the test data
+##################################
+optimal_coxph_heart_failure_y_test_ci = concordance_index_censored(y_test_array['DEATH_EVENT'], 
+                                                                         y_test_array['TIME'], 
+                                                                         optimal_coxph_model.predict(X_test))[0]
+optimal_coxns_heart_failure_y_test_ci = concordance_index_censored(y_test_array['DEATH_EVENT'], 
+                                                                         y_test_array['TIME'], 
+                                                                         optimal_coxns_model.predict(X_test))[0]
+optimal_stree_heart_failure_y_test_ci = concordance_index_censored(y_test_array['DEATH_EVENT'], 
+                                                                         y_test_array['TIME'], 
+                                                                         optimal_stree_model.predict(X_test))[0]
+optimal_rsf_heart_failure_y_test_ci = concordance_index_censored(y_test_array['DEATH_EVENT'], 
+                                                                       y_test_array['TIME'], 
+                                                                       optimal_rsf_model.predict(X_test))[0]
+optimal_gbs_heart_failure_y_test_ci = concordance_index_censored(y_test_array['DEATH_EVENT'], 
+                                                                         y_test_array['TIME'], 
+                                                                         optimal_gbs_model.predict(X_test))[0]
+```
+
+
+```python
+##################################
+# Adding the the concordance index estimated
+# from the test data
+##################################
+set_labels = ['Train','Cross-Validation','Validation','Test']
+updated_ci_plot = pd.DataFrame({'COXPH': list([optimal_coxph_heart_failure_y_train_ci,
+                                               optimal_coxph_heart_failure_y_crossvalidation_ci,
+                                               optimal_coxph_heart_failure_y_validation_ci,
+                                               optimal_coxph_heart_failure_y_test_ci]),
+                                'COXNS': list([optimal_coxns_heart_failure_y_train_ci,
+                                               optimal_coxns_heart_failure_y_crossvalidation_ci,
+                                               optimal_coxns_heart_failure_y_validation_ci,
+                                               optimal_coxns_heart_failure_y_test_ci]),
+                                'STREE': list([optimal_stree_heart_failure_y_train_ci,
+                                               optimal_stree_heart_failure_y_crossvalidation_ci,
+                                               optimal_stree_heart_failure_y_validation_ci,
+                                               optimal_stree_heart_failure_y_test_ci]),
+                                'RSF': list([optimal_rsf_heart_failure_y_train_ci,
+                                             optimal_rsf_heart_failure_y_crossvalidation_ci,
+                                             optimal_rsf_heart_failure_y_validation_ci,
+                                             optimal_rsf_heart_failure_y_test_ci]),
+                                'GBS': list([optimal_gbs_heart_failure_y_train_ci,
+                                             optimal_gbs_heart_failure_y_crossvalidation_ci,
+                                             optimal_gbs_heart_failure_y_validation_ci,
+                                             optimal_gbs_heart_failure_y_test_ci])}, index = set_labels)
+display(updated_ci_plot)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>COXPH</th>
+      <th>COXNS</th>
+      <th>STREE</th>
+      <th>RSF</th>
+      <th>GBS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Train</th>
+      <td>0.738829</td>
+      <td>0.738509</td>
+      <td>0.841207</td>
+      <td>0.859959</td>
+      <td>0.944941</td>
+    </tr>
+    <tr>
+      <th>Cross-Validation</th>
+      <td>0.712979</td>
+      <td>0.710479</td>
+      <td>0.661123</td>
+      <td>0.733265</td>
+      <td>0.752867</td>
+    </tr>
+    <tr>
+      <th>Validation</th>
+      <td>0.666439</td>
+      <td>0.665075</td>
+      <td>0.633697</td>
+      <td>0.625512</td>
+      <td>0.650068</td>
+    </tr>
+    <tr>
+      <th>Test</th>
+      <td>0.687368</td>
+      <td>0.690191</td>
+      <td>0.756175</td>
+      <td>0.713479</td>
+      <td>0.764644</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Plotting all the concordance indices
+# for all models
+##################################
+updated_ci_plot = updated_ci_plot.plot.barh(figsize=(10, 8), width=0.90)
+updated_ci_plot.set_xlim(0.00,1.00)
+updated_ci_plot.set_title("Survival Prediction Model Comparison by Concordance Index")
+updated_ci_plot.set_xlabel("Concordance Index")
+updated_ci_plot.set_ylabel("Data Set")
+updated_ci_plot.grid(False)
+updated_ci_plot.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+for container in updated_ci_plot.containers:
+    updated_ci_plot.bar_label(container, fmt='%.5f', padding=-50, color='white', fontweight='bold')
+```
+
+
+    
+![png](output_238_0.png)
+    
+
 
 ### 1.6.11 Model Inference <a class="anchor" id="1.6.11"></a>
 
