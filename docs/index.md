@@ -3893,7 +3893,7 @@ heart_failure_transformed.to_csv(os.path.join("..", DATASETS_PREPROCESSED_PATH, 
 # Saving the tranformed data
 # to the DATASETS_PREPROCESSED_PATH
 ##################################
-heart_failure_filtered = heart_failure_transformed.drop(['DIABETES','SEX', 'SMOKING', 'AGE','CREATININE_PHOSPHOKINASE','PLATELETS'], axis=1)
+heart_failure_filtered = heart_failure_transformed.drop(['DIABETES','SEX', 'SMOKING', 'CREATININE_PHOSPHOKINASE','PLATELETS'], axis=1)
 heart_failure_filtered.to_csv(os.path.join("..", DATASETS_FINAL_PATH, "heart_failure_final.csv"), index=False)
 display(heart_failure_filtered)
 ```
@@ -3917,6 +3917,7 @@ display(heart_failure_filtered)
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>AGE</th>
       <th>ANAEMIA</th>
       <th>EJECTION_FRACTION</th>
       <th>HIGH_BLOOD_PRESSURE</th>
@@ -3929,6 +3930,7 @@ display(heart_failure_filtered)
   <tbody>
     <tr>
       <th>0</th>
+      <td>75.0</td>
       <td>0</td>
       <td>20.0</td>
       <td>1</td>
@@ -3939,6 +3941,7 @@ display(heart_failure_filtered)
     </tr>
     <tr>
       <th>1</th>
+      <td>55.0</td>
       <td>0</td>
       <td>38.0</td>
       <td>0</td>
@@ -3949,6 +3952,7 @@ display(heart_failure_filtered)
     </tr>
     <tr>
       <th>2</th>
+      <td>65.0</td>
       <td>0</td>
       <td>20.0</td>
       <td>0</td>
@@ -3959,6 +3963,7 @@ display(heart_failure_filtered)
     </tr>
     <tr>
       <th>3</th>
+      <td>50.0</td>
       <td>1</td>
       <td>20.0</td>
       <td>0</td>
@@ -3969,6 +3974,7 @@ display(heart_failure_filtered)
     </tr>
     <tr>
       <th>4</th>
+      <td>65.0</td>
       <td>1</td>
       <td>20.0</td>
       <td>0</td>
@@ -3986,9 +3992,11 @@ display(heart_failure_filtered)
       <td>...</td>
       <td>...</td>
       <td>...</td>
+      <td>...</td>
     </tr>
     <tr>
       <th>294</th>
+      <td>62.0</td>
       <td>0</td>
       <td>38.0</td>
       <td>1</td>
@@ -3999,6 +4007,7 @@ display(heart_failure_filtered)
     </tr>
     <tr>
       <th>295</th>
+      <td>55.0</td>
       <td>0</td>
       <td>38.0</td>
       <td>0</td>
@@ -4009,6 +4018,7 @@ display(heart_failure_filtered)
     </tr>
     <tr>
       <th>296</th>
+      <td>45.0</td>
       <td>0</td>
       <td>60.0</td>
       <td>0</td>
@@ -4019,6 +4029,7 @@ display(heart_failure_filtered)
     </tr>
     <tr>
       <th>297</th>
+      <td>45.0</td>
       <td>0</td>
       <td>38.0</td>
       <td>0</td>
@@ -4029,6 +4040,7 @@ display(heart_failure_filtered)
     </tr>
     <tr>
       <th>298</th>
+      <td>50.0</td>
       <td>0</td>
       <td>45.0</td>
       <td>0</td>
@@ -4039,7 +4051,7 @@ display(heart_failure_filtered)
     </tr>
   </tbody>
 </table>
-<p>299 rows × 7 columns</p>
+<p>299 rows × 8 columns</p>
 </div>
 
 
@@ -4068,7 +4080,7 @@ display(heart_failure_final.shape)
     
 
 
-    (299, 7)
+    (299, 8)
 
 
 
@@ -4159,7 +4171,7 @@ display(y_train_initial['DEATH_EVENT'].value_counts(normalize = True))
     
 
 
-    (224, 5)
+    (224, 6)
 
 
 
@@ -4207,7 +4219,7 @@ display(y_test['DEATH_EVENT'].value_counts(normalize = True))
     
 
 
-    (75, 5)
+    (75, 6)
 
 
 
@@ -4269,7 +4281,7 @@ display(y_train['DEATH_EVENT'].value_counts(normalize = True))
     
 
 
-    (168, 5)
+    (168, 6)
 
 
 
@@ -4317,7 +4329,7 @@ display(y_validation['DEATH_EVENT'].value_counts(normalize = True))
     
 
 
-    (56, 5)
+    (56, 6)
 
 
 
@@ -4415,7 +4427,7 @@ coxph_pipeline = Pipeline([
 ##################################
 # Defining the hyperparameters for grid search
 ##################################
-coxph_hyperparameter_grid = {'coxph__alpha': [0.01, 0.10, 1.00, 10.00]}
+coxph_hyperparameter_grid = {'coxph__alpha': [0.01, 0.10, 1.00, 10.00, 100.00]}
 ```
 
 
@@ -4426,7 +4438,7 @@ coxph_hyperparameter_grid = {'coxph__alpha': [0.01, 0.10, 1.00, 10.00]}
 ##################################
 coxph_grid_search = GridSearchCV(estimator=coxph_pipeline,
                                  param_grid=coxph_hyperparameter_grid,
-                                 cv=KFold(n_splits=10, shuffle=True, random_state=88888888),
+                                 cv=KFold(n_splits=5, shuffle=True, random_state=88888888),
                                  return_train_score=False,
                                  n_jobs=-1,
                                  verbose=1)
@@ -4463,7 +4475,7 @@ coxns_hyperparameter_grid = {'coxns__l1_ratio': [0.10, 0.50, 1.00],
 ##################################
 coxns_grid_search = GridSearchCV(estimator=coxns_pipeline,
                                  param_grid=coxns_hyperparameter_grid,
-                                 cv=KFold(n_splits=10, shuffle=True, random_state=88888888),
+                                 cv=KFold(n_splits=5, shuffle=True, random_state=88888888),
                                  return_train_score=False,
                                  n_jobs=-1,
                                  verbose=1)
@@ -4500,7 +4512,7 @@ stree_hyperparameter_grid = {'stree__min_samples_split': [10, 15, 20],
 ##################################
 stree_grid_search = GridSearchCV(estimator=stree_pipeline,
                                  param_grid=stree_hyperparameter_grid,
-                                 cv=KFold(n_splits=10, shuffle=True, random_state=88888888),
+                                 cv=KFold(n_splits=5, shuffle=True, random_state=88888888),
                                  return_train_score=False,
                                  n_jobs=-1,
                                  verbose=1)
@@ -4537,7 +4549,7 @@ rsf_hyperparameter_grid = {'rsf__n_estimators': [100, 200, 300],
 ##################################
 rsf_grid_search = GridSearchCV(estimator=rsf_pipeline,
                                param_grid=rsf_hyperparameter_grid,
-                               cv=KFold(n_splits=10, shuffle=True, random_state=88888888),
+                               cv=KFold(n_splits=5, shuffle=True, random_state=88888888),
                                return_train_score=False,
                                n_jobs=-1,
                                verbose=1)
@@ -4574,7 +4586,7 @@ gbs_hyperparameter_grid = {'gbs__n_estimators': [100, 200, 300],
 ##################################
 gbs_grid_search = GridSearchCV(estimator=gbs_pipeline,
                                param_grid=gbs_hyperparameter_grid,
-                               cv=KFold(n_splits=10, shuffle=True, random_state=88888888),
+                               cv=KFold(n_splits=5, shuffle=True, random_state=88888888),
                                return_train_score=False,
                                n_jobs=-1,
                                verbose=1)
@@ -4592,7 +4604,7 @@ gbs_grid_search = GridSearchCV(estimator=gbs_pipeline,
 coxph_grid_search.fit(X_train, y_train_array)
 ```
 
-    Fitting 10 folds for each of 4 candidates, totalling 40 fits
+    Fitting 5 folds for each of 5 candidates, totalling 25 fits
     
 
 
@@ -5002,14 +5014,16 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                                        (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis())]),
-             n_jobs=-1, param_grid={&#x27;coxph__alpha&#x27;: [0.01, 0.1, 1.0, 10.0]},
-             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" ><label for="sk-estimator-id-1" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+             n_jobs=-1,
+             param_grid={&#x27;coxph__alpha&#x27;: [0.01, 0.1, 1.0, 10.0, 100.0]},
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" ><label for="sk-estimator-id-1" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                                        (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis())]),
-             n_jobs=-1, param_grid={&#x27;coxph__alpha&#x27;: [0.01, 0.1, 1.0, 10.0]},
+             n_jobs=-1,
+             param_grid={&#x27;coxph__alpha&#x27;: [0.01, 0.1, 1.0, 10.0, 100.0]},
              verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" ><label for="sk-estimator-id-2" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                 (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=10.0))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox" ><label for="sk-estimator-id-3" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-4" type="checkbox" ><label for="sk-estimator-id-4" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxPHSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxPHSurvivalAnalysis(alpha=10.0)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
 
@@ -5053,11 +5067,6 @@ coxph_grid_search_results.loc[:, ~coxph_grid_search_results.columns.str.endswith
       <th>split2_test_score</th>
       <th>split3_test_score</th>
       <th>split4_test_score</th>
-      <th>split5_test_score</th>
-      <th>split6_test_score</th>
-      <th>split7_test_score</th>
-      <th>split8_test_score</th>
-      <th>split9_test_score</th>
       <th>mean_test_score</th>
       <th>std_test_score</th>
       <th>rank_test_score</th>
@@ -5068,73 +5077,66 @@ coxph_grid_search_results.loc[:, ~coxph_grid_search_results.columns.str.endswith
       <th>3</th>
       <td>10.00</td>
       <td>{'coxph__alpha': 10.0}</td>
-      <td>0.8125</td>
-      <td>0.6875</td>
-      <td>0.703704</td>
-      <td>0.567568</td>
-      <td>0.71875</td>
-      <td>0.835821</td>
-      <td>0.977778</td>
-      <td>0.727273</td>
-      <td>0.384615</td>
-      <td>0.714286</td>
-      <td>0.712979</td>
-      <td>0.150018</td>
+      <td>0.767584</td>
+      <td>0.715170</td>
+      <td>0.790816</td>
+      <td>0.844444</td>
+      <td>0.507143</td>
+      <td>0.725032</td>
+      <td>0.116594</td>
       <td>1</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>0.01</td>
-      <td>{'coxph__alpha': 0.01}</td>
-      <td>0.8000</td>
-      <td>0.6625</td>
-      <td>0.716049</td>
-      <td>0.567568</td>
-      <td>0.71875</td>
-      <td>0.820896</td>
-      <td>0.977778</td>
-      <td>0.727273</td>
-      <td>0.384615</td>
-      <td>0.714286</td>
-      <td>0.708971</td>
-      <td>0.148641</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0.10</td>
-      <td>{'coxph__alpha': 0.1}</td>
-      <td>0.8000</td>
-      <td>0.6625</td>
-      <td>0.716049</td>
-      <td>0.567568</td>
-      <td>0.71875</td>
-      <td>0.820896</td>
-      <td>0.977778</td>
-      <td>0.727273</td>
-      <td>0.384615</td>
-      <td>0.714286</td>
-      <td>0.708971</td>
-      <td>0.148641</td>
-      <td>2</td>
     </tr>
     <tr>
       <th>2</th>
       <td>1.00</td>
       <td>{'coxph__alpha': 1.0}</td>
-      <td>0.8000</td>
-      <td>0.6625</td>
-      <td>0.716049</td>
-      <td>0.567568</td>
-      <td>0.71875</td>
-      <td>0.820896</td>
-      <td>0.977778</td>
-      <td>0.727273</td>
-      <td>0.384615</td>
-      <td>0.714286</td>
-      <td>0.708971</td>
-      <td>0.148641</td>
+      <td>0.761468</td>
+      <td>0.702786</td>
+      <td>0.790816</td>
+      <td>0.848889</td>
+      <td>0.492857</td>
+      <td>0.719363</td>
+      <td>0.122666</td>
       <td>2</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>0.01</td>
+      <td>{'coxph__alpha': 0.01}</td>
+      <td>0.758410</td>
+      <td>0.702786</td>
+      <td>0.790816</td>
+      <td>0.848889</td>
+      <td>0.492857</td>
+      <td>0.718752</td>
+      <td>0.122462</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.10</td>
+      <td>{'coxph__alpha': 0.1}</td>
+      <td>0.758410</td>
+      <td>0.702786</td>
+      <td>0.790816</td>
+      <td>0.848889</td>
+      <td>0.492857</td>
+      <td>0.718752</td>
+      <td>0.122462</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>100.00</td>
+      <td>{'coxph__alpha': 100.0}</td>
+      <td>0.755352</td>
+      <td>0.687307</td>
+      <td>0.770408</td>
+      <td>0.835556</td>
+      <td>0.535714</td>
+      <td>0.716867</td>
+      <td>0.102103</td>
+      <td>5</td>
     </tr>
   </tbody>
 </table>
@@ -5167,7 +5169,7 @@ optimal_coxph_heart_failure_y_crossvalidation_ci = coxph_grid_search.best_score_
 print(f"Cross-Validation Concordance Index: {optimal_coxph_heart_failure_y_crossvalidation_ci}")
 ```
 
-    Cross-Validation Concordance Index: 0.7129793770745263
+    Cross-Validation Concordance Index: 0.7250316009230025
     
 
 
@@ -5607,7 +5609,7 @@ optimal_coxph_heart_failure_y_train_ci = concordance_index_censored(y_train_arra
 print(f"Apparent Concordance Index: {optimal_coxph_heart_failure_y_train_ci}")
 ```
 
-    Apparent Concordance Index: 0.738828598787105
+    Apparent Concordance Index: 0.7400255346313438
     
 
 
@@ -5624,7 +5626,7 @@ optimal_coxph_heart_failure_y_validation_ci = concordance_index_censored(y_valid
 print(f"Validation Concordance Index: {optimal_coxph_heart_failure_y_validation_ci}")
 ```
 
-    Validation Concordance Index: 0.6664392905866303
+    Validation Concordance Index: 0.7175989085948158
     
 
 
@@ -5675,19 +5677,19 @@ display(coxph_summary)
     <tr>
       <th>0</th>
       <td>Train</td>
-      <td>0.738829</td>
+      <td>0.740026</td>
       <td>COXPH</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Cross-Validation</td>
-      <td>0.712979</td>
+      <td>0.725032</td>
       <td>COXPH</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Validation</td>
-      <td>0.666439</td>
+      <td>0.717599</td>
       <td>COXPH</td>
     </tr>
   </tbody>
@@ -5755,6 +5757,7 @@ display(validation_case_details)
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>AGE</th>
       <th>ANAEMIA</th>
       <th>EJECTION_FRACTION</th>
       <th>HIGH_BLOOD_PRESSURE</th>
@@ -5765,6 +5768,7 @@ display(validation_case_details)
   <tbody>
     <tr>
       <th>291</th>
+      <td>60.0</td>
       <td>0</td>
       <td>35.0</td>
       <td>0</td>
@@ -5773,6 +5777,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>66</th>
+      <td>42.0</td>
       <td>1</td>
       <td>15.0</td>
       <td>0</td>
@@ -5781,6 +5786,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>112</th>
+      <td>50.0</td>
       <td>0</td>
       <td>25.0</td>
       <td>0</td>
@@ -5789,6 +5795,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>89</th>
+      <td>57.0</td>
       <td>1</td>
       <td>25.0</td>
       <td>1</td>
@@ -5797,6 +5804,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>17</th>
+      <td>45.0</td>
       <td>0</td>
       <td>14.0</td>
       <td>0</td>
@@ -5900,7 +5908,7 @@ joblib.dump(coxph_best_model_train_cv,
 coxns_grid_search.fit(X_train, y_train_array)
 ```
 
-    Fitting 10 folds for each of 6 candidates, totalling 60 fits
+    Fitting 5 folds for each of 6 candidates, totalling 30 fits
     
 
 
@@ -6310,14 +6318,14 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-3" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+</style><div id="sk-container-id-3" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                                        (&#x27;coxns&#x27;, CoxnetSurvivalAnalysis())]),
              n_jobs=-1,
              param_grid={&#x27;coxns__alpha_min_ratio&#x27;: [0.0001, 0.01],
                          &#x27;coxns__fit_baseline_model&#x27;: [True],
                          &#x27;coxns__l1_ratio&#x27;: [0.1, 0.5, 1.0]},
-             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-8" type="checkbox" ><label for="sk-estimator-id-8" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-8" type="checkbox" ><label for="sk-estimator-id-8" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                                        (&#x27;coxns&#x27;, CoxnetSurvivalAnalysis())]),
              n_jobs=-1,
@@ -6373,11 +6381,6 @@ coxns_grid_search_results.loc[:, ~coxns_grid_search_results.columns.str.endswith
       <th>split2_test_score</th>
       <th>split3_test_score</th>
       <th>split4_test_score</th>
-      <th>split5_test_score</th>
-      <th>split6_test_score</th>
-      <th>split7_test_score</th>
-      <th>split8_test_score</th>
-      <th>split9_test_score</th>
       <th>mean_test_score</th>
       <th>std_test_score</th>
       <th>rank_test_score</th>
@@ -6390,99 +6393,14 @@ coxns_grid_search_results.loc[:, ~coxns_grid_search_results.columns.str.endswith
       <td>True</td>
       <td>0.1</td>
       <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
-      <td>0.8125</td>
-      <td>0.6625</td>
-      <td>0.703704</td>
-      <td>0.567568</td>
-      <td>0.71875</td>
-      <td>0.835821</td>
-      <td>0.977778</td>
-      <td>0.727273</td>
-      <td>0.384615</td>
-      <td>0.714286</td>
-      <td>0.710479</td>
-      <td>0.150629</td>
+      <td>0.761468</td>
+      <td>0.702786</td>
+      <td>0.790816</td>
+      <td>0.844444</td>
+      <td>0.500000</td>
+      <td>0.719903</td>
+      <td>0.119094</td>
       <td>1</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>0.0100</td>
-      <td>True</td>
-      <td>0.5</td>
-      <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
-      <td>0.8125</td>
-      <td>0.6625</td>
-      <td>0.703704</td>
-      <td>0.567568</td>
-      <td>0.71875</td>
-      <td>0.835821</td>
-      <td>0.977778</td>
-      <td>0.727273</td>
-      <td>0.384615</td>
-      <td>0.714286</td>
-      <td>0.710479</td>
-      <td>0.150629</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>0.0100</td>
-      <td>True</td>
-      <td>1.0</td>
-      <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
-      <td>0.8125</td>
-      <td>0.6625</td>
-      <td>0.703704</td>
-      <td>0.567568</td>
-      <td>0.71875</td>
-      <td>0.835821</td>
-      <td>0.977778</td>
-      <td>0.727273</td>
-      <td>0.384615</td>
-      <td>0.714286</td>
-      <td>0.710479</td>
-      <td>0.150629</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0.0001</td>
-      <td>True</td>
-      <td>0.5</td>
-      <td>{'coxns__alpha_min_ratio': 0.0001, 'coxns__fit...</td>
-      <td>0.8000</td>
-      <td>0.6625</td>
-      <td>0.716049</td>
-      <td>0.567568</td>
-      <td>0.71875</td>
-      <td>0.835821</td>
-      <td>0.977778</td>
-      <td>0.727273</td>
-      <td>0.384615</td>
-      <td>0.714286</td>
-      <td>0.710464</td>
-      <td>0.149827</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>0.0001</td>
-      <td>True</td>
-      <td>1.0</td>
-      <td>{'coxns__alpha_min_ratio': 0.0001, 'coxns__fit...</td>
-      <td>0.8000</td>
-      <td>0.6625</td>
-      <td>0.703704</td>
-      <td>0.567568</td>
-      <td>0.71875</td>
-      <td>0.835821</td>
-      <td>0.977778</td>
-      <td>0.727273</td>
-      <td>0.384615</td>
-      <td>0.714286</td>
-      <td>0.709229</td>
-      <td>0.149827</td>
-      <td>5</td>
     </tr>
     <tr>
       <th>0</th>
@@ -6490,19 +6408,74 @@ coxns_grid_search_results.loc[:, ~coxns_grid_search_results.columns.str.endswith
       <td>True</td>
       <td>0.1</td>
       <td>{'coxns__alpha_min_ratio': 0.0001, 'coxns__fit...</td>
-      <td>0.8000</td>
-      <td>0.6625</td>
-      <td>0.716049</td>
-      <td>0.567568</td>
-      <td>0.71875</td>
-      <td>0.820896</td>
-      <td>0.977778</td>
-      <td>0.727273</td>
-      <td>0.384615</td>
-      <td>0.714286</td>
-      <td>0.708971</td>
-      <td>0.148641</td>
-      <td>6</td>
+      <td>0.761468</td>
+      <td>0.702786</td>
+      <td>0.790816</td>
+      <td>0.848889</td>
+      <td>0.492857</td>
+      <td>0.719363</td>
+      <td>0.122666</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.0001</td>
+      <td>True</td>
+      <td>0.5</td>
+      <td>{'coxns__alpha_min_ratio': 0.0001, 'coxns__fit...</td>
+      <td>0.761468</td>
+      <td>0.702786</td>
+      <td>0.785714</td>
+      <td>0.848889</td>
+      <td>0.492857</td>
+      <td>0.718343</td>
+      <td>0.122087</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.0001</td>
+      <td>True</td>
+      <td>1.0</td>
+      <td>{'coxns__alpha_min_ratio': 0.0001, 'coxns__fit...</td>
+      <td>0.761468</td>
+      <td>0.702786</td>
+      <td>0.785714</td>
+      <td>0.848889</td>
+      <td>0.492857</td>
+      <td>0.718343</td>
+      <td>0.122087</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0100</td>
+      <td>True</td>
+      <td>0.5</td>
+      <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
+      <td>0.761468</td>
+      <td>0.702786</td>
+      <td>0.785714</td>
+      <td>0.848889</td>
+      <td>0.492857</td>
+      <td>0.718343</td>
+      <td>0.122087</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.0100</td>
+      <td>True</td>
+      <td>1.0</td>
+      <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
+      <td>0.761468</td>
+      <td>0.702786</td>
+      <td>0.785714</td>
+      <td>0.848889</td>
+      <td>0.492857</td>
+      <td>0.718343</td>
+      <td>0.122087</td>
+      <td>3</td>
     </tr>
   </tbody>
 </table>
@@ -6535,7 +6508,7 @@ optimal_coxns_heart_failure_y_crossvalidation_ci = coxns_grid_search.best_score_
 print(f"Cross-Validation Concordance Index: {optimal_coxns_heart_failure_y_crossvalidation_ci}")
 ```
 
-    Cross-Validation Concordance Index: 0.7104793770745264
+    Cross-Validation Concordance Index: 0.7199030077184584
     
 
 
@@ -6982,7 +6955,7 @@ optimal_coxns_heart_failure_y_train_ci = concordance_index_censored(y_train_arra
 print(f"Apparent Concordance Index: {optimal_coxns_heart_failure_y_train_ci}")
 ```
 
-    Apparent Concordance Index: 0.738509415895308
+    Apparent Concordance Index: 0.7417810405362273
     
 
 
@@ -6999,7 +6972,7 @@ optimal_coxns_heart_failure_y_validation_ci = concordance_index_censored(y_valid
 print(f"Validation Concordance Index: {optimal_coxns_heart_failure_y_validation_ci}")
 ```
 
-    Validation Concordance Index: 0.665075034106412
+    Validation Concordance Index: 0.7162346521145976
     
 
 
@@ -7050,19 +7023,19 @@ display(coxns_summary)
     <tr>
       <th>0</th>
       <td>Train</td>
-      <td>0.738509</td>
+      <td>0.741781</td>
       <td>COXNS</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Cross-Validation</td>
-      <td>0.710479</td>
+      <td>0.719903</td>
       <td>COXNS</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Validation</td>
-      <td>0.665075</td>
+      <td>0.716235</td>
       <td>COXNS</td>
     </tr>
   </tbody>
@@ -7130,6 +7103,7 @@ display(validation_case_details)
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>AGE</th>
       <th>ANAEMIA</th>
       <th>EJECTION_FRACTION</th>
       <th>HIGH_BLOOD_PRESSURE</th>
@@ -7140,6 +7114,7 @@ display(validation_case_details)
   <tbody>
     <tr>
       <th>291</th>
+      <td>60.0</td>
       <td>0</td>
       <td>35.0</td>
       <td>0</td>
@@ -7148,6 +7123,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>66</th>
+      <td>42.0</td>
       <td>1</td>
       <td>15.0</td>
       <td>0</td>
@@ -7156,6 +7132,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>112</th>
+      <td>50.0</td>
       <td>0</td>
       <td>25.0</td>
       <td>0</td>
@@ -7164,6 +7141,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>89</th>
+      <td>57.0</td>
       <td>1</td>
       <td>25.0</td>
       <td>1</td>
@@ -7172,6 +7150,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>17</th>
+      <td>45.0</td>
       <td>0</td>
       <td>14.0</td>
       <td>0</td>
@@ -7275,7 +7254,7 @@ joblib.dump(coxns_best_model_train_cv,
 stree_grid_search.fit(X_train, y_train_array)
 ```
 
-    Fitting 10 folds for each of 6 candidates, totalling 60 fits
+    Fitting 5 folds for each of 6 candidates, totalling 30 fits
     
 
 
@@ -7685,14 +7664,14 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-5" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+</style><div id="sk-container-id-5" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                                        (&#x27;stree&#x27;, SurvivalTree())]),
              n_jobs=-1,
              param_grid={&#x27;stree__min_samples_leaf&#x27;: [3, 6],
                          &#x27;stree__min_samples_split&#x27;: [10, 15, 20],
                          &#x27;stree__random_state&#x27;: [88888888]},
-             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-15" type="checkbox" ><label for="sk-estimator-id-15" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-15" type="checkbox" ><label for="sk-estimator-id-15" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                                        (&#x27;stree&#x27;, SurvivalTree())]),
              n_jobs=-1,
@@ -7701,7 +7680,8 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                          &#x27;stree__random_state&#x27;: [88888888]},
              verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-16" type="checkbox" ><label for="sk-estimator-id-16" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                 (&#x27;stree&#x27;,
-                 SurvivalTree(min_samples_split=15, random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-17" type="checkbox" ><label for="sk-estimator-id-17" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-18" type="checkbox" ><label for="sk-estimator-id-18" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">SurvivalTree</label><div class="sk-toggleable__content fitted"><pre>SurvivalTree(min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
+                 SurvivalTree(min_samples_leaf=6, min_samples_split=15,
+                              random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-17" type="checkbox" ><label for="sk-estimator-id-17" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-18" type="checkbox" ><label for="sk-estimator-id-18" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">SurvivalTree</label><div class="sk-toggleable__content fitted"><pre>SurvivalTree(min_samples_leaf=6, min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
 
 
 
@@ -7745,11 +7725,6 @@ stree_grid_search_results.loc[:, ~stree_grid_search_results.columns.str.endswith
       <th>split2_test_score</th>
       <th>split3_test_score</th>
       <th>split4_test_score</th>
-      <th>split5_test_score</th>
-      <th>split6_test_score</th>
-      <th>split7_test_score</th>
-      <th>split8_test_score</th>
-      <th>split9_test_score</th>
       <th>mean_test_score</th>
       <th>std_test_score</th>
       <th>rank_test_score</th>
@@ -7757,43 +7732,33 @@ stree_grid_search_results.loc[:, ~stree_grid_search_results.columns.str.endswith
   </thead>
   <tbody>
     <tr>
-      <th>1</th>
-      <td>3</td>
+      <th>4</th>
+      <td>6</td>
       <td>15</td>
       <td>88888888</td>
-      <td>{'stree__min_samples_leaf': 3, 'stree__min_sam...</td>
-      <td>0.65000</td>
-      <td>0.63125</td>
-      <td>0.611111</td>
-      <td>0.716216</td>
-      <td>0.734375</td>
-      <td>0.671642</td>
-      <td>0.900000</td>
-      <td>0.623377</td>
-      <td>0.358974</td>
-      <td>0.714286</td>
-      <td>0.661123</td>
-      <td>0.128311</td>
+      <td>{'stree__min_samples_leaf': 6, 'stree__min_sam...</td>
+      <td>0.743119</td>
+      <td>0.687307</td>
+      <td>0.798469</td>
+      <td>0.726667</td>
+      <td>0.539286</td>
+      <td>0.698970</td>
+      <td>0.087466</td>
       <td>1</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>3</td>
-      <td>20</td>
+      <th>3</th>
+      <td>6</td>
+      <td>10</td>
       <td>88888888</td>
-      <td>{'stree__min_samples_leaf': 3, 'stree__min_sam...</td>
-      <td>0.70000</td>
-      <td>0.55625</td>
-      <td>0.703704</td>
-      <td>0.648649</td>
-      <td>0.765625</td>
-      <td>0.679104</td>
-      <td>0.811111</td>
-      <td>0.551948</td>
-      <td>0.294872</td>
-      <td>0.714286</td>
-      <td>0.642555</td>
-      <td>0.139161</td>
+      <td>{'stree__min_samples_leaf': 6, 'stree__min_sam...</td>
+      <td>0.718654</td>
+      <td>0.681115</td>
+      <td>0.801020</td>
+      <td>0.724444</td>
+      <td>0.546429</td>
+      <td>0.694332</td>
+      <td>0.083583</td>
       <td>2</td>
     </tr>
     <tr>
@@ -7802,39 +7767,44 @@ stree_grid_search_results.loc[:, ~stree_grid_search_results.columns.str.endswith
       <td>20</td>
       <td>88888888</td>
       <td>{'stree__min_samples_leaf': 6, 'stree__min_sam...</td>
-      <td>0.68125</td>
-      <td>0.56875</td>
-      <td>0.765432</td>
-      <td>0.628378</td>
-      <td>0.703125</td>
-      <td>0.679104</td>
-      <td>0.766667</td>
-      <td>0.623377</td>
-      <td>0.294872</td>
-      <td>0.714286</td>
-      <td>0.642524</td>
-      <td>0.130019</td>
+      <td>0.749235</td>
+      <td>0.710526</td>
+      <td>0.721939</td>
+      <td>0.726667</td>
+      <td>0.560714</td>
+      <td>0.693816</td>
+      <td>0.067730</td>
       <td>3</td>
     </tr>
     <tr>
-      <th>4</th>
-      <td>6</td>
+      <th>2</th>
+      <td>3</td>
+      <td>20</td>
+      <td>88888888</td>
+      <td>{'stree__min_samples_leaf': 3, 'stree__min_sam...</td>
+      <td>0.669725</td>
+      <td>0.690402</td>
+      <td>0.653061</td>
+      <td>0.777778</td>
+      <td>0.553571</td>
+      <td>0.668908</td>
+      <td>0.071929</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>3</td>
       <td>15</td>
       <td>88888888</td>
-      <td>{'stree__min_samples_leaf': 6, 'stree__min_sam...</td>
-      <td>0.65000</td>
-      <td>0.56875</td>
-      <td>0.765432</td>
-      <td>0.594595</td>
-      <td>0.671875</td>
-      <td>0.671642</td>
-      <td>0.766667</td>
-      <td>0.649351</td>
-      <td>0.333333</td>
-      <td>0.714286</td>
-      <td>0.638593</td>
-      <td>0.118602</td>
-      <td>4</td>
+      <td>{'stree__min_samples_leaf': 3, 'stree__min_sam...</td>
+      <td>0.669725</td>
+      <td>0.673375</td>
+      <td>0.673469</td>
+      <td>0.746667</td>
+      <td>0.564286</td>
+      <td>0.665504</td>
+      <td>0.058268</td>
+      <td>5</td>
     </tr>
     <tr>
       <th>0</th>
@@ -7842,38 +7812,13 @@ stree_grid_search_results.loc[:, ~stree_grid_search_results.columns.str.endswith
       <td>10</td>
       <td>88888888</td>
       <td>{'stree__min_samples_leaf': 3, 'stree__min_sam...</td>
-      <td>0.66250</td>
-      <td>0.56250</td>
-      <td>0.722222</td>
-      <td>0.655405</td>
-      <td>0.796875</td>
-      <td>0.701493</td>
-      <td>0.833333</td>
-      <td>0.636364</td>
-      <td>0.435897</td>
-      <td>0.285714</td>
-      <td>0.629230</td>
-      <td>0.156623</td>
-      <td>5</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>6</td>
-      <td>10</td>
-      <td>88888888</td>
-      <td>{'stree__min_samples_leaf': 6, 'stree__min_sam...</td>
-      <td>0.65000</td>
-      <td>0.56875</td>
-      <td>0.765432</td>
-      <td>0.594595</td>
-      <td>0.671875</td>
-      <td>0.671642</td>
-      <td>0.822222</td>
-      <td>0.623377</td>
-      <td>0.371795</td>
-      <td>0.500000</td>
-      <td>0.623969</td>
-      <td>0.121422</td>
+      <td>0.646789</td>
+      <td>0.684211</td>
+      <td>0.678571</td>
+      <td>0.691111</td>
+      <td>0.582143</td>
+      <td>0.656565</td>
+      <td>0.040190</td>
       <td>6</td>
     </tr>
   </tbody>
@@ -7893,7 +7838,7 @@ print(f"Best Model Parameters: {stree_grid_search.best_params_}")
 ```
 
     Best Survival Tree Model using the Cross-Validated Train Data: 
-    Best Model Parameters: {'stree__min_samples_leaf': 3, 'stree__min_samples_split': 15, 'stree__random_state': 88888888}
+    Best Model Parameters: {'stree__min_samples_leaf': 6, 'stree__min_samples_split': 15, 'stree__random_state': 88888888}
     
 
 
@@ -7907,7 +7852,7 @@ optimal_stree_heart_failure_y_crossvalidation_ci = stree_grid_search.best_score_
 print(f"Cross-Validation Concordance Index: {optimal_stree_heart_failure_y_crossvalidation_ci}")
 ```
 
-    Cross-Validation Concordance Index: 0.66112308150088
+    Cross-Validation Concordance Index: 0.6989695072621033
     
 
 
@@ -8329,9 +8274,11 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 }
 </style><div id="sk-container-id-6" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                 (&#x27;stree&#x27;,
-                 SurvivalTree(min_samples_split=15, random_state=88888888))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-19" type="checkbox" ><label for="sk-estimator-id-19" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                 SurvivalTree(min_samples_leaf=6, min_samples_split=15,
+                              random_state=88888888))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-19" type="checkbox" ><label for="sk-estimator-id-19" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                 (&#x27;stree&#x27;,
-                 SurvivalTree(min_samples_split=15, random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-20" type="checkbox" ><label for="sk-estimator-id-20" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-21" type="checkbox" ><label for="sk-estimator-id-21" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">SurvivalTree</label><div class="sk-toggleable__content fitted"><pre>SurvivalTree(min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div>
+                 SurvivalTree(min_samples_leaf=6, min_samples_split=15,
+                              random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-20" type="checkbox" ><label for="sk-estimator-id-20" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-21" type="checkbox" ><label for="sk-estimator-id-21" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">SurvivalTree</label><div class="sk-toggleable__content fitted"><pre>SurvivalTree(min_samples_leaf=6, min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div>
 
 
 
@@ -8349,7 +8296,7 @@ optimal_stree_heart_failure_y_train_ci = concordance_index_censored(y_train_arra
 print(f"Apparent Concordance Index: {optimal_stree_heart_failure_y_train_ci}")
 ```
 
-    Apparent Concordance Index: 0.8412065113309927
+    Apparent Concordance Index: 0.831391637408235
     
 
 
@@ -8366,7 +8313,7 @@ optimal_stree_heart_failure_y_validation_ci = concordance_index_censored(y_valid
 print(f"Validation Concordance Index: {optimal_stree_heart_failure_y_validation_ci}")
 ```
 
-    Validation Concordance Index: 0.6336971350613916
+    Validation Concordance Index: 0.654843110504775
     
 
 
@@ -8417,19 +8364,19 @@ display(stree_summary)
     <tr>
       <th>0</th>
       <td>Train</td>
-      <td>0.841207</td>
+      <td>0.831392</td>
       <td>STREE</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Cross-Validation</td>
-      <td>0.661123</td>
+      <td>0.698970</td>
       <td>STREE</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Validation</td>
-      <td>0.633697</td>
+      <td>0.654843</td>
       <td>STREE</td>
     </tr>
   </tbody>
@@ -8497,6 +8444,7 @@ display(validation_case_details)
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>AGE</th>
       <th>ANAEMIA</th>
       <th>EJECTION_FRACTION</th>
       <th>HIGH_BLOOD_PRESSURE</th>
@@ -8507,6 +8455,7 @@ display(validation_case_details)
   <tbody>
     <tr>
       <th>291</th>
+      <td>60.0</td>
       <td>0</td>
       <td>35.0</td>
       <td>0</td>
@@ -8515,6 +8464,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>66</th>
+      <td>42.0</td>
       <td>1</td>
       <td>15.0</td>
       <td>0</td>
@@ -8523,6 +8473,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>112</th>
+      <td>50.0</td>
       <td>0</td>
       <td>25.0</td>
       <td>0</td>
@@ -8531,6 +8482,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>89</th>
+      <td>57.0</td>
       <td>1</td>
       <td>25.0</td>
       <td>1</td>
@@ -8539,6 +8491,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>17</th>
+      <td>45.0</td>
       <td>0</td>
       <td>14.0</td>
       <td>0</td>
@@ -8573,10 +8526,10 @@ print(heart_failure_validation.loc[[5, 10, 15, 20, 25]][['Predicted_RiskGroups_S
 
        Predicted_RiskGroups_STree
     5                    Low-Risk
-    10                  High-Risk
+    10                   Low-Risk
     15                   Low-Risk
     20                  High-Risk
-    25                  High-Risk
+    25                   Low-Risk
     
 
 
@@ -8642,7 +8595,7 @@ joblib.dump(stree_best_model_train_cv,
 rsf_grid_search.fit(X_train, y_train_array)
 ```
 
-    Fitting 10 folds for each of 9 candidates, totalling 90 fits
+    Fitting 5 folds for each of 9 candidates, totalling 45 fits
     
 
 
@@ -9052,14 +9005,14 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-7" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+</style><div id="sk-container-id-7" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                                        (&#x27;rsf&#x27;, RandomSurvivalForest())]),
              n_jobs=-1,
              param_grid={&#x27;rsf__min_samples_split&#x27;: [10, 15, 20],
                          &#x27;rsf__n_estimators&#x27;: [100, 200, 300],
                          &#x27;rsf__random_state&#x27;: [88888888]},
-             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-22" type="checkbox" ><label for="sk-estimator-id-22" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-22" type="checkbox" ><label for="sk-estimator-id-22" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                                        (&#x27;rsf&#x27;, RandomSurvivalForest())]),
              n_jobs=-1,
@@ -9068,8 +9021,8 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                          &#x27;rsf__random_state&#x27;: [88888888]},
              verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-23" type="checkbox" ><label for="sk-estimator-id-23" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                 (&#x27;rsf&#x27;,
-                 RandomSurvivalForest(min_samples_split=10,
-                                      random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-24" type="checkbox" ><label for="sk-estimator-id-24" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-25" type="checkbox" ><label for="sk-estimator-id-25" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">RandomSurvivalForest</label><div class="sk-toggleable__content fitted"><pre>RandomSurvivalForest(min_samples_split=10, random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
+                 RandomSurvivalForest(min_samples_split=15,
+                                      random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-24" type="checkbox" ><label for="sk-estimator-id-24" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-25" type="checkbox" ><label for="sk-estimator-id-25" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">RandomSurvivalForest</label><div class="sk-toggleable__content fitted"><pre>RandomSurvivalForest(min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
 
 
 
@@ -9113,11 +9066,6 @@ rsf_grid_search_results.loc[:, ~rsf_grid_search_results.columns.str.endswith('_t
       <th>split2_test_score</th>
       <th>split3_test_score</th>
       <th>split4_test_score</th>
-      <th>split5_test_score</th>
-      <th>split6_test_score</th>
-      <th>split7_test_score</th>
-      <th>split8_test_score</th>
-      <th>split9_test_score</th>
       <th>mean_test_score</th>
       <th>std_test_score</th>
       <th>rank_test_score</th>
@@ -9125,63 +9073,48 @@ rsf_grid_search_results.loc[:, ~rsf_grid_search_results.columns.str.endswith('_t
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
-      <td>10</td>
+      <th>3</th>
+      <td>15</td>
       <td>100</td>
       <td>88888888</td>
-      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
-      <td>0.8875</td>
-      <td>0.6250</td>
-      <td>0.728395</td>
-      <td>0.608108</td>
-      <td>0.75000</td>
-      <td>0.761194</td>
-      <td>0.977778</td>
-      <td>0.727273</td>
-      <td>0.410256</td>
-      <td>0.857143</td>
-      <td>0.733265</td>
-      <td>0.152237</td>
+      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
+      <td>0.761468</td>
+      <td>0.705882</td>
+      <td>0.724490</td>
+      <td>0.844444</td>
+      <td>0.592857</td>
+      <td>0.725828</td>
+      <td>0.081757</td>
       <td>1</td>
     </tr>
     <tr>
-      <th>1</th>
-      <td>10</td>
-      <td>200</td>
+      <th>5</th>
+      <td>15</td>
+      <td>300</td>
       <td>88888888</td>
-      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
-      <td>0.9000</td>
-      <td>0.6000</td>
-      <td>0.728395</td>
-      <td>0.608108</td>
-      <td>0.71875</td>
-      <td>0.776119</td>
-      <td>0.977778</td>
-      <td>0.727273</td>
-      <td>0.410256</td>
-      <td>0.857143</td>
-      <td>0.730382</td>
-      <td>0.155793</td>
+      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
+      <td>0.737003</td>
+      <td>0.715170</td>
+      <td>0.729592</td>
+      <td>0.835556</td>
+      <td>0.592857</td>
+      <td>0.722036</td>
+      <td>0.077333</td>
       <td>2</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>10</td>
-      <td>300</td>
+      <th>4</th>
+      <td>15</td>
+      <td>200</td>
       <td>88888888</td>
-      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
-      <td>0.8875</td>
-      <td>0.6000</td>
-      <td>0.728395</td>
-      <td>0.608108</td>
-      <td>0.68750</td>
-      <td>0.791045</td>
-      <td>0.977778</td>
-      <td>0.727273</td>
-      <td>0.410256</td>
-      <td>0.857143</td>
-      <td>0.727500</td>
-      <td>0.155512</td>
+      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
+      <td>0.730887</td>
+      <td>0.705882</td>
+      <td>0.729592</td>
+      <td>0.848889</td>
+      <td>0.585714</td>
+      <td>0.720193</td>
+      <td>0.083731</td>
       <td>3</td>
     </tr>
     <tr>
@@ -9190,38 +9123,28 @@ rsf_grid_search_results.loc[:, ~rsf_grid_search_results.columns.str.endswith('_t
       <td>100</td>
       <td>88888888</td>
       <td>{'rsf__min_samples_split': 20, 'rsf__n_estimat...</td>
-      <td>0.8375</td>
-      <td>0.6000</td>
-      <td>0.740741</td>
-      <td>0.594595</td>
-      <td>0.65625</td>
-      <td>0.761194</td>
-      <td>0.977778</td>
-      <td>0.753247</td>
-      <td>0.435897</td>
-      <td>0.857143</td>
-      <td>0.721434</td>
-      <td>0.147370</td>
+      <td>0.743119</td>
+      <td>0.712074</td>
+      <td>0.729592</td>
+      <td>0.840000</td>
+      <td>0.564286</td>
+      <td>0.717814</td>
+      <td>0.088671</td>
       <td>4</td>
     </tr>
     <tr>
-      <th>4</th>
-      <td>15</td>
-      <td>200</td>
+      <th>8</th>
+      <td>20</td>
+      <td>300</td>
       <td>88888888</td>
-      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
-      <td>0.8750</td>
-      <td>0.6000</td>
-      <td>0.728395</td>
-      <td>0.608108</td>
-      <td>0.59375</td>
-      <td>0.776119</td>
-      <td>0.977778</td>
-      <td>0.753247</td>
-      <td>0.435897</td>
-      <td>0.857143</td>
-      <td>0.720544</td>
-      <td>0.154006</td>
+      <td>{'rsf__min_samples_split': 20, 'rsf__n_estimat...</td>
+      <td>0.730887</td>
+      <td>0.708978</td>
+      <td>0.724490</td>
+      <td>0.844444</td>
+      <td>0.571429</td>
+      <td>0.716046</td>
+      <td>0.086881</td>
       <td>5</td>
     </tr>
     <tr>
@@ -9230,78 +9153,58 @@ rsf_grid_search_results.loc[:, ~rsf_grid_search_results.columns.str.endswith('_t
       <td>200</td>
       <td>88888888</td>
       <td>{'rsf__min_samples_split': 20, 'rsf__n_estimat...</td>
-      <td>0.8375</td>
-      <td>0.6125</td>
-      <td>0.740741</td>
-      <td>0.608108</td>
-      <td>0.59375</td>
-      <td>0.776119</td>
-      <td>0.977778</td>
-      <td>0.753247</td>
-      <td>0.435897</td>
-      <td>0.857143</td>
-      <td>0.719278</td>
-      <td>0.149824</td>
+      <td>0.730887</td>
+      <td>0.712074</td>
+      <td>0.739796</td>
+      <td>0.840000</td>
+      <td>0.550000</td>
+      <td>0.714551</td>
+      <td>0.093514</td>
       <td>6</td>
     </tr>
     <tr>
-      <th>5</th>
-      <td>15</td>
+      <th>2</th>
+      <td>10</td>
       <td>300</td>
       <td>88888888</td>
-      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
-      <td>0.8750</td>
-      <td>0.6125</td>
-      <td>0.728395</td>
-      <td>0.594595</td>
-      <td>0.59375</td>
-      <td>0.761194</td>
-      <td>0.977778</td>
-      <td>0.753247</td>
-      <td>0.435897</td>
-      <td>0.857143</td>
-      <td>0.718950</td>
-      <td>0.153649</td>
+      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
+      <td>0.730887</td>
+      <td>0.708978</td>
+      <td>0.714286</td>
+      <td>0.835556</td>
+      <td>0.578571</td>
+      <td>0.713656</td>
+      <td>0.081764</td>
       <td>7</td>
     </tr>
     <tr>
-      <th>3</th>
-      <td>15</td>
+      <th>0</th>
+      <td>10</td>
       <td>100</td>
       <td>88888888</td>
-      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
-      <td>0.8500</td>
-      <td>0.6000</td>
-      <td>0.728395</td>
-      <td>0.567568</td>
-      <td>0.65625</td>
-      <td>0.761194</td>
-      <td>0.977778</td>
-      <td>0.740260</td>
-      <td>0.435897</td>
-      <td>0.857143</td>
-      <td>0.717448</td>
-      <td>0.150560</td>
+      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
+      <td>0.730887</td>
+      <td>0.699690</td>
+      <td>0.719388</td>
+      <td>0.848889</td>
+      <td>0.564286</td>
+      <td>0.712628</td>
+      <td>0.090685</td>
       <td>8</td>
     </tr>
     <tr>
-      <th>8</th>
-      <td>20</td>
-      <td>300</td>
+      <th>1</th>
+      <td>10</td>
+      <td>200</td>
       <td>88888888</td>
-      <td>{'rsf__min_samples_split': 20, 'rsf__n_estimat...</td>
-      <td>0.8375</td>
-      <td>0.6125</td>
-      <td>0.728395</td>
-      <td>0.594595</td>
-      <td>0.59375</td>
-      <td>0.776119</td>
-      <td>0.977778</td>
-      <td>0.753247</td>
-      <td>0.435897</td>
-      <td>0.857143</td>
-      <td>0.716692</td>
-      <td>0.150737</td>
+      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
+      <td>0.730887</td>
+      <td>0.693498</td>
+      <td>0.719388</td>
+      <td>0.831111</td>
+      <td>0.571429</td>
+      <td>0.709263</td>
+      <td>0.083263</td>
       <td>9</td>
     </tr>
   </tbody>
@@ -9321,7 +9224,7 @@ print(f"Best Model Parameters: {rsf_grid_search.best_params_}")
 ```
 
     Best Random Survival Forest Model using the Cross-Validated Train Data: 
-    Best Model Parameters: {'rsf__min_samples_split': 10, 'rsf__n_estimators': 100, 'rsf__random_state': 88888888}
+    Best Model Parameters: {'rsf__min_samples_split': 15, 'rsf__n_estimators': 100, 'rsf__random_state': 88888888}
     
 
 
@@ -9335,7 +9238,7 @@ optimal_rsf_heart_failure_y_crossvalidation_ci = rsf_grid_search.best_score_
 print(f"Cross-Validation Concordance Index: {optimal_rsf_heart_failure_y_crossvalidation_ci}")
 ```
 
-    Cross-Validation Concordance Index: 0.7332646972137021
+    Cross-Validation Concordance Index: 0.7258283252138776
     
 
 
@@ -9757,11 +9660,11 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 }
 </style><div id="sk-container-id-8" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                 (&#x27;rsf&#x27;,
-                 RandomSurvivalForest(min_samples_split=10,
+                 RandomSurvivalForest(min_samples_split=15,
                                       random_state=88888888))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-26" type="checkbox" ><label for="sk-estimator-id-26" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                 (&#x27;rsf&#x27;,
-                 RandomSurvivalForest(min_samples_split=10,
-                                      random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-27" type="checkbox" ><label for="sk-estimator-id-27" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-28" type="checkbox" ><label for="sk-estimator-id-28" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">RandomSurvivalForest</label><div class="sk-toggleable__content fitted"><pre>RandomSurvivalForest(min_samples_split=10, random_state=88888888)</pre></div> </div></div></div></div></div></div>
+                 RandomSurvivalForest(min_samples_split=15,
+                                      random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-27" type="checkbox" ><label for="sk-estimator-id-27" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-28" type="checkbox" ><label for="sk-estimator-id-28" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">RandomSurvivalForest</label><div class="sk-toggleable__content fitted"><pre>RandomSurvivalForest(min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div>
 
 
 
@@ -9779,7 +9682,7 @@ optimal_rsf_heart_failure_y_train_ci = concordance_index_censored(y_train_array[
 print(f"Apparent Concordance Index: {optimal_rsf_heart_failure_y_train_ci}")
 ```
 
-    Apparent Concordance Index: 0.8599585062240664
+    Apparent Concordance Index: 0.8506224066390041
     
 
 
@@ -9796,7 +9699,7 @@ optimal_rsf_heart_failure_y_validation_ci = concordance_index_censored(y_validat
 print(f"Validation Concordance Index: {optimal_rsf_heart_failure_y_validation_ci}")
 ```
 
-    Validation Concordance Index: 0.6255115961800819
+    Validation Concordance Index: 0.6780354706684857
     
 
 
@@ -9847,19 +9750,19 @@ display(rsf_summary)
     <tr>
       <th>0</th>
       <td>Train</td>
-      <td>0.859959</td>
+      <td>0.850622</td>
       <td>RSF</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Cross-Validation</td>
-      <td>0.733265</td>
+      <td>0.725828</td>
       <td>RSF</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Validation</td>
-      <td>0.625512</td>
+      <td>0.678035</td>
       <td>RSF</td>
     </tr>
   </tbody>
@@ -9927,6 +9830,7 @@ display(validation_case_details)
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>AGE</th>
       <th>ANAEMIA</th>
       <th>EJECTION_FRACTION</th>
       <th>HIGH_BLOOD_PRESSURE</th>
@@ -9937,6 +9841,7 @@ display(validation_case_details)
   <tbody>
     <tr>
       <th>291</th>
+      <td>60.0</td>
       <td>0</td>
       <td>35.0</td>
       <td>0</td>
@@ -9945,6 +9850,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>66</th>
+      <td>42.0</td>
       <td>1</td>
       <td>15.0</td>
       <td>0</td>
@@ -9953,6 +9859,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>112</th>
+      <td>50.0</td>
       <td>0</td>
       <td>25.0</td>
       <td>0</td>
@@ -9961,6 +9868,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>89</th>
+      <td>57.0</td>
       <td>1</td>
       <td>25.0</td>
       <td>1</td>
@@ -9969,6 +9877,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>17</th>
+      <td>45.0</td>
       <td>0</td>
       <td>14.0</td>
       <td>0</td>
@@ -10072,7 +9981,7 @@ joblib.dump(rsf_best_model_train_cv,
 gbs_grid_search.fit(X_train, y_train_array)
 ```
 
-    Fitting 10 folds for each of 9 candidates, totalling 90 fits
+    Fitting 5 folds for each of 9 candidates, totalling 45 fits
     
 
 
@@ -10482,7 +10391,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-9" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+</style><div id="sk-container-id-9" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                                        (&#x27;gbs&#x27;,
                                         GradientBoostingSurvivalAnalysis())]),
@@ -10490,7 +10399,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
              param_grid={&#x27;gbs__learning_rate&#x27;: [0.05, 0.1, 0.15],
                          &#x27;gbs__n_estimators&#x27;: [100, 200, 300],
                          &#x27;gbs__random_state&#x27;: [88888888]},
-             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-29" type="checkbox" ><label for="sk-estimator-id-29" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=10, random_state=88888888, shuffle=True),
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-29" type="checkbox" ><label for="sk-estimator-id-29" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                                        (&#x27;gbs&#x27;,
                                         GradientBoostingSurvivalAnalysis())]),
@@ -10501,8 +10410,8 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
              verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-30" type="checkbox" ><label for="sk-estimator-id-30" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                 (&#x27;gbs&#x27;,
                  GradientBoostingSurvivalAnalysis(learning_rate=0.15,
-                                                  n_estimators=300,
-                                                  random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-31" type="checkbox" ><label for="sk-estimator-id-31" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-32" type="checkbox" ><label for="sk-estimator-id-32" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">GradientBoostingSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>GradientBoostingSurvivalAnalysis(learning_rate=0.15, n_estimators=300,
+                                                  n_estimators=200,
+                                                  random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-31" type="checkbox" ><label for="sk-estimator-id-31" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-32" type="checkbox" ><label for="sk-estimator-id-32" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">GradientBoostingSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>GradientBoostingSurvivalAnalysis(learning_rate=0.15, n_estimators=200,
                                  random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
 
 
@@ -10547,11 +10456,6 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <th>split2_test_score</th>
       <th>split3_test_score</th>
       <th>split4_test_score</th>
-      <th>split5_test_score</th>
-      <th>split6_test_score</th>
-      <th>split7_test_score</th>
-      <th>split8_test_score</th>
-      <th>split9_test_score</th>
       <th>mean_test_score</th>
       <th>std_test_score</th>
       <th>rank_test_score</th>
@@ -10559,44 +10463,19 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
   </thead>
   <tbody>
     <tr>
-      <th>8</th>
-      <td>0.15</td>
-      <td>300</td>
-      <td>88888888</td>
-      <td>{'gbs__learning_rate': 0.15, 'gbs__n_estimator...</td>
-      <td>0.77500</td>
-      <td>0.63750</td>
-      <td>0.814815</td>
-      <td>0.675676</td>
-      <td>0.78125</td>
-      <td>0.805970</td>
-      <td>1.000000</td>
-      <td>0.500000</td>
-      <td>0.538462</td>
-      <td>1.000000</td>
-      <td>0.752867</td>
-      <td>0.161022</td>
-      <td>1</td>
-    </tr>
-    <tr>
       <th>7</th>
       <td>0.15</td>
       <td>200</td>
       <td>88888888</td>
       <td>{'gbs__learning_rate': 0.15, 'gbs__n_estimator...</td>
-      <td>0.75000</td>
-      <td>0.63750</td>
-      <td>0.802469</td>
-      <td>0.662162</td>
-      <td>0.75000</td>
-      <td>0.776119</td>
-      <td>0.977778</td>
-      <td>0.512987</td>
-      <td>0.512821</td>
-      <td>1.000000</td>
-      <td>0.738184</td>
-      <td>0.157868</td>
-      <td>2</td>
+      <td>0.691131</td>
+      <td>0.727554</td>
+      <td>0.714286</td>
+      <td>0.764444</td>
+      <td>0.571429</td>
+      <td>0.693769</td>
+      <td>0.065622</td>
+      <td>1</td>
     </tr>
     <tr>
       <th>4</th>
@@ -10604,39 +10483,14 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>200</td>
       <td>88888888</td>
       <td>{'gbs__learning_rate': 0.1, 'gbs__n_estimators...</td>
-      <td>0.77500</td>
-      <td>0.66250</td>
-      <td>0.765432</td>
-      <td>0.675676</td>
-      <td>0.71875</td>
-      <td>0.791045</td>
-      <td>0.977778</td>
-      <td>0.551948</td>
-      <td>0.410256</td>
-      <td>1.000000</td>
-      <td>0.732838</td>
-      <td>0.168164</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>0.10</td>
-      <td>300</td>
-      <td>88888888</td>
-      <td>{'gbs__learning_rate': 0.1, 'gbs__n_estimators...</td>
-      <td>0.73750</td>
-      <td>0.65000</td>
-      <td>0.790123</td>
-      <td>0.648649</td>
-      <td>0.75000</td>
-      <td>0.776119</td>
-      <td>0.977778</td>
-      <td>0.525974</td>
-      <td>0.435897</td>
-      <td>1.000000</td>
-      <td>0.729204</td>
-      <td>0.167817</td>
-      <td>4</td>
+      <td>0.691131</td>
+      <td>0.715170</td>
+      <td>0.704082</td>
+      <td>0.782222</td>
+      <td>0.564286</td>
+      <td>0.691378</td>
+      <td>0.070898</td>
+      <td>2</td>
     </tr>
     <tr>
       <th>2</th>
@@ -10644,18 +10498,43 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>300</td>
       <td>88888888</td>
       <td>{'gbs__learning_rate': 0.05, 'gbs__n_estimator...</td>
-      <td>0.80000</td>
-      <td>0.65000</td>
-      <td>0.703704</td>
-      <td>0.635135</td>
-      <td>0.68750</td>
-      <td>0.791045</td>
-      <td>0.955556</td>
-      <td>0.564935</td>
-      <td>0.333333</td>
-      <td>1.000000</td>
-      <td>0.712121</td>
-      <td>0.182124</td>
+      <td>0.709480</td>
+      <td>0.708978</td>
+      <td>0.688776</td>
+      <td>0.788889</td>
+      <td>0.550000</td>
+      <td>0.689225</td>
+      <td>0.077611</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>0.15</td>
+      <td>300</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.15, 'gbs__n_estimator...</td>
+      <td>0.697248</td>
+      <td>0.718266</td>
+      <td>0.719388</td>
+      <td>0.737778</td>
+      <td>0.557143</td>
+      <td>0.685964</td>
+      <td>0.065677</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.10</td>
+      <td>300</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.1, 'gbs__n_estimators...</td>
+      <td>0.675841</td>
+      <td>0.715170</td>
+      <td>0.698980</td>
+      <td>0.773333</td>
+      <td>0.564286</td>
+      <td>0.685522</td>
+      <td>0.068648</td>
       <td>5</td>
     </tr>
     <tr>
@@ -10664,39 +10543,14 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>100</td>
       <td>88888888</td>
       <td>{'gbs__learning_rate': 0.1, 'gbs__n_estimators...</td>
-      <td>0.85000</td>
-      <td>0.65000</td>
-      <td>0.666667</td>
-      <td>0.621622</td>
-      <td>0.65625</td>
-      <td>0.776119</td>
-      <td>0.955556</td>
-      <td>0.564935</td>
-      <td>0.333333</td>
-      <td>1.000000</td>
-      <td>0.707448</td>
-      <td>0.186388</td>
+      <td>0.726300</td>
+      <td>0.721362</td>
+      <td>0.660714</td>
+      <td>0.777778</td>
+      <td>0.521429</td>
+      <td>0.681517</td>
+      <td>0.088227</td>
       <td>6</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0.05</td>
-      <td>200</td>
-      <td>88888888</td>
-      <td>{'gbs__learning_rate': 0.05, 'gbs__n_estimator...</td>
-      <td>0.83750</td>
-      <td>0.62500</td>
-      <td>0.666667</td>
-      <td>0.594595</td>
-      <td>0.65625</td>
-      <td>0.805970</td>
-      <td>0.955556</td>
-      <td>0.564935</td>
-      <td>0.307692</td>
-      <td>1.000000</td>
-      <td>0.701416</td>
-      <td>0.194251</td>
-      <td>7</td>
     </tr>
     <tr>
       <th>6</th>
@@ -10704,18 +10558,28 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>100</td>
       <td>88888888</td>
       <td>{'gbs__learning_rate': 0.15, 'gbs__n_estimator...</td>
-      <td>0.83750</td>
-      <td>0.66250</td>
-      <td>0.679012</td>
-      <td>0.648649</td>
-      <td>0.68750</td>
-      <td>0.716418</td>
-      <td>0.977778</td>
-      <td>0.564935</td>
-      <td>0.230769</td>
-      <td>1.000000</td>
-      <td>0.700506</td>
-      <td>0.207218</td>
+      <td>0.691131</td>
+      <td>0.684211</td>
+      <td>0.683673</td>
+      <td>0.768889</td>
+      <td>0.550000</td>
+      <td>0.675581</td>
+      <td>0.070511</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.05</td>
+      <td>200</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.05, 'gbs__n_estimator...</td>
+      <td>0.733945</td>
+      <td>0.705882</td>
+      <td>0.668367</td>
+      <td>0.773333</td>
+      <td>0.492857</td>
+      <td>0.674877</td>
+      <td>0.097281</td>
       <td>8</td>
     </tr>
     <tr>
@@ -10724,18 +10588,13 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>100</td>
       <td>88888888</td>
       <td>{'gbs__learning_rate': 0.05, 'gbs__n_estimator...</td>
-      <td>0.84375</td>
-      <td>0.60625</td>
-      <td>0.672840</td>
-      <td>0.540541</td>
-      <td>0.65625</td>
-      <td>0.791045</td>
-      <td>0.955556</td>
-      <td>0.616883</td>
-      <td>0.282051</td>
-      <td>0.857143</td>
-      <td>0.682231</td>
-      <td>0.182827</td>
+      <td>0.729358</td>
+      <td>0.671827</td>
+      <td>0.665816</td>
+      <td>0.755556</td>
+      <td>0.500000</td>
+      <td>0.664511</td>
+      <td>0.089009</td>
       <td>9</td>
     </tr>
   </tbody>
@@ -10755,7 +10614,7 @@ print(f"Best Model Parameters: {gbs_grid_search.best_params_}")
 ```
 
     Best Gradient Boosted Survival Model using the Cross-Validated Train Data: 
-    Best Model Parameters: {'gbs__learning_rate': 0.15, 'gbs__n_estimators': 300, 'gbs__random_state': 88888888}
+    Best Model Parameters: {'gbs__learning_rate': 0.15, 'gbs__n_estimators': 200, 'gbs__random_state': 88888888}
     
 
 
@@ -10769,7 +10628,7 @@ optimal_gbs_heart_failure_y_crossvalidation_ci = gbs_grid_search.best_score_
 print(f"Cross-Validation Concordance Index: {optimal_gbs_heart_failure_y_crossvalidation_ci}")
 ```
 
-    Cross-Validation Concordance Index: 0.752867217820576
+    Cross-Validation Concordance Index: 0.6937688816392484
     
 
 
@@ -11192,12 +11051,12 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 </style><div id="sk-container-id-10" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                 (&#x27;gbs&#x27;,
                  GradientBoostingSurvivalAnalysis(learning_rate=0.15,
-                                                  n_estimators=300,
+                                                  n_estimators=200,
                                                   random_state=88888888))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-33" type="checkbox" ><label for="sk-estimator-id-33" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
                 (&#x27;gbs&#x27;,
                  GradientBoostingSurvivalAnalysis(learning_rate=0.15,
-                                                  n_estimators=300,
-                                                  random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-34" type="checkbox" ><label for="sk-estimator-id-34" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-35" type="checkbox" ><label for="sk-estimator-id-35" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">GradientBoostingSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>GradientBoostingSurvivalAnalysis(learning_rate=0.15, n_estimators=300,
+                                                  n_estimators=200,
+                                                  random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-34" type="checkbox" ><label for="sk-estimator-id-34" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-35" type="checkbox" ><label for="sk-estimator-id-35" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">GradientBoostingSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>GradientBoostingSurvivalAnalysis(learning_rate=0.15, n_estimators=200,
                                  random_state=88888888)</pre></div> </div></div></div></div></div></div>
 
 
@@ -11216,7 +11075,7 @@ optimal_gbs_heart_failure_y_train_ci = concordance_index_censored(y_train_array[
 print(f"Apparent Concordance Index: {optimal_gbs_heart_failure_y_train_ci}")
 ```
 
-    Apparent Concordance Index: 0.9449409511650175
+    Apparent Concordance Index: 0.944462176827322
     
 
 
@@ -11233,7 +11092,7 @@ optimal_gbs_heart_failure_y_validation_ci = concordance_index_censored(y_validat
 print(f"Validation Concordance Index: {optimal_gbs_heart_failure_y_validation_ci}")
 ```
 
-    Validation Concordance Index: 0.650068212824011
+    Validation Concordance Index: 0.6725784447476125
     
 
 
@@ -11284,19 +11143,19 @@ display(gbs_summary)
     <tr>
       <th>0</th>
       <td>Train</td>
-      <td>0.944941</td>
+      <td>0.944462</td>
       <td>GBS</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Cross-Validation</td>
-      <td>0.752867</td>
+      <td>0.693769</td>
       <td>GBS</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Validation</td>
-      <td>0.650068</td>
+      <td>0.672578</td>
       <td>GBS</td>
     </tr>
   </tbody>
@@ -11364,6 +11223,7 @@ display(validation_case_details)
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>AGE</th>
       <th>ANAEMIA</th>
       <th>EJECTION_FRACTION</th>
       <th>HIGH_BLOOD_PRESSURE</th>
@@ -11374,6 +11234,7 @@ display(validation_case_details)
   <tbody>
     <tr>
       <th>291</th>
+      <td>60.0</td>
       <td>0</td>
       <td>35.0</td>
       <td>0</td>
@@ -11382,6 +11243,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>66</th>
+      <td>42.0</td>
       <td>1</td>
       <td>15.0</td>
       <td>0</td>
@@ -11390,6 +11252,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>112</th>
+      <td>50.0</td>
       <td>0</td>
       <td>25.0</td>
       <td>0</td>
@@ -11398,6 +11261,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>89</th>
+      <td>57.0</td>
       <td>1</td>
       <td>25.0</td>
       <td>1</td>
@@ -11406,6 +11270,7 @@ display(validation_case_details)
     </tr>
     <tr>
       <th>17</th>
+      <td>45.0</td>
       <td>0</td>
       <td>14.0</td>
       <td>0</td>
@@ -11553,27 +11418,27 @@ display(ci_plot)
   <tbody>
     <tr>
       <th>Train</th>
-      <td>0.738829</td>
-      <td>0.738509</td>
-      <td>0.841207</td>
-      <td>0.859959</td>
-      <td>0.944941</td>
+      <td>0.740026</td>
+      <td>0.741781</td>
+      <td>0.831392</td>
+      <td>0.850622</td>
+      <td>0.944462</td>
     </tr>
     <tr>
       <th>Cross-Validation</th>
-      <td>0.712979</td>
-      <td>0.710479</td>
-      <td>0.661123</td>
-      <td>0.733265</td>
-      <td>0.752867</td>
+      <td>0.725032</td>
+      <td>0.719903</td>
+      <td>0.698970</td>
+      <td>0.725828</td>
+      <td>0.693769</td>
     </tr>
     <tr>
       <th>Validation</th>
-      <td>0.666439</td>
-      <td>0.665075</td>
-      <td>0.633697</td>
-      <td>0.625512</td>
-      <td>0.650068</td>
+      <td>0.717599</td>
+      <td>0.716235</td>
+      <td>0.654843</td>
+      <td>0.678035</td>
+      <td>0.672578</td>
     </tr>
   </tbody>
 </table>
@@ -11687,35 +11552,35 @@ display(updated_ci_plot)
   <tbody>
     <tr>
       <th>Train</th>
-      <td>0.738829</td>
-      <td>0.738509</td>
-      <td>0.841207</td>
-      <td>0.859959</td>
-      <td>0.944941</td>
+      <td>0.740026</td>
+      <td>0.741781</td>
+      <td>0.831392</td>
+      <td>0.850622</td>
+      <td>0.944462</td>
     </tr>
     <tr>
       <th>Cross-Validation</th>
-      <td>0.712979</td>
-      <td>0.710479</td>
-      <td>0.661123</td>
-      <td>0.733265</td>
-      <td>0.752867</td>
+      <td>0.725032</td>
+      <td>0.719903</td>
+      <td>0.698970</td>
+      <td>0.725828</td>
+      <td>0.693769</td>
     </tr>
     <tr>
       <th>Validation</th>
-      <td>0.666439</td>
-      <td>0.665075</td>
-      <td>0.633697</td>
-      <td>0.625512</td>
-      <td>0.650068</td>
+      <td>0.717599</td>
+      <td>0.716235</td>
+      <td>0.654843</td>
+      <td>0.678035</td>
+      <td>0.672578</td>
     </tr>
     <tr>
       <th>Test</th>
-      <td>0.687368</td>
-      <td>0.690191</td>
-      <td>0.756175</td>
-      <td>0.713479</td>
-      <td>0.764644</td>
+      <td>0.716302</td>
+      <td>0.722653</td>
+      <td>0.770995</td>
+      <td>0.754411</td>
+      <td>0.781228</td>
     </tr>
   </tbody>
 </table>
@@ -11746,6 +11611,158 @@ for container in updated_ci_plot.containers:
 
 
 ### 1.6.11 Model Inference <a class="anchor" id="1.6.11"></a>
+
+
+```python
+##################################
+# Determining the Cox Proportional Hazards Regression model
+# absolute coefficient-based feature importance 
+# on train data
+##################################
+coxph_train_feature_importance = pd.DataFrame(
+    {'Signed.Coefficient': optimal_coxph_model.named_steps['coxph'].coef_,
+    'Absolute.Coefficient': np.abs(optimal_coxph_model.named_steps['coxph'].coef_)}, index=X_train.columns)
+display(coxph_train_feature_importance.sort_values('Absolute.Coefficient', ascending=False))
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Signed.Coefficient</th>
+      <th>Absolute.Coefficient</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>SERUM_CREATININE</th>
+      <td>0.421816</td>
+      <td>0.421816</td>
+    </tr>
+    <tr>
+      <th>EJECTION_FRACTION</th>
+      <td>-0.319527</td>
+      <td>0.319527</td>
+    </tr>
+    <tr>
+      <th>SERUM_SODIUM</th>
+      <td>-0.280366</td>
+      <td>0.280366</td>
+    </tr>
+    <tr>
+      <th>ANAEMIA</th>
+      <td>0.265085</td>
+      <td>0.265085</td>
+    </tr>
+    <tr>
+      <th>AGE</th>
+      <td>0.240829</td>
+      <td>0.240829</td>
+    </tr>
+    <tr>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <td>0.175722</td>
+      <td>0.175722</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+```python
+##################################
+# Determining the Cox Proportional Hazards Regression model
+# permutation-based feature importance 
+# on train data
+##################################
+coxph_train_feature_importance = permutation_importance(optimal_coxph_model,
+                                                        X_train, 
+                                                        y_train_array, 
+                                                        n_repeats=15, 
+                                                        random_state=88888888)
+
+coxph_train_feature_importance_summary = pd.DataFrame(
+    {k: coxph_train_feature_importance[k]
+     for k in ("importances_mean", "importances_std")}, 
+    index=X_train.columns).sort_values(by="importances_mean", ascending=False)
+coxph_train_feature_importance_summary.columns = ['Importances.Mean', 'Importances.Std']
+display(coxph_train_feature_importance_summary)
+```
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Importances.Mean</th>
+      <th>Importances.Std</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>SERUM_CREATININE</th>
+      <td>0.050404</td>
+      <td>0.016938</td>
+    </tr>
+    <tr>
+      <th>EJECTION_FRACTION</th>
+      <td>0.026460</td>
+      <td>0.014508</td>
+    </tr>
+    <tr>
+      <th>ANAEMIA</th>
+      <td>0.022162</td>
+      <td>0.013402</td>
+    </tr>
+    <tr>
+      <th>SERUM_SODIUM</th>
+      <td>0.018215</td>
+      <td>0.011994</td>
+    </tr>
+    <tr>
+      <th>AGE</th>
+      <td>0.011868</td>
+      <td>0.008926</td>
+    </tr>
+    <tr>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <td>0.003085</td>
+      <td>0.006483</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
 
 ## 1.7. Predictive Model Deployment Using Streamlit and Streamlit Community Cloud <a class="anchor" id="1.7"></a>
 
