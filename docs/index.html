@@ -11826,7 +11826,47 @@ dtype: object</pre>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="1.5.2-Hypothesis-Testing-">1.5.2 Hypothesis Testing <a class="anchor" id="1.5.2"></a><a class="anchor-link" href="#1.5.2-Hypothesis-Testing-">¶</a></h3>
+<h3 id="1.5.2-Hypothesis-Testing-">1.5.2 Hypothesis Testing <a class="anchor" id="1.5.2"></a><a class="anchor-link" href="#1.5.2-Hypothesis-Testing-">¶</a></h3><ol>
+<li>The relationship between the numeric predictors to the <span style="color: #FF0000">DEATH_EVENT</span> event variable was statistically evaluated using the following hypotheses:<ul>
+<li><strong>Null</strong>: Difference in the means between groups True and False is equal to zero</li>
+<li><strong>Alternative</strong>: Difference in the means between groups True and False is not equal to zero</li>
+</ul>
+</li>
+<li>There is sufficient evidence to conclude of a statistically significant difference between the means of the numeric measurements obtained from the <span style="color: #FF0000">Status</span> groups in 4 numeric predictors given their high t-test statistic values with reported low p-values less than the significance level of 0.05.<ul>
+<li><span style="color: #FF0000">SERUM_CREATININE</span>: T.Test.Statistic=-6.825, T.Test.PValue=0.000</li>
+<li><span style="color: #FF0000">EJECTION_FRACTION</span>: T.Test.Statistic=+5.495, T.Test.PValue=0.000</li>
+<li><span style="color: #FF0000">AGE</span>: T.Test.Statistic=-4.274, T.Test.PValue=0.000</li>
+<li><span style="color: #FF0000">SERUM_SODIUM</span>: T.Test.Statistic=+3.229, T.Test.PValue=0.001</li>
+</ul>
+</li>
+<li>The relationship between the object predictors to the <span style="color: #FF0000">DEATH_EVENT</span> event variable was statistically evaluated using the following hypotheses:<ul>
+<li><strong>Null</strong>: The object predictor is independent of the event variable</li>
+<li><strong>Alternative</strong>: The object predictor is dependent on the event variable</li>
+</ul>
+</li>
+<li>There were no categorical predictors that demonstrated sufficient evidence to conclude of a statistically significant relationship between the individual categories and the <span style="color: #FF0000">Status</span> groups with high chisquare statistic values with reported low p-values less than the significance level of 0.05.</li>
+<li>The relationship between the object predictors to the <span style="color: #FF0000">DEATH_EVENT</span> and <span style="color: #FF0000">TIME</span> variables was statistically evaluated using the following hypotheses:<ul>
+<li><strong>Null</strong>: There is no difference in survival probabilities among cases belonging to each category of the object predictor.</li>
+<li><strong>Alternative</strong>: There is a difference in survival probabilities among cases belonging to each category of the object predictor.</li>
+</ul>
+</li>
+<li>There is sufficient evidence to conclude of a statistically significant difference in survival probabilities between the individual categories and the <span style="color: #FF0000">DEATH_EVENT</span> groups with respect to the survival duration <span style="color: #FF0000">TIME</span> in 1 categorical predictor given its high log-rank test statistic values with reported low p-values less than the significance level of 0.05.<ul>
+<li><span style="color: #FF0000">HIGH_BLOOD_PRESSURE</span>: LR.Test.Statistic=4.406, LR.Test.PValue=0.035</li>
+</ul>
+</li>
+<li>The relationship between the binned numeric predictors to the <span style="color: #FF0000">DEATH_EVENT</span> and <span style="color: #FF0000">TIME</span> variables was statistically evaluated using the following hypotheses:<ul>
+<li><strong>Null</strong>: There is no difference in survival probabilities among cases belonging to each category of the binned numeric predictor.</li>
+<li><strong>Alternative</strong>: There is a difference in survival probabilities among cases belonging to each category of the binned numeric predictor.</li>
+</ul>
+</li>
+<li>There is sufficient evidence to conclude of a statistically significant difference in survival probabilities between the individual categories and the <span style="color: #FF0000">DEATH_EVENT</span> groups with respect to the survival duration <span style="color: #FF0000">TIME</span> in 9 binned numeric predictors given their high log-rank test statistic values with reported low p-values less than the significance level of 0.05.<ul>
+<li><span style="color: #FF0000">Binned_SERUM_CREATININE</span>: LR.Test.Statistic=21.190, LR.Test.PValue=0.000</li>
+<li><span style="color: #FF0000">Binned_EJECTION_FRACTION</span>: LR.Test.Statistic=9.469, LR.Test.PValue=0.002</li>
+<li><span style="color: #FF0000">Binned_AGE</span>: LR.Test.Statistic=4.951, LR.Test.PValue=0.026</li>
+<li><span style="color: #FF0000">Binned_SERUM_SODIUM</span>: LR.Test.Statistic=4.887, LR.Test.PValue=0.027</li>
+</ul>
+</li>
+</ol>
 </div>
 </div>
 </div>
@@ -14013,7 +14053,36 @@ Name: proportion, dtype: float64</pre>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="1.6.4-Cox-Proportional-Hazards-Regression-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">1.6.4 Cox Proportional Hazards Regression Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.4"></a><a class="anchor-link" href="#1.6.4-Cox-Proportional-Hazards-Regression-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">¶</a></h3>
+<h3 id="1.6.4-Cox-Proportional-Hazards-Regression-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">1.6.4 Cox Proportional Hazards Regression Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.4"></a><a class="anchor-link" href="#1.6.4-Cox-Proportional-Hazards-Regression-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">¶</a></h3><p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Survival Analysis</a> deals with the analysis of time-to-event data. It focuses on the expected duration of time until one or more events of interest occur, such as death, failure, or relapse. This type of analysis is used to study and model the time until the occurrence of an event, taking into account that the event might not have occurred for all subjects during the study period. Several key aspects of survival analysis include the survival function which refers to the probability that an individual survives longer than a certain time, hazard function which describes the instantaneous rate at which events occur, given no prior event, and censoring pertaining to a condition where the event of interest has not occurred for some subjects during the observation period.</p>
+<p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Right-Censored Survival Data</a> occurs when the event of interest has not happened for some subjects by the end of the study period or the last follow-up time. This type of censoring is common in survival analysis because not all individuals may experience the event before the study ends, or they might drop out or be lost to follow-up. Right-censored data is crucial in survival analysis as it allows the inclusion of all subjects in the analysis, providing more accurate and reliable estimates.</p>
+<p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Survival Models</a> refer to statistical methods used to analyze survival data, accounting for censored observations. These models aim to describe the relationship between survival time and one or more predictor variables, and to estimate the survival function and hazard function. Survival models are essential for understanding the factors that influence time-to-event data, allowing for predictions and comparisons between different groups or treatment effects. They are widely used in clinical trials, reliability engineering, and other areas where time-to-event data is prevalent.</p>
+<p><a href="https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/j.2517-6161.1972.tb00899.x">Cox Proportional Hazards Regression</a> is a semiparametric model used to study the relationship between the survival time of subjects and one or more predictor variables. The model assumes that the hazard ratio (the risk of the event occurring at a specific time) is a product of a baseline hazard function and an exponential function of the predictor variables. It also does not require the baseline hazard to be specified, thus making it a semiparametric model. As a method, it is well-established and widely used in survival analysis, can handle time-dependent covariates and provides a relatively straightforward interpretation. However, the process assumes proportional hazards, which may not hold in all datasets, and may be less flexible in capturing complex relationships between variables and survival times compared to some machine learning models. Given a dataset with survival times, event indicators, and predictor variables, the algorithm involves defining the partial likelihood function for the Cox model (which only considers the relative ordering of survival times); using optimization techniques to estimate the regression coefficients by maximizing the log-partial likelihood; estimating the baseline hazard function (although it is not explicitly required for predictions); and calculating the hazard function and survival function for new data using the estimated coefficients and baseline hazard.</p>
+<ol>
+<li>The <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html">cox proportional hazards regression model</a> from the <mark style="background-color: #CCECFF"><b>sksurv.linear_model</b></mark> Python library API was implemented.</li>
+<li>The model implementation used 1 hyperparameter:<ul>
+<li><span style="color: #FF0000">alpha</span> = regularization parameter for ridge regression penalty made to vary between 0.00, 0.01, 0.10, 1.00, 10.0 and 100.00</li>
+</ul>
+</li>
+<li>Hyperparameter tuning was conducted using the 5-fold cross-validation method with optimal model performance using the concordance index determined for:<ul>
+<li><span style="color: #FF0000">alpha</span> = 10.00</li>
+</ul>
+</li>
+<li>The cross-validated model performance of the optimal model is summarized as follows:<ul>
+<li><strong>Concordance Index</strong> = 0.7250</li>
+</ul>
+</li>
+<li>The apparent model performance of the optimal model is summarized as follows:<ul>
+<li><strong>Concordance Index</strong> = 0.7400</li>
+</ul>
+</li>
+<li>The independent validation model performance of the final model is summarized as follows:<ul>
+<li><strong>Concordance Index</strong> = 0.7175</li>
+</ul>
+</li>
+<li>Considerable difference in the apparent and cross-validated model performance observed, indicative of the presence of moderate model overfitting.</li>
+<li>Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated sufficient differentiation across the entire duration.</li>
+<li>Hazard and survival probability estimations for 5 sampled cases demonstrated reasonably smooth profiles.</li>
+</ol>
 </div>
 </div>
 </div>
@@ -15564,7 +15633,38 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="1.6.5-Cox-Net-Survival-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">1.6.5 Cox Net Survival Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.5"></a><a class="anchor-link" href="#1.6.5-Cox-Net-Survival-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">¶</a></h3>
+<h3 id="1.6.5-Cox-Net-Survival-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">1.6.5 Cox Net Survival Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.5"></a><a class="anchor-link" href="#1.6.5-Cox-Net-Survival-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">¶</a></h3><p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Survival Analysis</a> deals with the analysis of time-to-event data. It focuses on the expected duration of time until one or more events of interest occur, such as death, failure, or relapse. This type of analysis is used to study and model the time until the occurrence of an event, taking into account that the event might not have occurred for all subjects during the study period. Several key aspects of survival analysis include the survival function which refers to the probability that an individual survives longer than a certain time, hazard function which describes the instantaneous rate at which events occur, given no prior event, and censoring pertaining to a condition where the event of interest has not occurred for some subjects during the observation period.</p>
+<p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Right-Censored Survival Data</a> occurs when the event of interest has not happened for some subjects by the end of the study period or the last follow-up time. This type of censoring is common in survival analysis because not all individuals may experience the event before the study ends, or they might drop out or be lost to follow-up. Right-censored data is crucial in survival analysis as it allows the inclusion of all subjects in the analysis, providing more accurate and reliable estimates.</p>
+<p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Survival Models</a> refer to statistical methods used to analyze survival data, accounting for censored observations. These models aim to describe the relationship between survival time and one or more predictor variables, and to estimate the survival function and hazard function. Survival models are essential for understanding the factors that influence time-to-event data, allowing for predictions and comparisons between different groups or treatment effects. They are widely used in clinical trials, reliability engineering, and other areas where time-to-event data is prevalent.</p>
+<p><a href="https://doi.org/10.18637/jss.v039.i05">Cox Net Survival</a> is a regularized version of the Cox Proportional Hazards model, which incorporates both L1 (Lasso) and L2 (Ridge) penalties. The model is useful when dealing with high-dimensional data where the number of predictors can be larger than the number of observations. The elastic net penalty helps in both variable selection (via L1) and multicollinearity handling (via L2). As a method, it can handle high-dimensional data and perform variable selection. Additionally, it balances between L1 and L2 penalties, offering flexibility in modeling. However, the process requires tuning of penalty parameters, which can be computationally intensive. Additionally, interpretation is more complex due to the regularization terms. Given a dataset with survival times, event indicators, and predictor variables, the algorithm involves defining the penalized partial likelihood function, incorporating both L1 (Lasso) and L2 (Ridge) penalties; application of regularization techniques to estimate the regression coefficients by maximizing the penalized log-partial likelihood; performing cross-validation to select optimal values for the penalty parameters (alpha and l1_ratio); and the calculation of the hazard function and survival function for new data using the estimated regularized coefficients.</p>
+<ol>
+<li>The <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxnetSurvivalAnalysis.html">cox net survival model</a> from the <mark style="background-color: #CCECFF"><b>sksurv.linear_model</b></mark> Python library API was implemented.</li>
+<li>The model implementation used 2 hyperparameters:<ul>
+<li><span style="color: #FF0000">l1_ratio</span> = ElasticNet mixing parameter made to vary between 0.10, 0.50 and 1.00</li>
+<li><span style="color: #FF0000">alpha_min_ratio</span> = minimum alpha of the regularization path made to vary between 0.0001 and 0.01</li>
+</ul>
+</li>
+<li>Hyperparameter tuning was conducted using the 5-fold cross-validation method with optimal model performance using the concordance index determined for:<ul>
+<li><span style="color: #FF0000">l1_ratio</span> = 0.10</li>
+<li><span style="color: #FF0000">alpha_min_ratio</span> = 0.01</li>
+</ul>
+</li>
+<li>The cross-validated model performance of the optimal model is summarized as follows:<ul>
+<li><strong>Concordance Index</strong> = 0.7199</li>
+</ul>
+</li>
+<li>The apparent model performance of the optimal model is summarized as follows:<ul>
+<li><strong>Concordance Index</strong> = 0.7417</li>
+</ul>
+</li>
+<li>The independent validation model performance of the final model is summarized as follows:<ul>
+<li><strong>Concordance Index</strong> = 0.7162</li>
+</ul>
+</li>
+<li>Considerable difference in the apparent and cross-validated model performance observed, indicative of the presence of moderate model overfitting.</li>
+<li>Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated sufficient differentiation across the entire duration.</li>
+<li>Hazard and survival probability estimations for 5 sampled cases demonstrated reasonably smooth profiles.</li>
+</ol>
 </div>
 </div>
 </div>
@@ -17157,7 +17257,38 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="1.6.6-Survival-Tree-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">1.6.6 Survival Tree Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.6"></a><a class="anchor-link" href="#1.6.6-Survival-Tree-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">¶</a></h3>
+<h3 id="1.6.6-Survival-Tree-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">1.6.6 Survival Tree Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.6"></a><a class="anchor-link" href="#1.6.6-Survival-Tree-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">¶</a></h3><p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Survival Analysis</a> deals with the analysis of time-to-event data. It focuses on the expected duration of time until one or more events of interest occur, such as death, failure, or relapse. This type of analysis is used to study and model the time until the occurrence of an event, taking into account that the event might not have occurred for all subjects during the study period. Several key aspects of survival analysis include the survival function which refers to the probability that an individual survives longer than a certain time, hazard function which describes the instantaneous rate at which events occur, given no prior event, and censoring pertaining to a condition where the event of interest has not occurred for some subjects during the observation period.</p>
+<p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Right-Censored Survival Data</a> occurs when the event of interest has not happened for some subjects by the end of the study period or the last follow-up time. This type of censoring is common in survival analysis because not all individuals may experience the event before the study ends, or they might drop out or be lost to follow-up. Right-censored data is crucial in survival analysis as it allows the inclusion of all subjects in the analysis, providing more accurate and reliable estimates.</p>
+<p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Survival Models</a> refer to statistical methods used to analyze survival data, accounting for censored observations. These models aim to describe the relationship between survival time and one or more predictor variables, and to estimate the survival function and hazard function. Survival models are essential for understanding the factors that influence time-to-event data, allowing for predictions and comparisons between different groups or treatment effects. They are widely used in clinical trials, reliability engineering, and other areas where time-to-event data is prevalent.</p>
+<p><a href="https://www.tandfonline.com/doi/abs/10.1080/01621459.1993.10476296">Survival Trees</a> are non-parametric models that partition the data into subgroups (nodes) based on the values of predictor variables, creating a tree-like structure. The tree is built by recursively splitting the data at nodes where the differences in survival times between subgroups are maximized. Each terminal node represents a different survival function. The method have no assumptions about the underlying distribution of survival times, can capture interactions between variables naturally and applies an interpretable visual representation. However, the process can be prone to overfitting, especially with small datasets, and may be less accurate compared to ensemble methods like Random Survival Forest. Given a dataset with survival times, event indicators, and predictor variables, the algorithm involves recursively splitting the data at nodes to maximize the differences in survival times between subgroups with the splitting criteria often involving statistical tests (e.g., log-rank test); choosing the best predictor variable and split point at each node that maximizes the separation of survival times; continuously splitting until stopping criteria are met (e.g., minimum number of observations in a node, maximum tree depth); and estimating the survival function based on the survival times of the observations at each terminal node.</p>
+<ol>
+<li>The <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.tree.SurvivalTree.html">survival tree model</a> from the <mark style="background-color: #CCECFF"><b>sksurv.tree</b></mark> Python library API was implemented.</li>
+<li>The model implementation used 2 hyperparameters:<ul>
+<li><span style="color: #FF0000">min_samples_split</span> = minimum number of samples required to split an internal node made to vary between 10, 15 and 20</li>
+<li><span style="color: #FF0000">min_samples_leaf</span> = minimum number of samples required to be at a leaf node made to vary between 3 and 6</li>
+</ul>
+</li>
+<li>Hyperparameter tuning was conducted using the 5-fold cross-validation method with optimal model performance using the concordance index determined for:<ul>
+<li><span style="color: #FF0000">min_samples_split</span> = 15</li>
+<li><span style="color: #FF0000">min_samples_leaf</span> = 6</li>
+</ul>
+</li>
+<li>The cross-validated model performance of the optimal model is summarized as follows:<ul>
+<li><strong>Concordance Index</strong> = 0.6989</li>
+</ul>
+</li>
+<li>The apparent model performance of the optimal model is summarized as follows:<ul>
+<li><strong>Concordance Index</strong> = 0.8313</li>
+</ul>
+</li>
+<li>The independent validation model performance of the final model is summarized as follows:<ul>
+<li><strong>Concordance Index</strong> = 0.6548</li>
+</ul>
+</li>
+<li>Significant difference in the apparent and cross-validated model performance observed, indicative of the presence of excessive model overfitting.</li>
+<li>Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated non-optimal differentiation across the entire duration.</li>
+<li>Hazard and survival probability estimations for 5 sampled cases demonstrated non-optimal profiles.</li>
+</ol>
 </div>
 </div>
 </div>
@@ -18745,7 +18876,38 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="1.6.7-Random-Survival-Forest-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">1.6.7 Random Survival Forest Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.7"></a><a class="anchor-link" href="#1.6.7-Random-Survival-Forest-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">¶</a></h3>
+<h3 id="1.6.7-Random-Survival-Forest-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">1.6.7 Random Survival Forest Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.7"></a><a class="anchor-link" href="#1.6.7-Random-Survival-Forest-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">¶</a></h3><p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Survival Analysis</a> deals with the analysis of time-to-event data. It focuses on the expected duration of time until one or more events of interest occur, such as death, failure, or relapse. This type of analysis is used to study and model the time until the occurrence of an event, taking into account that the event might not have occurred for all subjects during the study period. Several key aspects of survival analysis include the survival function which refers to the probability that an individual survives longer than a certain time, hazard function which describes the instantaneous rate at which events occur, given no prior event, and censoring pertaining to a condition where the event of interest has not occurred for some subjects during the observation period.</p>
+<p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Right-Censored Survival Data</a> occurs when the event of interest has not happened for some subjects by the end of the study period or the last follow-up time. This type of censoring is common in survival analysis because not all individuals may experience the event before the study ends, or they might drop out or be lost to follow-up. Right-censored data is crucial in survival analysis as it allows the inclusion of all subjects in the analysis, providing more accurate and reliable estimates.</p>
+<p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Survival Models</a> refer to statistical methods used to analyze survival data, accounting for censored observations. These models aim to describe the relationship between survival time and one or more predictor variables, and to estimate the survival function and hazard function. Survival models are essential for understanding the factors that influence time-to-event data, allowing for predictions and comparisons between different groups or treatment effects. They are widely used in clinical trials, reliability engineering, and other areas where time-to-event data is prevalent.</p>
+<p><a href="https://projecteuclid.org/journals/annals-of-applied-statistics/volume-2/issue-3/Random-survival-forests/10.1214/08-AOAS169.full">Random Survival Forest</a> is an ensemble method that builds multiple survival trees and averages their predictions. The model combines the predictions of multiple survival trees, each built on a bootstrap sample of the data and a random subset of predictors. It uses the concept of ensemble learning to improve predictive accuracy and robustness. As a method, it handles high-dimensional data and complex interactions between variables well; can be more accurate and robust than a single survival tree; and provides measures of variable importance. However, the process can be bomputationally intensive due to the need to build multiple trees, and may be less interpretable than single trees or parametric models like the Cox model. Given a dataset with survival times, event indicators, and predictor variables, the algorithm involves generating multiple bootstrap samples from the original dataset; building a survival tree by recursively splitting the data at nodes using a random subset of predictor variables for each bootstrap sample; combining the predictions of all survival trees to form the random survival forest and averaging the survival functions predicted by all trees in the forest to obtain the final survival function for new data.</p>
+<ol>
+<li>The <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.RandomSurvivalForest.html">random survival forest model</a> from the <mark style="background-color: #CCECFF"><b>sksurv.ensemble</b></mark> Python library API was implemented.</li>
+<li>The model implementation used 2 hyperparameters:<ul>
+<li><span style="color: #FF0000">n_estimators</span> = number of trees in the forest made to vary between 100, 200 and 300</li>
+<li><span style="color: #FF0000">min_samples_split</span> = minimum number of samples required to split an internal node made to vary between 10, 15 and 20</li>
+</ul>
+</li>
+<li>Hyperparameter tuning was conducted using the 5-fold cross-validation method with optimal model performance using the concordance index determined for:<ul>
+<li><span style="color: #FF0000">n_estimators</span> = 100</li>
+<li><span style="color: #FF0000">min_samples_split</span> = 15</li>
+</ul>
+</li>
+<li>The cross-validated model performance of the optimal model is summarized as follows:<ul>
+<li><strong>Concordance Index</strong> = 0.7258</li>
+</ul>
+</li>
+<li>The apparent model performance of the optimal model is summarized as follows:<ul>
+<li><strong>Concordance Index</strong> = 0.8506</li>
+</ul>
+</li>
+<li>The independent test model performance of the final model is summarized as follows:<ul>
+<li><strong>Concordance Index</strong> = 0.6780</li>
+</ul>
+</li>
+<li>Significant difference in the apparent and cross-validated model performance observed, indicative of the presence of excessive model overfitting.</li>
+<li>Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated sufficient differentiation across the entire duration.</li>
+<li>Hazard and survival probability estimations for 5 sampled cases demonstrated reasonably smooth profiles.</li>
+</ol>
 </div>
 </div>
 </div>
@@ -20378,7 +20540,38 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="1.6.8-Gradient-Boosted-Survival-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">1.6.8 Gradient Boosted Survival Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.8"></a><a class="anchor-link" href="#1.6.8-Gradient-Boosted-Survival-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">¶</a></h3>
+<h3 id="1.6.8-Gradient-Boosted-Survival-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">1.6.8 Gradient Boosted Survival Model Fitting | Hyperparameter Tuning | Validation <a class="anchor" id="1.6.8"></a><a class="anchor-link" href="#1.6.8-Gradient-Boosted-Survival-Model-Fitting-%7C-Hyperparameter-Tuning-%7C-Validation-">¶</a></h3><p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Survival Analysis</a> deals with the analysis of time-to-event data. It focuses on the expected duration of time until one or more events of interest occur, such as death, failure, or relapse. This type of analysis is used to study and model the time until the occurrence of an event, taking into account that the event might not have occurred for all subjects during the study period. Several key aspects of survival analysis include the survival function which refers to the probability that an individual survives longer than a certain time, hazard function which describes the instantaneous rate at which events occur, given no prior event, and censoring pertaining to a condition where the event of interest has not occurred for some subjects during the observation period.</p>
+<p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Right-Censored Survival Data</a> occurs when the event of interest has not happened for some subjects by the end of the study period or the last follow-up time. This type of censoring is common in survival analysis because not all individuals may experience the event before the study ends, or they might drop out or be lost to follow-up. Right-censored data is crucial in survival analysis as it allows the inclusion of all subjects in the analysis, providing more accurate and reliable estimates.</p>
+<p><a href="https://link.springer.com/book/10.1007/978-1-4419-6646-9/">Survival Models</a> refer to statistical methods used to analyze survival data, accounting for censored observations. These models aim to describe the relationship between survival time and one or more predictor variables, and to estimate the survival function and hazard function. Survival models are essential for understanding the factors that influence time-to-event data, allowing for predictions and comparisons between different groups or treatment effects. They are widely used in clinical trials, reliability engineering, and other areas where time-to-event data is prevalent.</p>
+<p><a href="https://projecteuclid.org/journals/annals-of-statistics/volume-29/issue-5/Greedy-function-approximation-A-gradient-boosting-machine/10.1214/aos/1013203451.full">Gradient Boosted Survival</a> is an ensemble technique that builds a series of survival trees, where each tree tries to correct the errors of the previous one. The model uses boosting, a sequential technique where each new tree is fit to the residuals of the combined previous trees, and combines the predictions of all the trees to produce a final prediction. As a method, it has high predictive accuracy, the ability to model complex relationships, and reduces bias and variance compared to single-tree models. However, the process can even be more computationally intensive than Random Survival Forest, requires careful tuning of multiple hyperparameters, and makes interpretation challenging due to the complex nature of the model. Given a dataset with survival times, event indicators, and predictor variables, the algorithm involves starting with an initial prediction (often the median survival time or a simple model); calculating the residuals (errors) of the current model's predictions; fitting a survival tree to the residuals to learn the errors made by the current model; updating the current model by adding the new tree weighted by a learning rate parameter; repeating previous steps for a fixed number of iterations or until convergence; and summing the predictions of all trees in the sequence to obtain the final survival function for new data.</p>
+<ol>
+<li>The <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.GradientBoostingSurvivalAnalysis.html">random survival forest model</a> from the <mark style="background-color: #CCECFF"><b>sksurv.ensemble</b></mark> Python library API was implemented.</li>
+<li>The model implementation used 2 hyperparameters:<ul>
+<li><span style="color: #FF0000">n_estimators</span> = number of regression trees to create made to vary between 100, 200 and 300</li>
+<li><span style="color: #FF0000">learning_rate</span> = shrinkage parameter for the contribution of each tree made to vary between 0.05, 0.10 and 0.15</li>
+</ul>
+</li>
+<li>Hyperparameter tuning was conducted using the 5-fold cross-validation method with optimal model performance using the concordance index determined for:<ul>
+<li><span style="color: #FF0000">n_estimators</span> = 100</li>
+<li><span style="color: #FF0000">learning_rate</span> = 0.15</li>
+</ul>
+</li>
+<li>The cross-validated model performance of the optimal model is summarized as follows:<ul>
+<li><strong>Concordance Index</strong> = 0.6937</li>
+</ul>
+</li>
+<li>The apparent model performance of the optimal model is summarized as follows:<ul>
+<li><strong>Concordance Index</strong> = 0.9444</li>
+</ul>
+</li>
+<li>The independent test model performance of the final model is summarized as follows:<ul>
+<li><strong>Concordance Index</strong> = 0.6725</li>
+</ul>
+</li>
+<li>Significant difference in the apparent and cross-validated model performance observed, indicative of the presence of excessive model overfitting.</li>
+<li>Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated sufficient differentiation across the entire duration.</li>
+<li>Hazard and survival probability estimations for 5 sampled cases demonstrated reasonably smooth profiles.</li>
+</ol>
 </div>
 </div>
 </div>
