@@ -4601,7 +4601,7 @@ coxns_hyperparameter_grid = {'coxns__l1_ratio': [0.10, 0.50, 1.00],
 ```python
 ##################################
 # Setting up the GridSearchCV with 5-fold cross-validation
-# and using F1 score as the model evaluation metric
+# and using concordance index as the model evaluation metric
 ##################################
 coxns_grid_search = GridSearchCV(estimator=coxns_pipeline,
                                  param_grid=coxns_hyperparameter_grid,
@@ -4656,7 +4656,7 @@ stree_hyperparameter_grid = {'stree__min_samples_split': [10, 15, 20],
 ```python
 ##################################
 # Setting up the GridSearchCV with 5-fold cross-validation
-# and using F1 score as the model evaluation metric
+# and using concordance index as the model evaluation metric
 ##################################
 stree_grid_search = GridSearchCV(estimator=stree_pipeline,
                                  param_grid=stree_hyperparameter_grid,
@@ -4711,7 +4711,7 @@ rsf_hyperparameter_grid = {'rsf__n_estimators': [100, 200, 300],
 ```python
 ##################################
 # Setting up the GridSearchCV with 5-fold cross-validation
-# and using F1 score as the model evaluation metric
+# and using concordance index as the model evaluation metric
 ##################################
 rsf_grid_search = GridSearchCV(estimator=rsf_pipeline,
                                param_grid=rsf_hyperparameter_grid,
@@ -4766,7 +4766,7 @@ gbs_hyperparameter_grid = {'gbs__n_estimators': [100, 200, 300],
 ```python
 ##################################
 # Setting up the GridSearchCV with 5-fold cross-validation
-# and using F1 score as the model evaluation metric
+# and using concordance index as the model evaluation metric
 ##################################
 gbs_grid_search = GridSearchCV(estimator=gbs_pipeline,
                                param_grid=gbs_hyperparameter_grid,
@@ -11802,24 +11802,24 @@ for container in ci_plot.containers:
 
 ```python
 ##################################
-# Evaluating the F1 scores
+# Evaluating the concordance indices
 # on the test data
 ##################################
 optimal_coxph_heart_failure_y_test_ci = concordance_index_censored(y_test_array['DEATH_EVENT'], 
-                                                                         y_test_array['TIME'], 
-                                                                         optimal_coxph_model.predict(X_test))[0]
+                                                                   y_test_array['TIME'], 
+                                                                   optimal_coxph_model.predict(X_test))[0]
 optimal_coxns_heart_failure_y_test_ci = concordance_index_censored(y_test_array['DEATH_EVENT'], 
-                                                                         y_test_array['TIME'], 
-                                                                         optimal_coxns_model.predict(X_test))[0]
+                                                                   y_test_array['TIME'], 
+                                                                   optimal_coxns_model.predict(X_test))[0]
 optimal_stree_heart_failure_y_test_ci = concordance_index_censored(y_test_array['DEATH_EVENT'], 
-                                                                         y_test_array['TIME'], 
-                                                                         optimal_stree_model.predict(X_test))[0]
+                                                                   y_test_array['TIME'], 
+                                                                   optimal_stree_model.predict(X_test))[0]
 optimal_rsf_heart_failure_y_test_ci = concordance_index_censored(y_test_array['DEATH_EVENT'], 
-                                                                       y_test_array['TIME'], 
-                                                                       optimal_rsf_model.predict(X_test))[0]
+                                                                 y_test_array['TIME'], 
+                                                                 optimal_rsf_model.predict(X_test))[0]
 optimal_gbs_heart_failure_y_test_ci = concordance_index_censored(y_test_array['DEATH_EVENT'], 
-                                                                         y_test_array['TIME'], 
-                                                                         optimal_gbs_model.predict(X_test))[0]
+                                                                 y_test_array['TIME'], 
+                                                                 optimal_gbs_model.predict(X_test))[0]
 ```
 
 
@@ -12091,6 +12091,257 @@ display(coxph_train_feature_importance_summary)
   </tbody>
 </table>
 </div>
+
+
+
+```python
+##################################
+# Rebuilding the training data
+# for plotting kaplan-meier charts
+##################################
+X_train_indices = X_train.index.tolist()
+heart_failure_MI = heart_failure_EDA.copy()
+heart_failure_MI = heart_failure_MI.drop(['DIABETES','SEX', 'SMOKING', 'CREATININE_PHOSPHOKINASE','PLATELETS'], axis=1)
+heart_failure_MI = heart_failure_MI.loc[X_train_indices]
+heart_failure_MI.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AGE</th>
+      <th>EJECTION_FRACTION</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+      <th>ANAEMIA</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <th>DEATH_EVENT</th>
+      <th>TIME</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>266</th>
+      <td>-0.423454</td>
+      <td>-1.773346</td>
+      <td>1.144260</td>
+      <td>-0.689301</td>
+      <td>Absent</td>
+      <td>Absent</td>
+      <td>True</td>
+      <td>241.0</td>
+    </tr>
+    <tr>
+      <th>180</th>
+      <td>-2.043070</td>
+      <td>-0.633046</td>
+      <td>-0.732811</td>
+      <td>-0.244181</td>
+      <td>Absent</td>
+      <td>Absent</td>
+      <td>False</td>
+      <td>148.0</td>
+    </tr>
+    <tr>
+      <th>288</th>
+      <td>0.434332</td>
+      <td>-0.160461</td>
+      <td>-0.087641</td>
+      <td>1.348555</td>
+      <td>Absent</td>
+      <td>Absent</td>
+      <td>False</td>
+      <td>256.0</td>
+    </tr>
+    <tr>
+      <th>258</th>
+      <td>-1.446547</td>
+      <td>-1.163741</td>
+      <td>-1.149080</td>
+      <td>-0.471658</td>
+      <td>Present</td>
+      <td>Absent</td>
+      <td>False</td>
+      <td>230.0</td>
+    </tr>
+    <tr>
+      <th>236</th>
+      <td>1.173233</td>
+      <td>1.021735</td>
+      <td>-0.087641</td>
+      <td>3.397822</td>
+      <td>Absent</td>
+      <td>Present</td>
+      <td>False</td>
+      <td>209.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Determining the medians for the numeric predictors
+##################################
+heart_failure_MI_numeric = heart_failure_MI[["AGE","EJECTION_FRACTION","SERUM_CREATININE","SERUM_SODIUM"]]
+numeric_predictor_median_list = heart_failure_MI_numeric.median()
+numeric_predictor_median_list
+```
+
+
+
+
+    AGE                  0.065124
+    EJECTION_FRACTION    0.100914
+    SERUM_CREATININE    -0.087641
+    SERUM_SODIUM        -0.006503
+    dtype: float64
+
+
+
+
+```python
+##################################
+# Creating a function to bin
+# numeric predictors into two groups
+##################################
+def bin_numeric_model_predictor(df, predictor):
+    median = numeric_predictor_median_list.loc[predictor]
+    df[predictor] = np.where(df[predictor] <= median, "Low", "High")
+    return df
+```
+
+
+```python
+##################################
+# Binning the numeric predictors
+# into two groups
+##################################
+for numeric_column in ["AGE","EJECTION_FRACTION","SERUM_CREATININE","SERUM_SODIUM"]:
+    heart_failure_MI = bin_numeric_model_predictor(heart_failure_MI, numeric_column)
+```
+
+
+```python
+##################################
+# Exploring the transformed
+# dataset for plotting
+##################################
+heart_failure_MI.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AGE</th>
+      <th>EJECTION_FRACTION</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+      <th>ANAEMIA</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <th>DEATH_EVENT</th>
+      <th>TIME</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>266</th>
+      <td>Low</td>
+      <td>Low</td>
+      <td>High</td>
+      <td>Low</td>
+      <td>Absent</td>
+      <td>Absent</td>
+      <td>True</td>
+      <td>241.0</td>
+    </tr>
+    <tr>
+      <th>180</th>
+      <td>Low</td>
+      <td>Low</td>
+      <td>Low</td>
+      <td>Low</td>
+      <td>Absent</td>
+      <td>Absent</td>
+      <td>False</td>
+      <td>148.0</td>
+    </tr>
+    <tr>
+      <th>288</th>
+      <td>High</td>
+      <td>Low</td>
+      <td>Low</td>
+      <td>High</td>
+      <td>Absent</td>
+      <td>Absent</td>
+      <td>False</td>
+      <td>256.0</td>
+    </tr>
+    <tr>
+      <th>258</th>
+      <td>Low</td>
+      <td>Low</td>
+      <td>Low</td>
+      <td>Low</td>
+      <td>Present</td>
+      <td>Absent</td>
+      <td>False</td>
+      <td>230.0</td>
+    </tr>
+    <tr>
+      <th>236</th>
+      <td>High</td>
+      <td>High</td>
+      <td>Low</td>
+      <td>High</td>
+      <td>Absent</td>
+      <td>Present</td>
+      <td>False</td>
+      <td>209.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
 
 
 ## 1.7. Predictive Model Deployment Using Streamlit and Streamlit Community Cloud <a class="anchor" id="1.7"></a>
