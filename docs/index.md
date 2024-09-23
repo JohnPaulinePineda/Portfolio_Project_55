@@ -11675,6 +11675,16 @@ joblib.dump(gbs_best_model_train_cv,
 
 ### 1.6.9 Model Selection <a class="anchor" id="1.6.9"></a>
 
+1. The [cox proportional hazards regression model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html) was selected as the final model by demonstrating the best **concordance index** in the **validation data** with minimal overfitting between the apparent and cross-validated **train data**:
+    * **train data (apparent)** = 0.7400
+    * **train data (cross-validated)** = 0.7250
+    * **validation data** = 0.7175
+2. The optimal hyperparameters for the final model configuration was determined as follows:
+    * <span style="color: #FF0000">alpha</span> = 10.00
+3. The [cox net survival model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxnetSurvivalAnalysis.html) also demonstrated comparably good survival prediction, but was not selected over the [cox proportional hazards regression model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html) due to model complexity.
+4. the [survival tree model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.tree.SurvivalTree.html), [random survival forest model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.RandomSurvivalForest.html), and [gradient boosted survival model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.GradientBoostingSurvivalAnalysis.html) all showed lower **concordance index** values.
+
+
 
 ```python
 ##################################
@@ -11780,6 +11790,14 @@ for container in ci_plot.containers:
 
 
 ### 1.6.10 Model Testing <a class="anchor" id="1.6.10"></a>
+
+1. The selected [cox proportional hazards regression model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html) demonstrated sufficient **concordance index** in the independent **test data** :
+    * **train data (apparent)** = 0.7400
+    * **train data (cross-validated)** = 0.7250
+    * **validation data** = 0.7175
+    * **test data** = 0.7163
+2. For benchmarking purposes, all candidate models were evaluated on the **test data**. Interestingly, the [survival tree model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.tree.SurvivalTree.html), [random survival forest model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.RandomSurvivalForest.html), and [gradient boosted survival model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.GradientBoostingSurvivalAnalysis.html) performed better than the selected model. In this case, the inconsistent performance (poor on validation, good on test) might be an indicator of instability. The [cox proportional hazards regression model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html) model (and to some extent, the [cox net survival model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxnetSurvivalAnalysis.html) model), which shows more consistent performance across validation and test sets, is more reliable. Although, the selected model may not perform as well on the test set alone, its generalization across both validation and test sets makes it a more robust and stable choice in practice.
+
 
 
 ```python

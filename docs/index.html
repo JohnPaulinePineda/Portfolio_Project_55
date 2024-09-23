@@ -22397,7 +22397,20 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="1.6.9-Model-Selection-">1.6.9 Model Selection <a class="anchor" id="1.6.9"></a><a class="anchor-link" href="#1.6.9-Model-Selection-">¶</a></h3>
+<h3 id="1.6.9-Model-Selection-">1.6.9 Model Selection <a class="anchor" id="1.6.9"></a><a class="anchor-link" href="#1.6.9-Model-Selection-">¶</a></h3><ol>
+<li>The <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html">cox proportional hazards regression model</a> was selected as the final model by demonstrating the best <strong>concordance index</strong> in the <strong>validation data</strong> with minimal overfitting between the apparent and cross-validated <strong>train data</strong>:<ul>
+<li><strong>train data (apparent)</strong> = 0.7400</li>
+<li><strong>train data (cross-validated)</strong> = 0.7250</li>
+<li><strong>validation data</strong> = 0.7175</li>
+</ul>
+</li>
+<li>The optimal hyperparameters for the final model configuration was determined as follows:<ul>
+<li><span style="color: #FF0000">alpha</span> = 10.00</li>
+</ul>
+</li>
+<li>The <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxnetSurvivalAnalysis.html">cox net survival model</a> also demonstrated comparably good survival prediction, but was not selected over the <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html">cox proportional hazards regression model</a> due to model complexity.</li>
+<li>the <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.tree.SurvivalTree.html">survival tree model</a>, <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.RandomSurvivalForest.html">random survival forest model</a>, and <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.GradientBoostingSurvivalAnalysis.html">gradient boosted survival model</a> all showed lower <strong>concordance index</strong> values.</li>
+</ol>
 </div>
 </div>
 </div>
@@ -22544,7 +22557,16 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="1.6.10-Model-Testing-">1.6.10 Model Testing <a class="anchor" id="1.6.10"></a><a class="anchor-link" href="#1.6.10-Model-Testing-">¶</a></h3>
+<h3 id="1.6.10-Model-Testing-">1.6.10 Model Testing <a class="anchor" id="1.6.10"></a><a class="anchor-link" href="#1.6.10-Model-Testing-">¶</a></h3><ol>
+<li>The selected <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html">cox proportional hazards regression model</a> demonstrated sufficient <strong>concordance index</strong> in the independent <strong>test data</strong> :<ul>
+<li><strong>train data (apparent)</strong> = 0.7400</li>
+<li><strong>train data (cross-validated)</strong> = 0.7250</li>
+<li><strong>validation data</strong> = 0.7175</li>
+<li><strong>test data</strong> = 0.7163</li>
+</ul>
+</li>
+<li>For benchmarking purposes, all candidate models were evaluated on the <strong>test data</strong>. Interestingly, the <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.tree.SurvivalTree.html">survival tree model</a>, <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.RandomSurvivalForest.html">random survival forest model</a>, and <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.GradientBoostingSurvivalAnalysis.html">gradient boosted survival model</a> performed better than the selected model. In this case, the inconsistent performance (poor on validation, good on test) might be an indicator of instability. The <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html">cox proportional hazards regression model</a> model (and to some extent, the <a href="https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxnetSurvivalAnalysis.html">cox net survival model</a> model), which shows more consistent performance across validation and test sets, is more reliable. Although, the selected model may not perform as well on the test set alone, its generalization across both validation and test sets makes it a more robust and stable choice in practice.</li>
+</ol>
 </div>
 </div>
 </div>
