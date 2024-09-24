@@ -12344,6 +12344,154 @@ heart_failure_MI.head()
 
 
 
+
+```python
+##################################
+# Defining a function to plot the
+# estimated survival profiles
+# using Kaplan-Meier Plots
+##################################
+def plot_kaplan_meier(df, cat_var, ax, new_case_value=None):
+    kmf = KaplanMeierFitter()
+
+    # Defining the color scheme for each category
+    if cat_var in ['AGE', 'EJECTION_FRACTION', 'SERUM_CREATININE', 'SERUM_SODIUM']:
+        categories = ['Low', 'High']
+        colors = {'Low': 'blue', 'High': 'red'}
+    else:
+        categories = ['Absent', 'Present']
+        colors = {'Absent': 'blue', 'Present': 'red'}
+
+    # Plotting each category with a thin line and transparency
+    for value in categories:
+        mask = df[cat_var] == value
+        kmf.fit(df['TIME'][mask], event_observed=df['DEATH_EVENT'][mask], label=f'{cat_var}={value} (Baseline Distribution)')
+        kmf.plot_survival_function(ax=ax, ci_show=False, color=colors[str(value)], linestyle='-', linewidth=5.0, alpha=0.30)
+
+    # Overlaying a thicker broken line for the new case if provided
+    if new_case_value is not None:
+        mask_new_case = df[cat_var] == new_case_value
+        kmf.fit(df['TIME'][mask_new_case], event_observed=df['DEATH_EVENT'][mask_new_case], label=f'{cat_var}={value} (Test Case)')
+        kmf.plot_survival_function(ax=ax, ci_show=False, color='black', linestyle=':', linewidth=4.0)
+
+```
+
+
+```python
+##################################
+# Plotting the estimated survival profiles
+# of the model training data
+# using Kaplan-Meier Plots
+##################################
+fig, axes = plt.subplots(3, 2, figsize=(17, 18))
+
+heart_failure_predictors = ['AGE','EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM','ANAEMIA','HIGH_BLOOD_PRESSURE']
+
+for i, predictor in enumerate(heart_failure_predictors):
+    ax = axes[i // 2, i % 2]
+    plot_kaplan_meier(heart_failure_MI, predictor, ax, new_case_value=None)
+    ax.set_title(f'DEATH_EVENT Survival Probabilities by {predictor} Categories')
+    ax.set_xlabel('TIME')
+    ax.set_ylabel('DEATH_EVENT Survival Probability')
+plt.tight_layout()
+plt.show()
+```
+
+
+    
+![png](output_248_0.png)
+    
+
+
+
+```python
+##################################
+# Describing the details of the 
+# test case for evaluation
+##################################
+X_sample = {'AGE': 'High',   
+            'EJECTION_FRACTION': 'Low',
+            'SERUM_CREATININE': 'High', 
+            'SERUM_SODIUM': 'Low', 
+            'ANAEMIA': 'Present', 
+            'HIGH_BLOOD_PRESSURE': 'Absent'}
+X_test_sample = pd.DataFrame([X_sample])
+X_test_sample.head()
+
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AGE</th>
+      <th>EJECTION_FRACTION</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+      <th>ANAEMIA</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>High</td>
+      <td>Low</td>
+      <td>High</td>
+      <td>Low</td>
+      <td>Present</td>
+      <td>Absent</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Plotting the estimated survival profiles
+# of the test case
+# using Kaplan-Meier Plots
+##################################
+fig, axes = plt.subplots(3, 2, figsize=(17, 18))
+
+heart_failure_predictors = ['AGE','EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM','ANAEMIA','HIGH_BLOOD_PRESSURE']
+
+for i, predictor in enumerate(heart_failure_predictors):
+    ax = axes[i // 2, i % 2]
+    plot_kaplan_meier(heart_failure_MI, predictor, ax, new_case_value=X_sample[predictor])
+    ax.set_title(f'DEATH_EVENT Survival Probabilities by {predictor} Categories')
+    ax.set_xlabel('TIME')
+    ax.set_ylabel('DEATH_EVENT Survival Probability')
+plt.tight_layout()
+plt.show()
+```
+
+
+    
+![png](output_250_0.png)
+    
+
+
 ## 1.7. Predictive Model Deployment Using Streamlit and Streamlit Community Cloud <a class="anchor" id="1.7"></a>
 
 ### 1.7.1 Model Prediction Application Code Development <a class="anchor" id="1.7.1"></a>
