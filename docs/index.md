@@ -2,7 +2,7 @@
 # Model Deployment : Estimating Heart Failure Survival Risk Profiles From Cardiovascular, Hematologic And Metabolic Markers
 
 ***
-### John Pauline Pineda <br> <br> *September 28, 2024*
+### John Pauline Pineda <br> <br> *October 5, 2024*
 ***
 
 * [**1. Table of Contents**](#TOC)
@@ -4526,12 +4526,103 @@ y_test_array = np.array([(row.DEATH_EVENT, row.TIME) for index, row in y_test.it
 
 
 ```python
+X_train.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AGE</th>
+      <th>ANAEMIA</th>
+      <th>EJECTION_FRACTION</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>266</th>
+      <td>55.0</td>
+      <td>0</td>
+      <td>20.0</td>
+      <td>0</td>
+      <td>1.83</td>
+      <td>134.0</td>
+    </tr>
+    <tr>
+      <th>180</th>
+      <td>40.0</td>
+      <td>0</td>
+      <td>30.0</td>
+      <td>0</td>
+      <td>0.90</td>
+      <td>136.0</td>
+    </tr>
+    <tr>
+      <th>288</th>
+      <td>65.0</td>
+      <td>0</td>
+      <td>35.0</td>
+      <td>0</td>
+      <td>1.10</td>
+      <td>142.0</td>
+    </tr>
+    <tr>
+      <th>258</th>
+      <td>45.0</td>
+      <td>1</td>
+      <td>25.0</td>
+      <td>0</td>
+      <td>0.80</td>
+      <td>135.0</td>
+    </tr>
+    <tr>
+      <th>236</th>
+      <td>75.0</td>
+      <td>0</td>
+      <td>50.0</td>
+      <td>1</td>
+      <td>1.10</td>
+      <td>148.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
 ##################################
 # Defining the modelling pipeline
 # using the Cox Proportional Hazards Regression Model
 ##################################
+coxph_pipeline_preprocessor = ColumnTransformer(
+    transformers=[
+        ('numeric_predictors', PowerTransformer(method='yeo-johnson', standardize=True), ['AGE', 'EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM'])  # Applying PowerTransformer to numeric columns only
+    ], remainder='passthrough'  # Keeping the categorical columns unchanged
+)
 coxph_pipeline = Pipeline([
-    ('yeo_johnson', PowerTransformer(method='yeo-johnson', standardize=True)),
+    ('yeo_johnson', coxph_pipeline_preprocessor),
     ('coxph', CoxPHSurvivalAnalysis())])
 ```
 
@@ -4547,7 +4638,7 @@ coxph_hyperparameter_grid = {'coxph__alpha': [0.01, 0.10, 1.00, 10.00, 100.00]}
 ```python
 ##################################
 # Setting up the GridSearchCV with 5-fold cross-validation
-# and using F1 score as the model evaluation metric
+# and using concordance index as the model evaluation metric
 ##################################
 coxph_grid_search = GridSearchCV(estimator=coxph_pipeline,
                                  param_grid=coxph_hyperparameter_grid,
@@ -4582,8 +4673,13 @@ coxph_grid_search = GridSearchCV(estimator=coxph_pipeline,
 # Defining the modelling pipeline
 # using the cox net survival analysis model
 ##################################
+coxns_pipeline_preprocessor = ColumnTransformer(
+    transformers=[
+        ('numeric_predictors', PowerTransformer(method='yeo-johnson', standardize=True), ['AGE', 'EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM'])  # Applying PowerTransformer to numeric columns only
+    ], remainder='passthrough'  # Keeping the categorical columns unchanged
+)
 coxns_pipeline = Pipeline([
-    ('yeo_johnson', PowerTransformer(method='yeo-johnson', standardize=True)),
+    ('yeo_johnson', coxns_pipeline_preprocessor),
     ('coxns', CoxnetSurvivalAnalysis())])
 ```
 
@@ -4637,8 +4733,13 @@ coxns_grid_search = GridSearchCV(estimator=coxns_pipeline,
 # Defining the modelling pipeline
 # using the survival tree model
 ##################################
+stree_pipeline_preprocessor = ColumnTransformer(
+    transformers=[
+        ('numeric_predictors', PowerTransformer(method='yeo-johnson', standardize=True), ['AGE', 'EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM'])  # Applying PowerTransformer to numeric columns only
+    ], remainder='passthrough'  # Keeping the categorical columns unchanged
+)
 stree_pipeline = Pipeline([
-    ('yeo_johnson', PowerTransformer(method='yeo-johnson', standardize=True)),
+    ('yeo_johnson', stree_pipeline_preprocessor),
     ('stree', SurvivalTree())])
 ```
 
@@ -4692,8 +4793,13 @@ stree_grid_search = GridSearchCV(estimator=stree_pipeline,
 # Defining the modelling pipeline
 # using the random survival forest model
 ##################################
+rsf_pipeline_preprocessor = ColumnTransformer(
+    transformers=[
+        ('numeric_predictors', PowerTransformer(method='yeo-johnson', standardize=True), ['AGE', 'EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM'])  # Applying PowerTransformer to numeric columns only
+    ], remainder='passthrough'  # Keeping the categorical columns unchanged
+)
 rsf_pipeline = Pipeline([
-    ('yeo_johnson', PowerTransformer(method='yeo-johnson', standardize=True)),
+    ('yeo_johnson', rsf_pipeline_preprocessor),
     ('rsf', RandomSurvivalForest())])
 ```
 
@@ -4747,8 +4853,13 @@ rsf_grid_search = GridSearchCV(estimator=rsf_pipeline,
 # Defining the modelling pipeline
 # using the gradient boosted survival model
 ##################################
+gbs_pipeline_preprocessor = ColumnTransformer(
+    transformers=[
+        ('numeric_predictors', PowerTransformer(method='yeo-johnson', standardize=True), ['AGE', 'EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM'])  # Applying PowerTransformer to numeric columns only
+    ], remainder='passthrough'  # Keeping the categorical columns unchanged
+)
 gbs_pipeline = Pipeline([
-    ('yeo_johnson', PowerTransformer(method='yeo-johnson', standardize=True)),
+    ('yeo_johnson', gbs_pipeline_preprocessor),
     ('gbs', GradientBoostingSurvivalAnalysis())])
 ```
 
@@ -5223,17 +5334,40 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   background-color: var(--sklearn-color-fitted-level-3);
 }
 </style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
-             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                                        ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                                          transformers=[(&#x27;numeric_predictors&#x27;,
+                                                                         PowerTransformer(),
+                                                                         [&#x27;AGE&#x27;,
+                                                                          &#x27;EJECTION_FRACTION&#x27;,
+                                                                          &#x27;SERUM_CREATININE&#x27;,
+                                                                          &#x27;SERUM_SODIUM&#x27;])])),
                                        (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis())]),
              n_jobs=-1,
              param_grid={&#x27;coxph__alpha&#x27;: [0.01, 0.1, 1.0, 10.0, 100.0]},
              verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" ><label for="sk-estimator-id-1" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
-             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                                        ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                                          transformers=[(&#x27;numeric_predictors&#x27;,
+                                                                         PowerTransformer(),
+                                                                         [&#x27;AGE&#x27;,
+                                                                          &#x27;EJECTION_FRACTION&#x27;,
+                                                                          &#x27;SERUM_CREATININE&#x27;,
+                                                                          &#x27;SERUM_SODIUM&#x27;])])),
                                        (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis())]),
              n_jobs=-1,
              param_grid={&#x27;coxph__alpha&#x27;: [0.01, 0.1, 1.0, 10.0, 100.0]},
-             verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" ><label for="sk-estimator-id-2" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
-                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=10.0))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox" ><label for="sk-estimator-id-3" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-4" type="checkbox" ><label for="sk-estimator-id-4" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxPHSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxPHSurvivalAnalysis(alpha=10.0)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
+             verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" ><label for="sk-estimator-id-2" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                 ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                   transformers=[(&#x27;numeric_predictors&#x27;,
+                                                  PowerTransformer(),
+                                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                                   &#x27;SERUM_CREATININE&#x27;,
+                                                   &#x27;SERUM_SODIUM&#x27;])])),
+                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=1.0))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox" ><label for="sk-estimator-id-3" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                  transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
+                                 [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-4" type="checkbox" ><label for="sk-estimator-id-4" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-5" type="checkbox" ><label for="sk-estimator-id-5" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-6" type="checkbox" ><label for="sk-estimator-id-6" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-7" type="checkbox" ><label for="sk-estimator-id-7" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-8" type="checkbox" ><label for="sk-estimator-id-8" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxPHSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxPHSurvivalAnalysis(alpha=1.0)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
 
 
 
@@ -5282,30 +5416,17 @@ coxph_grid_search_results.loc[:, ~coxph_grid_search_results.columns.str.endswith
   </thead>
   <tbody>
     <tr>
-      <th>3</th>
-      <td>10.00</td>
-      <td>{'coxph__alpha': 10.0}</td>
-      <td>0.767584</td>
-      <td>0.715170</td>
-      <td>0.790816</td>
-      <td>0.844444</td>
-      <td>0.507143</td>
-      <td>0.725032</td>
-      <td>0.116594</td>
-      <td>1</td>
-    </tr>
-    <tr>
       <th>2</th>
       <td>1.00</td>
       <td>{'coxph__alpha': 1.0}</td>
-      <td>0.761468</td>
-      <td>0.702786</td>
-      <td>0.790816</td>
+      <td>0.764526</td>
+      <td>0.715170</td>
+      <td>0.785714</td>
       <td>0.848889</td>
       <td>0.492857</td>
-      <td>0.719363</td>
-      <td>0.122666</td>
-      <td>2</td>
+      <td>0.721431</td>
+      <td>0.122082</td>
+      <td>1</td>
     </tr>
     <tr>
       <th>0</th>
@@ -5318,7 +5439,7 @@ coxph_grid_search_results.loc[:, ~coxph_grid_search_results.columns.str.endswith
       <td>0.492857</td>
       <td>0.718752</td>
       <td>0.122462</td>
-      <td>3</td>
+      <td>2</td>
     </tr>
     <tr>
       <th>1</th>
@@ -5331,19 +5452,32 @@ coxph_grid_search_results.loc[:, ~coxph_grid_search_results.columns.str.endswith
       <td>0.492857</td>
       <td>0.718752</td>
       <td>0.122462</td>
-      <td>3</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>10.00</td>
+      <td>{'coxph__alpha': 10.0}</td>
+      <td>0.758410</td>
+      <td>0.681115</td>
+      <td>0.780612</td>
+      <td>0.840000</td>
+      <td>0.521429</td>
+      <td>0.716313</td>
+      <td>0.109931</td>
+      <td>4</td>
     </tr>
     <tr>
       <th>4</th>
       <td>100.00</td>
       <td>{'coxph__alpha': 100.0}</td>
-      <td>0.755352</td>
-      <td>0.687307</td>
-      <td>0.770408</td>
-      <td>0.835556</td>
-      <td>0.535714</td>
-      <td>0.716867</td>
-      <td>0.102103</td>
+      <td>0.770642</td>
+      <td>0.668731</td>
+      <td>0.755102</td>
+      <td>0.817778</td>
+      <td>0.550000</td>
+      <td>0.712451</td>
+      <td>0.094447</td>
       <td>5</td>
     </tr>
   </tbody>
@@ -5363,7 +5497,7 @@ print(f"Best Model Parameters: {coxph_grid_search.best_params_}")
 ```
 
     Best Cox Proportional Hazards Regression Model using the Cross-Validated Train Data: 
-    Best Model Parameters: {'coxph__alpha': 10.0}
+    Best Model Parameters: {'coxph__alpha': 1.0}
     
 
 
@@ -5377,7 +5511,7 @@ optimal_coxph_heart_failure_y_crossvalidation_ci = coxph_grid_search.best_score_
 print(f"Cross-Validation Concordance Index: {optimal_coxph_heart_failure_y_crossvalidation_ci}")
 ```
 
-    Cross-Validation Concordance Index: 0.7250316009230025
+    Cross-Validation Concordance Index: 0.721431317996376
     
 
 
@@ -5797,9 +5931,24 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-2" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
-                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=10.0))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-5" type="checkbox" ><label for="sk-estimator-id-5" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
-                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=10.0))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-6" type="checkbox" ><label for="sk-estimator-id-6" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-7" type="checkbox" ><label for="sk-estimator-id-7" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxPHSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxPHSurvivalAnalysis(alpha=10.0)</pre></div> </div></div></div></div></div></div>
+</style><div id="sk-container-id-2" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                 ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                   transformers=[(&#x27;numeric_predictors&#x27;,
+                                                  PowerTransformer(),
+                                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                                   &#x27;SERUM_CREATININE&#x27;,
+                                                   &#x27;SERUM_SODIUM&#x27;])])),
+                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=1.0))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-9" type="checkbox" ><label for="sk-estimator-id-9" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                 ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                   transformers=[(&#x27;numeric_predictors&#x27;,
+                                                  PowerTransformer(),
+                                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                                   &#x27;SERUM_CREATININE&#x27;,
+                                                   &#x27;SERUM_SODIUM&#x27;])])),
+                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=1.0))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-10" type="checkbox" ><label for="sk-estimator-id-10" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                  transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
+                                 [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-11" type="checkbox" ><label for="sk-estimator-id-11" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-12" type="checkbox" ><label for="sk-estimator-id-12" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-13" type="checkbox" ><label for="sk-estimator-id-13" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-14" type="checkbox" ><label for="sk-estimator-id-14" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-15" type="checkbox" ><label for="sk-estimator-id-15" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxPHSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxPHSurvivalAnalysis(alpha=1.0)</pre></div> </div></div></div></div></div></div>
 
 
 
@@ -5817,7 +5966,7 @@ optimal_coxph_heart_failure_y_train_ci = concordance_index_censored(y_train_arra
 print(f"Apparent Concordance Index: {optimal_coxph_heart_failure_y_train_ci}")
 ```
 
-    Apparent Concordance Index: 0.7400255346313438
+    Apparent Concordance Index: 0.7422598148739228
     
 
 
@@ -5885,13 +6034,13 @@ display(coxph_summary)
     <tr>
       <th>0</th>
       <td>Train</td>
-      <td>0.740026</td>
+      <td>0.742260</td>
       <td>COXPH</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Cross-Validation</td>
-      <td>0.725032</td>
+      <td>0.721431</td>
       <td>COXPH</td>
     </tr>
     <tr>
@@ -5932,7 +6081,7 @@ plt.show()
 
 
     
-![png](output_166_0.png)
+![png](output_167_0.png)
     
 
 
@@ -6083,7 +6232,7 @@ plt.show()
 
 
     
-![png](output_170_0.png)
+![png](output_171_0.png)
     
 
 
@@ -6553,24 +6702,47 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   background-color: var(--sklearn-color-fitted-level-3);
 }
 </style><div id="sk-container-id-3" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
-             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                                        ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                                          transformers=[(&#x27;numeric_predictors&#x27;,
+                                                                         PowerTransformer(),
+                                                                         [&#x27;AGE&#x27;,
+                                                                          &#x27;EJECTION_FRACTION&#x27;,
+                                                                          &#x27;SERUM_CREATININE&#x27;,
+                                                                          &#x27;SERUM_SODIUM&#x27;])])),
                                        (&#x27;coxns&#x27;, CoxnetSurvivalAnalysis())]),
              n_jobs=-1,
              param_grid={&#x27;coxns__alpha_min_ratio&#x27;: [0.0001, 0.01],
                          &#x27;coxns__fit_baseline_model&#x27;: [True],
                          &#x27;coxns__l1_ratio&#x27;: [0.1, 0.5, 1.0]},
-             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-8" type="checkbox" ><label for="sk-estimator-id-8" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
-             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-16" type="checkbox" ><label for="sk-estimator-id-16" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                                        ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                                          transformers=[(&#x27;numeric_predictors&#x27;,
+                                                                         PowerTransformer(),
+                                                                         [&#x27;AGE&#x27;,
+                                                                          &#x27;EJECTION_FRACTION&#x27;,
+                                                                          &#x27;SERUM_CREATININE&#x27;,
+                                                                          &#x27;SERUM_SODIUM&#x27;])])),
                                        (&#x27;coxns&#x27;, CoxnetSurvivalAnalysis())]),
              n_jobs=-1,
              param_grid={&#x27;coxns__alpha_min_ratio&#x27;: [0.0001, 0.01],
                          &#x27;coxns__fit_baseline_model&#x27;: [True],
                          &#x27;coxns__l1_ratio&#x27;: [0.1, 0.5, 1.0]},
-             verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-9" type="checkbox" ><label for="sk-estimator-id-9" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+             verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-17" type="checkbox" ><label for="sk-estimator-id-17" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                 ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                   transformers=[(&#x27;numeric_predictors&#x27;,
+                                                  PowerTransformer(),
+                                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                                   &#x27;SERUM_CREATININE&#x27;,
+                                                   &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;coxns&#x27;,
                  CoxnetSurvivalAnalysis(alpha_min_ratio=0.01,
                                         fit_baseline_model=True,
-                                        l1_ratio=0.1))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-10" type="checkbox" ><label for="sk-estimator-id-10" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-11" type="checkbox" ><label for="sk-estimator-id-11" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxnetSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxnetSurvivalAnalysis(alpha_min_ratio=0.01, fit_baseline_model=True,
+                                        l1_ratio=0.1))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-18" type="checkbox" ><label for="sk-estimator-id-18" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                  transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
+                                 [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-19" type="checkbox" ><label for="sk-estimator-id-19" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-20" type="checkbox" ><label for="sk-estimator-id-20" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-21" type="checkbox" ><label for="sk-estimator-id-21" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-22" type="checkbox" ><label for="sk-estimator-id-22" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-23" type="checkbox" ><label for="sk-estimator-id-23" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxnetSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxnetSurvivalAnalysis(alpha_min_ratio=0.01, fit_baseline_model=True,
                        l1_ratio=0.1)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
 
 
@@ -6628,13 +6800,43 @@ coxns_grid_search_results.loc[:, ~coxns_grid_search_results.columns.str.endswith
       <td>0.1</td>
       <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
       <td>0.761468</td>
-      <td>0.702786</td>
-      <td>0.790816</td>
+      <td>0.705882</td>
+      <td>0.785714</td>
       <td>0.844444</td>
-      <td>0.500000</td>
-      <td>0.719903</td>
-      <td>0.119094</td>
+      <td>0.514286</td>
+      <td>0.722359</td>
+      <td>0.113150</td>
       <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0100</td>
+      <td>True</td>
+      <td>0.5</td>
+      <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
+      <td>0.758410</td>
+      <td>0.708978</td>
+      <td>0.790816</td>
+      <td>0.848889</td>
+      <td>0.492857</td>
+      <td>0.719990</td>
+      <td>0.122326</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.0100</td>
+      <td>True</td>
+      <td>1.0</td>
+      <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
+      <td>0.758410</td>
+      <td>0.705882</td>
+      <td>0.790816</td>
+      <td>0.848889</td>
+      <td>0.492857</td>
+      <td>0.719371</td>
+      <td>0.122388</td>
+      <td>3</td>
     </tr>
     <tr>
       <th>0</th>
@@ -6649,7 +6851,7 @@ coxns_grid_search_results.loc[:, ~coxns_grid_search_results.columns.str.endswith
       <td>0.492857</td>
       <td>0.719363</td>
       <td>0.122666</td>
-      <td>2</td>
+      <td>4</td>
     </tr>
     <tr>
       <th>1</th>
@@ -6664,7 +6866,7 @@ coxns_grid_search_results.loc[:, ~coxns_grid_search_results.columns.str.endswith
       <td>0.492857</td>
       <td>0.718343</td>
       <td>0.122087</td>
-      <td>3</td>
+      <td>5</td>
     </tr>
     <tr>
       <th>2</th>
@@ -6679,37 +6881,7 @@ coxns_grid_search_results.loc[:, ~coxns_grid_search_results.columns.str.endswith
       <td>0.492857</td>
       <td>0.718343</td>
       <td>0.122087</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>0.0100</td>
-      <td>True</td>
-      <td>0.5</td>
-      <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
-      <td>0.761468</td>
-      <td>0.702786</td>
-      <td>0.785714</td>
-      <td>0.848889</td>
-      <td>0.492857</td>
-      <td>0.718343</td>
-      <td>0.122087</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>0.0100</td>
-      <td>True</td>
-      <td>1.0</td>
-      <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
-      <td>0.761468</td>
-      <td>0.702786</td>
-      <td>0.785714</td>
-      <td>0.848889</td>
-      <td>0.492857</td>
-      <td>0.718343</td>
-      <td>0.122087</td>
-      <td>3</td>
+      <td>5</td>
     </tr>
   </tbody>
 </table>
@@ -6742,7 +6914,7 @@ optimal_coxns_heart_failure_y_crossvalidation_ci = coxns_grid_search.best_score_
 print(f"Cross-Validation Concordance Index: {optimal_coxns_heart_failure_y_crossvalidation_ci}")
 ```
 
-    Cross-Validation Concordance Index: 0.7199030077184584
+    Cross-Validation Concordance Index: 0.7223589374587756
     
 
 
@@ -7162,15 +7334,30 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-4" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+</style><div id="sk-container-id-4" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                 ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                   transformers=[(&#x27;numeric_predictors&#x27;,
+                                                  PowerTransformer(),
+                                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                                   &#x27;SERUM_CREATININE&#x27;,
+                                                   &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;coxns&#x27;,
                  CoxnetSurvivalAnalysis(alpha_min_ratio=0.01,
                                         fit_baseline_model=True,
-                                        l1_ratio=0.1))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-12" type="checkbox" ><label for="sk-estimator-id-12" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                                        l1_ratio=0.1))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-24" type="checkbox" ><label for="sk-estimator-id-24" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                 ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                   transformers=[(&#x27;numeric_predictors&#x27;,
+                                                  PowerTransformer(),
+                                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                                   &#x27;SERUM_CREATININE&#x27;,
+                                                   &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;coxns&#x27;,
                  CoxnetSurvivalAnalysis(alpha_min_ratio=0.01,
                                         fit_baseline_model=True,
-                                        l1_ratio=0.1))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-13" type="checkbox" ><label for="sk-estimator-id-13" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-14" type="checkbox" ><label for="sk-estimator-id-14" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxnetSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxnetSurvivalAnalysis(alpha_min_ratio=0.01, fit_baseline_model=True,
+                                        l1_ratio=0.1))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-25" type="checkbox" ><label for="sk-estimator-id-25" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                  transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
+                                 [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-26" type="checkbox" ><label for="sk-estimator-id-26" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-27" type="checkbox" ><label for="sk-estimator-id-27" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-28" type="checkbox" ><label for="sk-estimator-id-28" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-29" type="checkbox" ><label for="sk-estimator-id-29" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-30" type="checkbox" ><label for="sk-estimator-id-30" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxnetSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxnetSurvivalAnalysis(alpha_min_ratio=0.01, fit_baseline_model=True,
                        l1_ratio=0.1)</pre></div> </div></div></div></div></div></div>
 
 
@@ -7189,7 +7376,7 @@ optimal_coxns_heart_failure_y_train_ci = concordance_index_censored(y_train_arra
 print(f"Apparent Concordance Index: {optimal_coxns_heart_failure_y_train_ci}")
 ```
 
-    Apparent Concordance Index: 0.7417810405362273
+    Apparent Concordance Index: 0.7419406319821258
     
 
 
@@ -7206,7 +7393,7 @@ optimal_coxns_heart_failure_y_validation_ci = concordance_index_censored(y_valid
 print(f"Validation Concordance Index: {optimal_coxns_heart_failure_y_validation_ci}")
 ```
 
-    Validation Concordance Index: 0.7162346521145976
+    Validation Concordance Index: 0.7298772169167803
     
 
 
@@ -7257,19 +7444,19 @@ display(coxns_summary)
     <tr>
       <th>0</th>
       <td>Train</td>
-      <td>0.741781</td>
+      <td>0.741941</td>
       <td>COXNS</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Cross-Validation</td>
-      <td>0.719903</td>
+      <td>0.722359</td>
       <td>COXNS</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Validation</td>
-      <td>0.716235</td>
+      <td>0.729877</td>
       <td>COXNS</td>
     </tr>
   </tbody>
@@ -7304,7 +7491,7 @@ plt.show()
 
 
     
-![png](output_181_0.png)
+![png](output_182_0.png)
     
 
 
@@ -7455,7 +7642,7 @@ plt.show()
 
 
     
-![png](output_185_0.png)
+![png](output_186_0.png)
     
 
 
@@ -7925,23 +8112,46 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   background-color: var(--sklearn-color-fitted-level-3);
 }
 </style><div id="sk-container-id-5" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
-             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                                        ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                                          transformers=[(&#x27;numeric_predictors&#x27;,
+                                                                         PowerTransformer(),
+                                                                         [&#x27;AGE&#x27;,
+                                                                          &#x27;EJECTION_FRACTION&#x27;,
+                                                                          &#x27;SERUM_CREATININE&#x27;,
+                                                                          &#x27;SERUM_SODIUM&#x27;])])),
                                        (&#x27;stree&#x27;, SurvivalTree())]),
              n_jobs=-1,
              param_grid={&#x27;stree__min_samples_leaf&#x27;: [3, 6],
                          &#x27;stree__min_samples_split&#x27;: [10, 15, 20],
                          &#x27;stree__random_state&#x27;: [88888888]},
-             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-15" type="checkbox" ><label for="sk-estimator-id-15" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
-             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-31" type="checkbox" ><label for="sk-estimator-id-31" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                                        ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                                          transformers=[(&#x27;numeric_predictors&#x27;,
+                                                                         PowerTransformer(),
+                                                                         [&#x27;AGE&#x27;,
+                                                                          &#x27;EJECTION_FRACTION&#x27;,
+                                                                          &#x27;SERUM_CREATININE&#x27;,
+                                                                          &#x27;SERUM_SODIUM&#x27;])])),
                                        (&#x27;stree&#x27;, SurvivalTree())]),
              n_jobs=-1,
              param_grid={&#x27;stree__min_samples_leaf&#x27;: [3, 6],
                          &#x27;stree__min_samples_split&#x27;: [10, 15, 20],
                          &#x27;stree__random_state&#x27;: [88888888]},
-             verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-16" type="checkbox" ><label for="sk-estimator-id-16" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+             verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-32" type="checkbox" ><label for="sk-estimator-id-32" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                 ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                   transformers=[(&#x27;numeric_predictors&#x27;,
+                                                  PowerTransformer(),
+                                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                                   &#x27;SERUM_CREATININE&#x27;,
+                                                   &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;stree&#x27;,
                  SurvivalTree(min_samples_leaf=6, min_samples_split=15,
-                              random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-17" type="checkbox" ><label for="sk-estimator-id-17" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-18" type="checkbox" ><label for="sk-estimator-id-18" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">SurvivalTree</label><div class="sk-toggleable__content fitted"><pre>SurvivalTree(min_samples_leaf=6, min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
+                              random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-33" type="checkbox" ><label for="sk-estimator-id-33" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                  transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
+                                 [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-34" type="checkbox" ><label for="sk-estimator-id-34" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-35" type="checkbox" ><label for="sk-estimator-id-35" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-36" type="checkbox" ><label for="sk-estimator-id-36" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-37" type="checkbox" ><label for="sk-estimator-id-37" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-38" type="checkbox" ><label for="sk-estimator-id-38" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">SurvivalTree</label><div class="sk-toggleable__content fitted"><pre>SurvivalTree(min_samples_leaf=6, min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
 
 
 
@@ -8007,6 +8217,21 @@ stree_grid_search_results.loc[:, ~stree_grid_search_results.columns.str.endswith
       <td>1</td>
     </tr>
     <tr>
+      <th>5</th>
+      <td>6</td>
+      <td>20</td>
+      <td>88888888</td>
+      <td>{'stree__min_samples_leaf': 6, 'stree__min_sam...</td>
+      <td>0.749235</td>
+      <td>0.715170</td>
+      <td>0.721939</td>
+      <td>0.726667</td>
+      <td>0.560714</td>
+      <td>0.694745</td>
+      <td>0.067984</td>
+      <td>2</td>
+    </tr>
+    <tr>
       <th>3</th>
       <td>6</td>
       <td>10</td>
@@ -8019,21 +8244,6 @@ stree_grid_search_results.loc[:, ~stree_grid_search_results.columns.str.endswith
       <td>0.546429</td>
       <td>0.694332</td>
       <td>0.083583</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>6</td>
-      <td>20</td>
-      <td>88888888</td>
-      <td>{'stree__min_samples_leaf': 6, 'stree__min_sam...</td>
-      <td>0.749235</td>
-      <td>0.710526</td>
-      <td>0.721939</td>
-      <td>0.726667</td>
-      <td>0.560714</td>
-      <td>0.693816</td>
-      <td>0.067730</td>
       <td>3</td>
     </tr>
     <tr>
@@ -8532,13 +8742,28 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-6" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+</style><div id="sk-container-id-6" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                 ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                   transformers=[(&#x27;numeric_predictors&#x27;,
+                                                  PowerTransformer(),
+                                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                                   &#x27;SERUM_CREATININE&#x27;,
+                                                   &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;stree&#x27;,
                  SurvivalTree(min_samples_leaf=6, min_samples_split=15,
-                              random_state=88888888))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-19" type="checkbox" ><label for="sk-estimator-id-19" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                              random_state=88888888))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-39" type="checkbox" ><label for="sk-estimator-id-39" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                 ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                   transformers=[(&#x27;numeric_predictors&#x27;,
+                                                  PowerTransformer(),
+                                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                                   &#x27;SERUM_CREATININE&#x27;,
+                                                   &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;stree&#x27;,
                  SurvivalTree(min_samples_leaf=6, min_samples_split=15,
-                              random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-20" type="checkbox" ><label for="sk-estimator-id-20" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-21" type="checkbox" ><label for="sk-estimator-id-21" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">SurvivalTree</label><div class="sk-toggleable__content fitted"><pre>SurvivalTree(min_samples_leaf=6, min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div>
+                              random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-40" type="checkbox" ><label for="sk-estimator-id-40" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                  transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
+                                 [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-41" type="checkbox" ><label for="sk-estimator-id-41" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-42" type="checkbox" ><label for="sk-estimator-id-42" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-43" type="checkbox" ><label for="sk-estimator-id-43" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-44" type="checkbox" ><label for="sk-estimator-id-44" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-45" type="checkbox" ><label for="sk-estimator-id-45" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">SurvivalTree</label><div class="sk-toggleable__content fitted"><pre>SurvivalTree(min_samples_leaf=6, min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div>
 
 
 
@@ -8671,7 +8896,7 @@ plt.show()
 
 
     
-![png](output_196_0.png)
+![png](output_197_0.png)
     
 
 
@@ -8822,7 +9047,7 @@ plt.show()
 
 
     
-![png](output_200_0.png)
+![png](output_201_0.png)
     
 
 
@@ -9291,23 +9516,46 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   background-color: var(--sklearn-color-fitted-level-3);
 }
 </style><div id="sk-container-id-7" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
-             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                                        ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                                          transformers=[(&#x27;numeric_predictors&#x27;,
+                                                                         PowerTransformer(),
+                                                                         [&#x27;AGE&#x27;,
+                                                                          &#x27;EJECTION_FRACTION&#x27;,
+                                                                          &#x27;SERUM_CREATININE&#x27;,
+                                                                          &#x27;SERUM_SODIUM&#x27;])])),
                                        (&#x27;rsf&#x27;, RandomSurvivalForest())]),
              n_jobs=-1,
              param_grid={&#x27;rsf__min_samples_split&#x27;: [10, 15, 20],
                          &#x27;rsf__n_estimators&#x27;: [100, 200, 300],
                          &#x27;rsf__random_state&#x27;: [88888888]},
-             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-22" type="checkbox" ><label for="sk-estimator-id-22" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
-             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-46" type="checkbox" ><label for="sk-estimator-id-46" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                                        ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                                          transformers=[(&#x27;numeric_predictors&#x27;,
+                                                                         PowerTransformer(),
+                                                                         [&#x27;AGE&#x27;,
+                                                                          &#x27;EJECTION_FRACTION&#x27;,
+                                                                          &#x27;SERUM_CREATININE&#x27;,
+                                                                          &#x27;SERUM_SODIUM&#x27;])])),
                                        (&#x27;rsf&#x27;, RandomSurvivalForest())]),
              n_jobs=-1,
              param_grid={&#x27;rsf__min_samples_split&#x27;: [10, 15, 20],
                          &#x27;rsf__n_estimators&#x27;: [100, 200, 300],
                          &#x27;rsf__random_state&#x27;: [88888888]},
-             verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-23" type="checkbox" ><label for="sk-estimator-id-23" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+             verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-47" type="checkbox" ><label for="sk-estimator-id-47" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                 ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                   transformers=[(&#x27;numeric_predictors&#x27;,
+                                                  PowerTransformer(),
+                                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                                   &#x27;SERUM_CREATININE&#x27;,
+                                                   &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;rsf&#x27;,
-                 RandomSurvivalForest(min_samples_split=15,
-                                      random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-24" type="checkbox" ><label for="sk-estimator-id-24" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-25" type="checkbox" ><label for="sk-estimator-id-25" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">RandomSurvivalForest</label><div class="sk-toggleable__content fitted"><pre>RandomSurvivalForest(min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
+                 RandomSurvivalForest(min_samples_split=10,
+                                      random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-48" type="checkbox" ><label for="sk-estimator-id-48" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                  transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
+                                 [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-49" type="checkbox" ><label for="sk-estimator-id-49" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-50" type="checkbox" ><label for="sk-estimator-id-50" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-51" type="checkbox" ><label for="sk-estimator-id-51" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-52" type="checkbox" ><label for="sk-estimator-id-52" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-53" type="checkbox" ><label for="sk-estimator-id-53" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">RandomSurvivalForest</label><div class="sk-toggleable__content fitted"><pre>RandomSurvivalForest(min_samples_split=10, random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
 
 
 
@@ -9358,64 +9606,34 @@ rsf_grid_search_results.loc[:, ~rsf_grid_search_results.columns.str.endswith('_t
   </thead>
   <tbody>
     <tr>
-      <th>3</th>
-      <td>15</td>
+      <th>0</th>
+      <td>10</td>
       <td>100</td>
       <td>88888888</td>
-      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
-      <td>0.761468</td>
-      <td>0.705882</td>
-      <td>0.724490</td>
+      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
+      <td>0.755352</td>
+      <td>0.690402</td>
+      <td>0.755102</td>
       <td>0.844444</td>
-      <td>0.592857</td>
-      <td>0.725828</td>
-      <td>0.081757</td>
+      <td>0.578571</td>
+      <td>0.724774</td>
+      <td>0.088014</td>
       <td>1</td>
     </tr>
     <tr>
-      <th>5</th>
-      <td>15</td>
-      <td>300</td>
-      <td>88888888</td>
-      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
-      <td>0.737003</td>
-      <td>0.715170</td>
-      <td>0.729592</td>
-      <td>0.835556</td>
-      <td>0.592857</td>
-      <td>0.722036</td>
-      <td>0.077333</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>15</td>
+      <th>1</th>
+      <td>10</td>
       <td>200</td>
       <td>88888888</td>
-      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
-      <td>0.730887</td>
-      <td>0.705882</td>
-      <td>0.729592</td>
-      <td>0.848889</td>
-      <td>0.585714</td>
-      <td>0.720193</td>
-      <td>0.083731</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>20</td>
-      <td>100</td>
-      <td>88888888</td>
-      <td>{'rsf__min_samples_split': 20, 'rsf__n_estimat...</td>
+      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
       <td>0.743119</td>
-      <td>0.712074</td>
-      <td>0.729592</td>
-      <td>0.840000</td>
-      <td>0.564286</td>
-      <td>0.717814</td>
-      <td>0.088671</td>
-      <td>4</td>
+      <td>0.684211</td>
+      <td>0.739796</td>
+      <td>0.835556</td>
+      <td>0.592857</td>
+      <td>0.719108</td>
+      <td>0.079651</td>
+      <td>2</td>
     </tr>
     <tr>
       <th>8</th>
@@ -9424,13 +9642,58 @@ rsf_grid_search_results.loc[:, ~rsf_grid_search_results.columns.str.endswith('_t
       <td>88888888</td>
       <td>{'rsf__min_samples_split': 20, 'rsf__n_estimat...</td>
       <td>0.730887</td>
+      <td>0.705882</td>
+      <td>0.734694</td>
+      <td>0.831111</td>
+      <td>0.592857</td>
+      <td>0.719086</td>
+      <td>0.076211</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>10</td>
+      <td>300</td>
+      <td>88888888</td>
+      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
+      <td>0.737003</td>
+      <td>0.687307</td>
+      <td>0.744898</td>
+      <td>0.840000</td>
+      <td>0.585714</td>
+      <td>0.718984</td>
+      <td>0.082952</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>15</td>
+      <td>300</td>
+      <td>88888888</td>
+      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
+      <td>0.733945</td>
       <td>0.708978</td>
-      <td>0.724490</td>
-      <td>0.844444</td>
-      <td>0.571429</td>
-      <td>0.716046</td>
-      <td>0.086881</td>
+      <td>0.739796</td>
+      <td>0.831111</td>
+      <td>0.578571</td>
+      <td>0.718480</td>
+      <td>0.081295</td>
       <td>5</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>15</td>
+      <td>100</td>
+      <td>88888888</td>
+      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
+      <td>0.740061</td>
+      <td>0.684211</td>
+      <td>0.755102</td>
+      <td>0.840000</td>
+      <td>0.571429</td>
+      <td>0.718160</td>
+      <td>0.088738</td>
+      <td>6</td>
     </tr>
     <tr>
       <th>7</th>
@@ -9439,57 +9702,42 @@ rsf_grid_search_results.loc[:, ~rsf_grid_search_results.columns.str.endswith('_t
       <td>88888888</td>
       <td>{'rsf__min_samples_split': 20, 'rsf__n_estimat...</td>
       <td>0.730887</td>
-      <td>0.712074</td>
-      <td>0.739796</td>
-      <td>0.840000</td>
-      <td>0.550000</td>
-      <td>0.714551</td>
-      <td>0.093514</td>
-      <td>6</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>10</td>
-      <td>300</td>
-      <td>88888888</td>
-      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
-      <td>0.730887</td>
-      <td>0.708978</td>
-      <td>0.714286</td>
+      <td>0.702786</td>
+      <td>0.734694</td>
       <td>0.835556</td>
       <td>0.578571</td>
-      <td>0.713656</td>
-      <td>0.081764</td>
+      <td>0.716499</td>
+      <td>0.082371</td>
       <td>7</td>
     </tr>
     <tr>
-      <th>0</th>
-      <td>10</td>
+      <th>6</th>
+      <td>20</td>
       <td>100</td>
       <td>88888888</td>
-      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
-      <td>0.730887</td>
+      <td>{'rsf__min_samples_split': 20, 'rsf__n_estimat...</td>
+      <td>0.740061</td>
       <td>0.699690</td>
-      <td>0.719388</td>
-      <td>0.848889</td>
-      <td>0.564286</td>
-      <td>0.712628</td>
-      <td>0.090685</td>
+      <td>0.739796</td>
+      <td>0.840000</td>
+      <td>0.557143</td>
+      <td>0.715338</td>
+      <td>0.091674</td>
       <td>8</td>
     </tr>
     <tr>
-      <th>1</th>
-      <td>10</td>
+      <th>4</th>
+      <td>15</td>
       <td>200</td>
       <td>88888888</td>
-      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
-      <td>0.730887</td>
-      <td>0.693498</td>
-      <td>0.719388</td>
-      <td>0.831111</td>
+      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
+      <td>0.737003</td>
+      <td>0.690402</td>
+      <td>0.739796</td>
+      <td>0.835556</td>
       <td>0.571429</td>
-      <td>0.709263</td>
-      <td>0.083263</td>
+      <td>0.714837</td>
+      <td>0.085849</td>
       <td>9</td>
     </tr>
   </tbody>
@@ -9509,7 +9757,7 @@ print(f"Best Model Parameters: {rsf_grid_search.best_params_}")
 ```
 
     Best Random Survival Forest Model using the Cross-Validated Train Data: 
-    Best Model Parameters: {'rsf__min_samples_split': 15, 'rsf__n_estimators': 100, 'rsf__random_state': 88888888}
+    Best Model Parameters: {'rsf__min_samples_split': 10, 'rsf__n_estimators': 100, 'rsf__random_state': 88888888}
     
 
 
@@ -9523,7 +9771,7 @@ optimal_rsf_heart_failure_y_crossvalidation_ci = rsf_grid_search.best_score_
 print(f"Cross-Validation Concordance Index: {optimal_rsf_heart_failure_y_crossvalidation_ci}")
 ```
 
-    Cross-Validation Concordance Index: 0.7258283252138776
+    Cross-Validation Concordance Index: 0.7247744145139144
     
 
 
@@ -9943,13 +10191,28 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-8" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+</style><div id="sk-container-id-8" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                 ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                   transformers=[(&#x27;numeric_predictors&#x27;,
+                                                  PowerTransformer(),
+                                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                                   &#x27;SERUM_CREATININE&#x27;,
+                                                   &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;rsf&#x27;,
-                 RandomSurvivalForest(min_samples_split=15,
-                                      random_state=88888888))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-26" type="checkbox" ><label for="sk-estimator-id-26" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                 RandomSurvivalForest(min_samples_split=10,
+                                      random_state=88888888))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-54" type="checkbox" ><label for="sk-estimator-id-54" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                 ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                   transformers=[(&#x27;numeric_predictors&#x27;,
+                                                  PowerTransformer(),
+                                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                                   &#x27;SERUM_CREATININE&#x27;,
+                                                   &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;rsf&#x27;,
-                 RandomSurvivalForest(min_samples_split=15,
-                                      random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-27" type="checkbox" ><label for="sk-estimator-id-27" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-28" type="checkbox" ><label for="sk-estimator-id-28" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">RandomSurvivalForest</label><div class="sk-toggleable__content fitted"><pre>RandomSurvivalForest(min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div>
+                 RandomSurvivalForest(min_samples_split=10,
+                                      random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-55" type="checkbox" ><label for="sk-estimator-id-55" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                  transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
+                                 [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-56" type="checkbox" ><label for="sk-estimator-id-56" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-57" type="checkbox" ><label for="sk-estimator-id-57" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-58" type="checkbox" ><label for="sk-estimator-id-58" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-59" type="checkbox" ><label for="sk-estimator-id-59" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-60" type="checkbox" ><label for="sk-estimator-id-60" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">RandomSurvivalForest</label><div class="sk-toggleable__content fitted"><pre>RandomSurvivalForest(min_samples_split=10, random_state=88888888)</pre></div> </div></div></div></div></div></div>
 
 
 
@@ -9967,7 +10230,7 @@ optimal_rsf_heart_failure_y_train_ci = concordance_index_censored(y_train_array[
 print(f"Apparent Concordance Index: {optimal_rsf_heart_failure_y_train_ci}")
 ```
 
-    Apparent Concordance Index: 0.8506224066390041
+    Apparent Concordance Index: 0.8702521544845196
     
 
 
@@ -9984,7 +10247,7 @@ optimal_rsf_heart_failure_y_validation_ci = concordance_index_censored(y_validat
 print(f"Validation Concordance Index: {optimal_rsf_heart_failure_y_validation_ci}")
 ```
 
-    Validation Concordance Index: 0.6780354706684857
+    Validation Concordance Index: 0.6875852660300137
     
 
 
@@ -10035,19 +10298,19 @@ display(rsf_summary)
     <tr>
       <th>0</th>
       <td>Train</td>
-      <td>0.850622</td>
+      <td>0.870252</td>
       <td>RSF</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Cross-Validation</td>
-      <td>0.725828</td>
+      <td>0.724774</td>
       <td>RSF</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Validation</td>
-      <td>0.678035</td>
+      <td>0.687585</td>
       <td>RSF</td>
     </tr>
   </tbody>
@@ -10082,7 +10345,7 @@ plt.show()
 
 
     
-![png](output_211_0.png)
+![png](output_212_0.png)
     
 
 
@@ -10233,7 +10496,7 @@ plt.show()
 
 
     
-![png](output_215_0.png)
+![png](output_216_0.png)
     
 
 
@@ -10703,27 +10966,48 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   background-color: var(--sklearn-color-fitted-level-3);
 }
 </style><div id="sk-container-id-9" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
-             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                                        ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                                          transformers=[(&#x27;numeric_predictors&#x27;,
+                                                                         PowerTransformer(),
+                                                                         [&#x27;AGE&#x27;,
+                                                                          &#x27;EJECTION_FRACTION&#x27;,
+                                                                          &#x27;SERUM_CREATININE&#x27;,
+                                                                          &#x27;SERUM_SODIUM&#x27;])])),
                                        (&#x27;gbs&#x27;,
                                         GradientBoostingSurvivalAnalysis())]),
              n_jobs=-1,
              param_grid={&#x27;gbs__learning_rate&#x27;: [0.05, 0.1, 0.15],
                          &#x27;gbs__n_estimators&#x27;: [100, 200, 300],
                          &#x27;gbs__random_state&#x27;: [88888888]},
-             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-29" type="checkbox" ><label for="sk-estimator-id-29" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
-             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-61" type="checkbox" ><label for="sk-estimator-id-61" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+             estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                                        ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                                          transformers=[(&#x27;numeric_predictors&#x27;,
+                                                                         PowerTransformer(),
+                                                                         [&#x27;AGE&#x27;,
+                                                                          &#x27;EJECTION_FRACTION&#x27;,
+                                                                          &#x27;SERUM_CREATININE&#x27;,
+                                                                          &#x27;SERUM_SODIUM&#x27;])])),
                                        (&#x27;gbs&#x27;,
                                         GradientBoostingSurvivalAnalysis())]),
              n_jobs=-1,
              param_grid={&#x27;gbs__learning_rate&#x27;: [0.05, 0.1, 0.15],
                          &#x27;gbs__n_estimators&#x27;: [100, 200, 300],
                          &#x27;gbs__random_state&#x27;: [88888888]},
-             verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-30" type="checkbox" ><label for="sk-estimator-id-30" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+             verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-62" type="checkbox" ><label for="sk-estimator-id-62" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                 ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                   transformers=[(&#x27;numeric_predictors&#x27;,
+                                                  PowerTransformer(),
+                                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                                   &#x27;SERUM_CREATININE&#x27;,
+                                                   &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;gbs&#x27;,
-                 GradientBoostingSurvivalAnalysis(learning_rate=0.15,
-                                                  n_estimators=200,
-                                                  random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-31" type="checkbox" ><label for="sk-estimator-id-31" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-32" type="checkbox" ><label for="sk-estimator-id-32" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">GradientBoostingSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>GradientBoostingSurvivalAnalysis(learning_rate=0.15, n_estimators=200,
-                                 random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
+                 GradientBoostingSurvivalAnalysis(n_estimators=200,
+                                                  random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-63" type="checkbox" ><label for="sk-estimator-id-63" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                  transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
+                                 [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-64" type="checkbox" ><label for="sk-estimator-id-64" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-65" type="checkbox" ><label for="sk-estimator-id-65" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-66" type="checkbox" ><label for="sk-estimator-id-66" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-67" type="checkbox" ><label for="sk-estimator-id-67" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-68" type="checkbox" ><label for="sk-estimator-id-68" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">GradientBoostingSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>GradientBoostingSurvivalAnalysis(n_estimators=200, random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
 
 
 
@@ -10774,33 +11058,33 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
   </thead>
   <tbody>
     <tr>
-      <th>7</th>
-      <td>0.15</td>
-      <td>200</td>
-      <td>88888888</td>
-      <td>{'gbs__learning_rate': 0.15, 'gbs__n_estimator...</td>
-      <td>0.691131</td>
-      <td>0.727554</td>
-      <td>0.714286</td>
-      <td>0.764444</td>
-      <td>0.571429</td>
-      <td>0.693769</td>
-      <td>0.065622</td>
-      <td>1</td>
-    </tr>
-    <tr>
       <th>4</th>
       <td>0.10</td>
       <td>200</td>
       <td>88888888</td>
       <td>{'gbs__learning_rate': 0.1, 'gbs__n_estimators...</td>
-      <td>0.691131</td>
-      <td>0.715170</td>
+      <td>0.694190</td>
+      <td>0.712074</td>
       <td>0.704082</td>
       <td>0.782222</td>
       <td>0.564286</td>
-      <td>0.691378</td>
-      <td>0.070898</td>
+      <td>0.691371</td>
+      <td>0.070715</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>0.15</td>
+      <td>200</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.15, 'gbs__n_estimator...</td>
+      <td>0.700306</td>
+      <td>0.718266</td>
+      <td>0.704082</td>
+      <td>0.760000</td>
+      <td>0.571429</td>
+      <td>0.690816</td>
+      <td>0.063339</td>
       <td>2</td>
     </tr>
     <tr>
@@ -10809,13 +11093,13 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>300</td>
       <td>88888888</td>
       <td>{'gbs__learning_rate': 0.05, 'gbs__n_estimator...</td>
-      <td>0.709480</td>
+      <td>0.712538</td>
       <td>0.708978</td>
       <td>0.688776</td>
       <td>0.788889</td>
       <td>0.550000</td>
-      <td>0.689225</td>
-      <td>0.077611</td>
+      <td>0.689836</td>
+      <td>0.077780</td>
       <td>3</td>
     </tr>
     <tr>
@@ -10824,13 +11108,13 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>300</td>
       <td>88888888</td>
       <td>{'gbs__learning_rate': 0.15, 'gbs__n_estimator...</td>
-      <td>0.697248</td>
-      <td>0.718266</td>
-      <td>0.719388</td>
-      <td>0.737778</td>
+      <td>0.703364</td>
+      <td>0.705882</td>
+      <td>0.714286</td>
+      <td>0.742222</td>
       <td>0.557143</td>
-      <td>0.685964</td>
-      <td>0.065677</td>
+      <td>0.684579</td>
+      <td>0.065195</td>
       <td>4</td>
     </tr>
     <tr>
@@ -10839,29 +11123,14 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>300</td>
       <td>88888888</td>
       <td>{'gbs__learning_rate': 0.1, 'gbs__n_estimators...</td>
-      <td>0.675841</td>
-      <td>0.715170</td>
+      <td>0.678899</td>
+      <td>0.705882</td>
       <td>0.698980</td>
       <td>0.773333</td>
       <td>0.564286</td>
-      <td>0.685522</td>
-      <td>0.068648</td>
+      <td>0.684276</td>
+      <td>0.067883</td>
       <td>5</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>0.10</td>
-      <td>100</td>
-      <td>88888888</td>
-      <td>{'gbs__learning_rate': 0.1, 'gbs__n_estimators...</td>
-      <td>0.726300</td>
-      <td>0.721362</td>
-      <td>0.660714</td>
-      <td>0.777778</td>
-      <td>0.521429</td>
-      <td>0.681517</td>
-      <td>0.088227</td>
-      <td>6</td>
     </tr>
     <tr>
       <th>6</th>
@@ -10869,13 +11138,28 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>100</td>
       <td>88888888</td>
       <td>{'gbs__learning_rate': 0.15, 'gbs__n_estimator...</td>
-      <td>0.691131</td>
-      <td>0.684211</td>
+      <td>0.700306</td>
+      <td>0.696594</td>
       <td>0.683673</td>
       <td>0.768889</td>
-      <td>0.550000</td>
-      <td>0.675581</td>
-      <td>0.070511</td>
+      <td>0.564286</td>
+      <td>0.682750</td>
+      <td>0.066264</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.10</td>
+      <td>100</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.1, 'gbs__n_estimators...</td>
+      <td>0.732416</td>
+      <td>0.705882</td>
+      <td>0.660714</td>
+      <td>0.777778</td>
+      <td>0.521429</td>
+      <td>0.679644</td>
+      <td>0.087743</td>
       <td>7</td>
     </tr>
     <tr>
@@ -10884,13 +11168,13 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>200</td>
       <td>88888888</td>
       <td>{'gbs__learning_rate': 0.05, 'gbs__n_estimator...</td>
-      <td>0.733945</td>
-      <td>0.705882</td>
+      <td>0.737003</td>
+      <td>0.696594</td>
       <td>0.668367</td>
-      <td>0.773333</td>
+      <td>0.777778</td>
       <td>0.492857</td>
-      <td>0.674877</td>
-      <td>0.097281</td>
+      <td>0.674520</td>
+      <td>0.098074</td>
       <td>8</td>
     </tr>
     <tr>
@@ -10899,12 +11183,12 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>100</td>
       <td>88888888</td>
       <td>{'gbs__learning_rate': 0.05, 'gbs__n_estimator...</td>
-      <td>0.729358</td>
-      <td>0.671827</td>
+      <td>0.723242</td>
+      <td>0.662539</td>
       <td>0.665816</td>
-      <td>0.755556</td>
+      <td>0.760000</td>
       <td>0.500000</td>
-      <td>0.664511</td>
+      <td>0.662319</td>
       <td>0.089009</td>
       <td>9</td>
     </tr>
@@ -10925,7 +11209,7 @@ print(f"Best Model Parameters: {gbs_grid_search.best_params_}")
 ```
 
     Best Gradient Boosted Survival Model using the Cross-Validated Train Data: 
-    Best Model Parameters: {'gbs__learning_rate': 0.15, 'gbs__n_estimators': 200, 'gbs__random_state': 88888888}
+    Best Model Parameters: {'gbs__learning_rate': 0.1, 'gbs__n_estimators': 200, 'gbs__random_state': 88888888}
     
 
 
@@ -10939,7 +11223,7 @@ optimal_gbs_heart_failure_y_crossvalidation_ci = gbs_grid_search.best_score_
 print(f"Cross-Validation Concordance Index: {optimal_gbs_heart_failure_y_crossvalidation_ci}")
 ```
 
-    Cross-Validation Concordance Index: 0.6937688816392484
+    Cross-Validation Concordance Index: 0.6913706950026108
     
 
 
@@ -11359,16 +11643,28 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-10" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+</style><div id="sk-container-id-10" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                 ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                   transformers=[(&#x27;numeric_predictors&#x27;,
+                                                  PowerTransformer(),
+                                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                                   &#x27;SERUM_CREATININE&#x27;,
+                                                   &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;gbs&#x27;,
-                 GradientBoostingSurvivalAnalysis(learning_rate=0.15,
-                                                  n_estimators=200,
-                                                  random_state=88888888))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-33" type="checkbox" ><label for="sk-estimator-id-33" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;, PowerTransformer()),
+                 GradientBoostingSurvivalAnalysis(n_estimators=200,
+                                                  random_state=88888888))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-69" type="checkbox" ><label for="sk-estimator-id-69" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                 ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                                   transformers=[(&#x27;numeric_predictors&#x27;,
+                                                  PowerTransformer(),
+                                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                                   &#x27;SERUM_CREATININE&#x27;,
+                                                   &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;gbs&#x27;,
-                 GradientBoostingSurvivalAnalysis(learning_rate=0.15,
-                                                  n_estimators=200,
-                                                  random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-34" type="checkbox" ><label for="sk-estimator-id-34" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-35" type="checkbox" ><label for="sk-estimator-id-35" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">GradientBoostingSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>GradientBoostingSurvivalAnalysis(learning_rate=0.15, n_estimators=200,
-                                 random_state=88888888)</pre></div> </div></div></div></div></div></div>
+                 GradientBoostingSurvivalAnalysis(n_estimators=200,
+                                                  random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-70" type="checkbox" ><label for="sk-estimator-id-70" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                  transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
+                                 [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-71" type="checkbox" ><label for="sk-estimator-id-71" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-72" type="checkbox" ><label for="sk-estimator-id-72" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-73" type="checkbox" ><label for="sk-estimator-id-73" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-74" type="checkbox" ><label for="sk-estimator-id-74" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-75" type="checkbox" ><label for="sk-estimator-id-75" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">GradientBoostingSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>GradientBoostingSurvivalAnalysis(n_estimators=200, random_state=88888888)</pre></div> </div></div></div></div></div></div>
 
 
 
@@ -11386,7 +11682,7 @@ optimal_gbs_heart_failure_y_train_ci = concordance_index_censored(y_train_array[
 print(f"Apparent Concordance Index: {optimal_gbs_heart_failure_y_train_ci}")
 ```
 
-    Apparent Concordance Index: 0.944462176827322
+    Apparent Concordance Index: 0.9274656878391319
     
 
 
@@ -11403,7 +11699,7 @@ optimal_gbs_heart_failure_y_validation_ci = concordance_index_censored(y_validat
 print(f"Validation Concordance Index: {optimal_gbs_heart_failure_y_validation_ci}")
 ```
 
-    Validation Concordance Index: 0.6725784447476125
+    Validation Concordance Index: 0.6575716234652115
     
 
 
@@ -11454,19 +11750,19 @@ display(gbs_summary)
     <tr>
       <th>0</th>
       <td>Train</td>
-      <td>0.944462</td>
+      <td>0.927466</td>
       <td>GBS</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Cross-Validation</td>
-      <td>0.693769</td>
+      <td>0.691371</td>
       <td>GBS</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Validation</td>
-      <td>0.672578</td>
+      <td>0.657572</td>
       <td>GBS</td>
     </tr>
   </tbody>
@@ -11501,7 +11797,7 @@ plt.show()
 
 
     
-![png](output_226_0.png)
+![png](output_227_0.png)
     
 
 
@@ -11652,7 +11948,7 @@ plt.show()
 
 
     
-![png](output_230_0.png)
+![png](output_231_0.png)
     
 
 
@@ -11739,27 +12035,27 @@ display(ci_plot)
   <tbody>
     <tr>
       <th>Train</th>
-      <td>0.740026</td>
-      <td>0.741781</td>
+      <td>0.742260</td>
+      <td>0.741941</td>
       <td>0.831392</td>
-      <td>0.850622</td>
-      <td>0.944462</td>
+      <td>0.870252</td>
+      <td>0.927466</td>
     </tr>
     <tr>
       <th>Cross-Validation</th>
-      <td>0.725032</td>
-      <td>0.719903</td>
+      <td>0.721431</td>
+      <td>0.722359</td>
       <td>0.698970</td>
-      <td>0.725828</td>
-      <td>0.693769</td>
+      <td>0.724774</td>
+      <td>0.691371</td>
     </tr>
     <tr>
       <th>Validation</th>
       <td>0.717599</td>
-      <td>0.716235</td>
+      <td>0.729877</td>
       <td>0.654843</td>
-      <td>0.678035</td>
-      <td>0.672578</td>
+      <td>0.687585</td>
+      <td>0.657572</td>
     </tr>
   </tbody>
 </table>
@@ -11785,7 +12081,7 @@ for container in ci_plot.containers:
 
 
     
-![png](output_234_0.png)
+![png](output_235_0.png)
     
 
 
@@ -11881,35 +12177,35 @@ display(updated_ci_plot)
   <tbody>
     <tr>
       <th>Train</th>
-      <td>0.740026</td>
-      <td>0.741781</td>
+      <td>0.742260</td>
+      <td>0.741941</td>
       <td>0.831392</td>
-      <td>0.850622</td>
-      <td>0.944462</td>
+      <td>0.870252</td>
+      <td>0.927466</td>
     </tr>
     <tr>
       <th>Cross-Validation</th>
-      <td>0.725032</td>
-      <td>0.719903</td>
+      <td>0.721431</td>
+      <td>0.722359</td>
       <td>0.698970</td>
-      <td>0.725828</td>
-      <td>0.693769</td>
+      <td>0.724774</td>
+      <td>0.691371</td>
     </tr>
     <tr>
       <th>Validation</th>
       <td>0.717599</td>
-      <td>0.716235</td>
+      <td>0.729877</td>
       <td>0.654843</td>
-      <td>0.678035</td>
-      <td>0.672578</td>
+      <td>0.687585</td>
+      <td>0.657572</td>
     </tr>
     <tr>
       <th>Test</th>
-      <td>0.716302</td>
-      <td>0.722653</td>
+      <td>0.724065</td>
+      <td>0.719831</td>
       <td>0.770995</td>
-      <td>0.754411</td>
-      <td>0.781228</td>
+      <td>0.760056</td>
+      <td>0.778758</td>
     </tr>
   </tbody>
 </table>
@@ -11935,7 +12231,7 @@ for container in updated_ci_plot.containers:
 
 
     
-![png](output_238_0.png)
+![png](output_239_0.png)
     
 
 
@@ -11980,33 +12276,33 @@ display(coxph_train_feature_importance.sort_values('Absolute.Coefficient', ascen
   <tbody>
     <tr>
       <th>SERUM_CREATININE</th>
-      <td>0.421816</td>
-      <td>0.421816</td>
+      <td>0.626032</td>
+      <td>0.626032</td>
     </tr>
     <tr>
       <th>EJECTION_FRACTION</th>
-      <td>-0.319527</td>
-      <td>0.319527</td>
+      <td>0.479839</td>
+      <td>0.479839</td>
     </tr>
     <tr>
       <th>SERUM_SODIUM</th>
-      <td>-0.280366</td>
-      <td>0.280366</td>
+      <td>0.429101</td>
+      <td>0.429101</td>
     </tr>
     <tr>
       <th>ANAEMIA</th>
-      <td>0.265085</td>
-      <td>0.265085</td>
-    </tr>
-    <tr>
-      <th>AGE</th>
-      <td>0.240829</td>
-      <td>0.240829</td>
+      <td>-0.379991</td>
+      <td>0.379991</td>
     </tr>
     <tr>
       <th>HIGH_BLOOD_PRESSURE</th>
-      <td>0.175722</td>
-      <td>0.175722</td>
+      <td>-0.296241</td>
+      <td>0.296241</td>
+    </tr>
+    <tr>
+      <th>AGE</th>
+      <td>0.284114</td>
+      <td>0.284114</td>
     </tr>
   </tbody>
 </table>
@@ -12060,33 +12356,33 @@ display(coxph_train_feature_importance_summary)
   <tbody>
     <tr>
       <th>SERUM_CREATININE</th>
-      <td>0.050404</td>
-      <td>0.016938</td>
+      <td>0.053256</td>
+      <td>0.017803</td>
     </tr>
     <tr>
       <th>EJECTION_FRACTION</th>
-      <td>0.026460</td>
-      <td>0.014508</td>
+      <td>0.031759</td>
+      <td>0.015755</td>
     </tr>
     <tr>
       <th>ANAEMIA</th>
-      <td>0.022162</td>
-      <td>0.013402</td>
+      <td>0.024535</td>
+      <td>0.013439</td>
     </tr>
     <tr>
       <th>SERUM_SODIUM</th>
-      <td>0.018215</td>
-      <td>0.011994</td>
+      <td>0.018757</td>
+      <td>0.011353</td>
     </tr>
     <tr>
       <th>AGE</th>
-      <td>0.011868</td>
-      <td>0.008926</td>
+      <td>0.015071</td>
+      <td>0.009484</td>
     </tr>
     <tr>
       <th>HIGH_BLOOD_PRESSURE</th>
-      <td>0.003085</td>
-      <td>0.006483</td>
+      <td>0.004713</td>
+      <td>0.006479</td>
     </tr>
   </tbody>
 </table>
@@ -12239,7 +12535,7 @@ def bin_numeric_model_predictor(df, predictor):
 # into two groups
 ##################################
 for numeric_column in ["AGE","EJECTION_FRACTION","SERUM_CREATININE","SERUM_SODIUM"]:
-    heart_failure_MI = bin_numeric_model_predictor(heart_failure_MI, numeric_column)
+    heart_failure_MI_EDA = bin_numeric_model_predictor(heart_failure_MI, numeric_column)
 ```
 
 
@@ -12248,7 +12544,7 @@ for numeric_column in ["AGE","EJECTION_FRACTION","SERUM_CREATININE","SERUM_SODIU
 # Exploring the transformed
 # dataset for plotting
 ##################################
-heart_failure_MI.head()
+heart_failure_MI_EDA.head()
 ```
 
 
@@ -12362,18 +12658,17 @@ def plot_kaplan_meier(df, cat_var, ax, new_case_value=None):
         categories = ['Absent', 'Present']
         colors = {'Absent': 'blue', 'Present': 'red'}
 
-    # Plotting each category with a thin line and transparency
+    # Plotting each category with a partly red or blue transparent line
     for value in categories:
         mask = df[cat_var] == value
         kmf.fit(df['TIME'][mask], event_observed=df['DEATH_EVENT'][mask], label=f'{cat_var}={value} (Baseline Distribution)')
-        kmf.plot_survival_function(ax=ax, ci_show=False, color=colors[str(value)], linestyle='-', linewidth=5.0, alpha=0.30)
+        kmf.plot_survival_function(ax=ax, ci_show=False, color=colors[str(value)], linestyle='-', linewidth=6.0, alpha=0.30)
 
-    # Overlaying a thicker broken line for the new case if provided
+    # Overlaying a black broken line for the new case if provided
     if new_case_value is not None:
         mask_new_case = df[cat_var] == new_case_value
-        kmf.fit(df['TIME'][mask_new_case], event_observed=df['DEATH_EVENT'][mask_new_case], label=f'{cat_var}={value} (Test Case)')
+        kmf.fit(df['TIME'][mask_new_case], event_observed=df['DEATH_EVENT'][mask_new_case], label=f'{cat_var}={new_case_value} (Test Case)')
         kmf.plot_survival_function(ax=ax, ci_show=False, color='black', linestyle=':', linewidth=4.0)
-
 ```
 
 
@@ -12389,17 +12684,66 @@ heart_failure_predictors = ['AGE','EJECTION_FRACTION','SERUM_CREATININE','SERUM_
 
 for i, predictor in enumerate(heart_failure_predictors):
     ax = axes[i // 2, i % 2]
-    plot_kaplan_meier(heart_failure_MI, predictor, ax, new_case_value=None)
+    plot_kaplan_meier(heart_failure_MI_EDA, predictor, ax, new_case_value=None)
     ax.set_title(f'DEATH_EVENT Survival Probabilities by {predictor} Categories')
-    ax.set_xlabel('TIME')
-    ax.set_ylabel('DEATH_EVENT Survival Probability')
+    ax.set_xlabel('Time (Days)')
+    ax.set_ylabel('Estimated Survival Probability')
 plt.tight_layout()
 plt.show()
 ```
 
 
     
-![png](output_248_0.png)
+![png](output_249_0.png)
+    
+
+
+
+```python
+##################################
+# Estimating the survival functions
+# for the training data
+##################################
+heart_failure_train_survival_function = optimal_coxph_model.predict_survival_function(X_train)
+```
+
+
+```python
+##################################
+# Resetting the index for 
+# plotting survival functions
+# for the training data
+##################################
+y_train_reset_index = y_train.reset_index()
+```
+
+
+```python
+##################################
+# Plotting the baseline survival functions
+# for the training data
+##################################
+plt.figure(figsize=(17, 8))
+for i, surv_func in enumerate(heart_failure_train_survival_function):
+    plt.step(surv_func.x, 
+             surv_func.y, 
+             where="post", 
+             color='red' if y_train_reset_index['DEATH_EVENT'][i] == 1 else 'blue', 
+             linewidth=6.0,
+             alpha=0.05)
+red_patch = plt.Line2D([0], [0], color='red', lw=6, alpha=0.30,  label='Death Event Status = True')
+blue_patch = plt.Line2D([0], [0], color='blue', lw=6, alpha=0.30, label='Death Event Status = False')
+plt.legend(handles=[red_patch, blue_patch], facecolor='white', framealpha=1, loc='upper center', bbox_to_anchor=(0.5, -0.10), ncol=3)
+plt.title('Final Survival Prediction Model: Cox Proportional Hazards Regression')
+plt.xlabel('Time (Days)')
+plt.ylabel('Estimated Survival Probability')
+plt.tight_layout(rect=[0, 0, 1.00, 0.95])
+plt.show()
+```
+
+
+    
+![png](output_252_0.png)
     
 
 
@@ -12409,15 +12753,70 @@ plt.show()
 # Describing the details of the 
 # test case for evaluation
 ##################################
-X_sample = {'AGE': 'High',   
-            'EJECTION_FRACTION': 'Low',
-            'SERUM_CREATININE': 'High', 
-            'SERUM_SODIUM': 'Low', 
-            'ANAEMIA': 'Present', 
-            'HIGH_BLOOD_PRESSURE': 'Absent'}
+X_sample = {'AGE': 43,  
+            'ANAEMIA': 0, 
+            'EJECTION_FRACTION': 75,
+            'HIGH_BLOOD_PRESSURE': 1,
+            'SERUM_CREATININE': 2.75, 
+            'SERUM_SODIUM': 50}
 X_test_sample = pd.DataFrame([X_sample])
 X_test_sample.head()
+```
 
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AGE</th>
+      <th>ANAEMIA</th>
+      <th>EJECTION_FRACTION</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>43</td>
+      <td>0</td>
+      <td>75</td>
+      <td>1</td>
+      <td>2.75</td>
+      <td>50</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Applying preprocessing to the new case
+##################################
+coxph_pipeline.fit(X_train, y_train_array)
+X_test_sample_transformed = coxph_pipeline.named_steps['yeo_johnson'].transform(X_test_sample)
+X_test_sample_converted = pd.DataFrame([X_test_sample_transformed[0]], columns=["AGE", "EJECTION_FRACTION", "SERUM_CREATININE", "SERUM_SODIUM", "ANAEMIA", "HIGH_BLOOD_PRESSURE"])
+X_test_sample_converted.head()
 ```
 
 
@@ -12452,12 +12851,84 @@ X_test_sample.head()
   <tbody>
     <tr>
       <th>0</th>
-      <td>High</td>
+      <td>-1.669035</td>
+      <td>2.423321</td>
+      <td>1.737733</td>
+      <td>-5.207127</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Binning numeric predictors into two groups
+##################################
+for i, col in enumerate(["AGE", "EJECTION_FRACTION", "SERUM_CREATININE", "SERUM_SODIUM"]):
+    X_test_sample_converted[col] = X_test_sample_converted[col].apply(lambda x: 'High' if x > numeric_predictor_median_list[i] else 'Low')
+```
+
+
+```python
+##################################
+# Converting integer predictors into labels
+##################################
+for col in ["ANAEMIA", "HIGH_BLOOD_PRESSURE"]:
+    X_test_sample_converted[col] = X_test_sample_converted[col].apply(lambda x: 'Absent' if x < 1.0 else 'Present')
+```
+
+
+```python
+##################################
+# Describing the details of the 
+# test case for evaluation
+##################################
+X_test_sample_converted.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AGE</th>
+      <th>EJECTION_FRACTION</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+      <th>ANAEMIA</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
       <td>Low</td>
       <td>High</td>
+      <td>High</td>
       <td>Low</td>
-      <td>Present</td>
       <td>Absent</td>
+      <td>Present</td>
     </tr>
   </tbody>
 </table>
@@ -12478,7 +12949,7 @@ heart_failure_predictors = ['AGE','EJECTION_FRACTION','SERUM_CREATININE','SERUM_
 
 for i, predictor in enumerate(heart_failure_predictors):
     ax = axes[i // 2, i % 2]
-    plot_kaplan_meier(heart_failure_MI, predictor, ax, new_case_value=X_sample[predictor])
+    plot_kaplan_meier(heart_failure_MI_EDA, predictor, ax, new_case_value=X_test_sample_converted[predictor][0])
     ax.set_title(f'DEATH_EVENT Survival Probabilities by {predictor} Categories')
     ax.set_xlabel('TIME')
     ax.set_ylabel('DEATH_EVENT Survival Probability')
@@ -12488,7 +12959,56 @@ plt.show()
 
 
     
-![png](output_250_0.png)
+![png](output_258_0.png)
+    
+
+
+
+```python
+##################################
+# Computing the estimated survival probability
+# for the test case
+##################################
+X_test_sample_survival_function = optimal_coxph_model.predict_survival_function(X_test_sample)
+```
+
+
+```python
+##################################
+# Plotting the estimated survival probability
+# for the test case 
+# in the baseline survival function
+# of the final survival prediction model
+##################################
+plt.figure(figsize=(17, 8))
+for i, surv_func in enumerate(heart_failure_train_survival_function):
+    plt.step(surv_func.x, 
+             surv_func.y, 
+             where="post", 
+             color='red' if y_train_reset_index['DEATH_EVENT'][i] == 1 else 'blue', 
+             linewidth=6.0,
+             alpha=0.05)
+plt.step(X_test_sample_survival_function[0].x, 
+         X_test_sample_survival_function[0].y, 
+         where="post", 
+         color='black', 
+         linewidth=4.0, 
+         linestyle=':',
+         label='Test Case')
+red_patch = plt.Line2D([0], [0], color='red', lw=6, alpha=0.30,  label='Death Event Status = True')
+blue_patch = plt.Line2D([0], [0], color='blue', lw=6, alpha=0.30, label='Death Event Status = False')
+black_patch = plt.Line2D([0], [0], color='black', lw=3, label='Test Case')
+plt.legend(handles=[red_patch, blue_patch, black_patch], facecolor='white', framealpha=1, loc='upper center', bbox_to_anchor=(0.5, -0.10), ncol=3)
+plt.title('Final Survival Prediction Model: Cox Proportional Hazards Regression')
+plt.xlabel('Time (Days)')
+plt.ylabel('Estimated Survival Probability')
+plt.tight_layout(rect=[0, 0, 1.00, 0.95])
+plt.show()
+```
+
+
+    
+![png](output_260_0.png)
     
 
 
