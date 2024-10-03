@@ -134,7 +134,7 @@ from sklearn.preprocessing import PowerTransformer
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from sklearn.model_selection import KFold
+from sklearn.model_selection import KFold, RepeatedKFold
 from sklearn.inspection import permutation_importance
 from sklearn.feature_selection import SelectKBest
 
@@ -4518,96 +4518,10 @@ y_test_array = np.array([(row.DEATH_EVENT, row.TIME) for index, row in y_test.it
 [Yeo-Johnson Transformation](https://academic.oup.com/biomet/article-abstract/87/4/954/232908?redirectedFrom=fulltext&login=false) applies a new family of distributions that can be used without restrictions, extending many of the good properties of the Box-Cox power family. Similar to the Box-Cox transformation, the method also estimates the optimal value of lambda but has the ability to transform both positive and negative values by inflating low variance data and deflating high variance data to create a more uniform data set. While there are no restrictions in terms of the applicable values, the interpretability of the transformed values is more diminished as compared to the other methods.
 
 1. A modelling pipeline was implemented with the following steps:
-    * [Yeo-johnson transformation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PowerTransformer.html) from the <mark style="background-color: #CCECFF"><b>sklearn.processing</b></mark> Python library API.
+    * [Yeo-johnson transformation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PowerTransformer.html) from the <mark style="background-color: #CCECFF"><b>sklearn.processing</b></mark> Python library API applied to the numeric predictors only. Categorical predictors were excluded from the transformation.
     * [Cox proportional hazards regression model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html) from the <mark style="background-color: #CCECFF"><b>sksurv.linear_model</b></mark> Python library API with 1 hyperparameter:
         * <span style="color: #FF0000">alpha</span> = regularization parameter for ridge regression penalty made to vary between 0.00, 0.01, 0.10, 1.00, 10.0 and 100.00
-2. Hyperparameter tuning was conducted using the 5-fold cross-validation method with optimal model performance determined using the concordance index. 
-
-
-
-```python
-X_train.head()
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>AGE</th>
-      <th>ANAEMIA</th>
-      <th>EJECTION_FRACTION</th>
-      <th>HIGH_BLOOD_PRESSURE</th>
-      <th>SERUM_CREATININE</th>
-      <th>SERUM_SODIUM</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>266</th>
-      <td>55.0</td>
-      <td>0</td>
-      <td>20.0</td>
-      <td>0</td>
-      <td>1.83</td>
-      <td>134.0</td>
-    </tr>
-    <tr>
-      <th>180</th>
-      <td>40.0</td>
-      <td>0</td>
-      <td>30.0</td>
-      <td>0</td>
-      <td>0.90</td>
-      <td>136.0</td>
-    </tr>
-    <tr>
-      <th>288</th>
-      <td>65.0</td>
-      <td>0</td>
-      <td>35.0</td>
-      <td>0</td>
-      <td>1.10</td>
-      <td>142.0</td>
-    </tr>
-    <tr>
-      <th>258</th>
-      <td>45.0</td>
-      <td>1</td>
-      <td>25.0</td>
-      <td>0</td>
-      <td>0.80</td>
-      <td>135.0</td>
-    </tr>
-    <tr>
-      <th>236</th>
-      <td>75.0</td>
-      <td>0</td>
-      <td>50.0</td>
-      <td>1</td>
-      <td>1.10</td>
-      <td>148.0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+2. Hyperparameter tuning was conducted using the 5-fold cross-validation method for 5 repeats with optimal model performance determined using the concordance index. 
 
 
 
@@ -4618,8 +4532,10 @@ X_train.head()
 ##################################
 coxph_pipeline_preprocessor = ColumnTransformer(
     transformers=[
-        ('numeric_predictors', PowerTransformer(method='yeo-johnson', standardize=True), ['AGE', 'EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM'])  # Applying PowerTransformer to numeric columns only
-    ], remainder='passthrough'  # Keeping the categorical columns unchanged
+        # Applying PowerTransformer to numeric columns only
+        ('numeric_predictors', PowerTransformer(method='yeo-johnson', standardize=True), ['AGE', 'EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM'])  
+        # Keeping the categorical columns unchanged
+    ], remainder='passthrough'
 )
 coxph_pipeline = Pipeline([
     ('yeo_johnson', coxph_pipeline_preprocessor),
@@ -4631,7 +4547,7 @@ coxph_pipeline = Pipeline([
 ##################################
 # Defining the hyperparameters for grid search
 ##################################
-coxph_hyperparameter_grid = {'coxph__alpha': [0.01, 0.10, 1.00, 10.00, 100.00]}
+coxph_hyperparameter_grid = {'coxph__alpha': [0.01, 0.10, 1.00, 10.00]}
 ```
 
 
@@ -4642,7 +4558,7 @@ coxph_hyperparameter_grid = {'coxph__alpha': [0.01, 0.10, 1.00, 10.00, 100.00]}
 ##################################
 coxph_grid_search = GridSearchCV(estimator=coxph_pipeline,
                                  param_grid=coxph_hyperparameter_grid,
-                                 cv=KFold(n_splits=5, shuffle=True, random_state=88888888),
+                                 cv=RepeatedKFold(n_splits=5, n_repeats=5, random_state=88888888),
                                  return_train_score=False,
                                  n_jobs=-1,
                                  verbose=1)
@@ -4661,11 +4577,11 @@ coxph_grid_search = GridSearchCV(estimator=coxph_pipeline,
 [Yeo-Johnson Transformation](https://academic.oup.com/biomet/article-abstract/87/4/954/232908?redirectedFrom=fulltext&login=false) applies a new family of distributions that can be used without restrictions, extending many of the good properties of the Box-Cox power family. Similar to the Box-Cox transformation, the method also estimates the optimal value of lambda but has the ability to transform both positive and negative values by inflating low variance data and deflating high variance data to create a more uniform data set. While there are no restrictions in terms of the applicable values, the interpretability of the transformed values is more diminished as compared to the other methods.
 
 1. A modelling pipeline was implemented with the following steps:
-    * [Yeo-johnson transformation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PowerTransformer.html) from the <mark style="background-color: #CCECFF"><b>sklearn.processing</b></mark> Python library API.
+    * [Yeo-johnson transformation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PowerTransformer.html) from the <mark style="background-color: #CCECFF"><b>sklearn.processing</b></mark> Python library API applied to the numeric predictors only. Categorical predictors were excluded from the transformation.
     * [Cox net survival model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxnetSurvivalAnalysis.html) from the <mark style="background-color: #CCECFF"><b>sksurv.linear_model</b></mark> Python library API with 2 hyperparameters:
         * <span style="color: #FF0000">l1_ratio</span> = ElasticNet mixing parameter made to vary between 0.10, 0.50 and 1.00
         * <span style="color: #FF0000">alpha_min_ratio</span> = minimum alpha of the regularization path made to vary between 0.0001 and 0.01
-2. Hyperparameter tuning was conducted using the 5-fold cross-validation method with optimal model performance determined using the concordance index. 
+2. Hyperparameter tuning was conducted using the 5-fold cross-validation method for 5 repeats with optimal model performance determined using the concordance index. 
 
 
 ```python
@@ -4675,8 +4591,10 @@ coxph_grid_search = GridSearchCV(estimator=coxph_pipeline,
 ##################################
 coxns_pipeline_preprocessor = ColumnTransformer(
     transformers=[
-        ('numeric_predictors', PowerTransformer(method='yeo-johnson', standardize=True), ['AGE', 'EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM'])  # Applying PowerTransformer to numeric columns only
-    ], remainder='passthrough'  # Keeping the categorical columns unchanged
+        # Applying PowerTransformer to numeric columns only
+        ('numeric_predictors', PowerTransformer(method='yeo-johnson', standardize=True), ['AGE', 'EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM'])  
+        # Keeping the categorical columns unchanged
+    ], remainder='passthrough'  
 )
 coxns_pipeline = Pipeline([
     ('yeo_johnson', coxns_pipeline_preprocessor),
@@ -4701,7 +4619,7 @@ coxns_hyperparameter_grid = {'coxns__l1_ratio': [0.10, 0.50, 1.00],
 ##################################
 coxns_grid_search = GridSearchCV(estimator=coxns_pipeline,
                                  param_grid=coxns_hyperparameter_grid,
-                                 cv=KFold(n_splits=5, shuffle=True, random_state=88888888),
+                                 cv=RepeatedKFold(n_splits=5, n_repeats=5, random_state=88888888),
                                  return_train_score=False,
                                  n_jobs=-1,
                                  verbose=1)
@@ -4720,11 +4638,11 @@ coxns_grid_search = GridSearchCV(estimator=coxns_pipeline,
 [Yeo-Johnson Transformation](https://academic.oup.com/biomet/article-abstract/87/4/954/232908?redirectedFrom=fulltext&login=false) applies a new family of distributions that can be used without restrictions, extending many of the good properties of the Box-Cox power family. Similar to the Box-Cox transformation, the method also estimates the optimal value of lambda but has the ability to transform both positive and negative values by inflating low variance data and deflating high variance data to create a more uniform data set. While there are no restrictions in terms of the applicable values, the interpretability of the transformed values is more diminished as compared to the other methods.
 
 1. A modelling pipeline was implemented with the following steps:
-    * [Yeo-johnson transformation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PowerTransformer.html) from the <mark style="background-color: #CCECFF"><b>sklearn.processing</b></mark> Python library API.
+    * [Yeo-johnson transformation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PowerTransformer.html) from the <mark style="background-color: #CCECFF"><b>sklearn.processing</b></mark> Python library API applied to the numeric predictors only. Categorical predictors were excluded from the transformation.
     * [Survival tree model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.tree.SurvivalTree.html) from the <mark style="background-color: #CCECFF"><b>sksurv.tree</b></mark> Python library API with 2 hyperparameters:
         * <span style="color: #FF0000">min_samples_split</span> = minimum number of samples required to split an internal node made to vary between 10, 15 and 20
         * <span style="color: #FF0000">min_samples_leaf</span> = minimum number of samples required to be at a leaf node made to vary between 3 and 6
-2. Hyperparameter tuning was conducted using the 5-fold cross-validation method with optimal model performance determined using the concordance index.
+2. Hyperparameter tuning was conducted using the 5-fold cross-validation method for 5 repeats with optimal model performance determined using the concordance index.
 
 
 
@@ -4735,8 +4653,10 @@ coxns_grid_search = GridSearchCV(estimator=coxns_pipeline,
 ##################################
 stree_pipeline_preprocessor = ColumnTransformer(
     transformers=[
-        ('numeric_predictors', PowerTransformer(method='yeo-johnson', standardize=True), ['AGE', 'EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM'])  # Applying PowerTransformer to numeric columns only
-    ], remainder='passthrough'  # Keeping the categorical columns unchanged
+        # Applying PowerTransformer to numeric columns only
+        ('numeric_predictors', PowerTransformer(method='yeo-johnson', standardize=True), ['AGE', 'EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM'])  
+        # Keeping the categorical columns unchanged
+    ], remainder='passthrough'  
 )
 stree_pipeline = Pipeline([
     ('yeo_johnson', stree_pipeline_preprocessor),
@@ -4761,7 +4681,7 @@ stree_hyperparameter_grid = {'stree__min_samples_split': [10, 15, 20],
 ##################################
 stree_grid_search = GridSearchCV(estimator=stree_pipeline,
                                  param_grid=stree_hyperparameter_grid,
-                                 cv=KFold(n_splits=5, shuffle=True, random_state=88888888),
+                                 cv=RepeatedKFold(n_splits=5, n_repeats=5, random_state=88888888),
                                  return_train_score=False,
                                  n_jobs=-1,
                                  verbose=1)
@@ -4780,11 +4700,11 @@ stree_grid_search = GridSearchCV(estimator=stree_pipeline,
 [Yeo-Johnson Transformation](https://academic.oup.com/biomet/article-abstract/87/4/954/232908?redirectedFrom=fulltext&login=false) applies a new family of distributions that can be used without restrictions, extending many of the good properties of the Box-Cox power family. Similar to the Box-Cox transformation, the method also estimates the optimal value of lambda but has the ability to transform both positive and negative values by inflating low variance data and deflating high variance data to create a more uniform data set. While there are no restrictions in terms of the applicable values, the interpretability of the transformed values is more diminished as compared to the other methods.
 
 1. A modelling pipeline was implemented with the following steps:
-    * [Yeo-johnson transformation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PowerTransformer.html) from the <mark style="background-color: #CCECFF"><b>sklearn.processing</b></mark> Python library API.
+    * [Yeo-johnson transformation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PowerTransformer.html) from the <mark style="background-color: #CCECFF"><b>sklearn.processing</b></mark> Python library API applied to the numeric predictors only. Categorical predictors were excluded from the transformation.
     * [Random survival forest model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.RandomSurvivalForest.html) from the <mark style="background-color: #CCECFF"><b>sksurv.ensemble</b></mark> Python library API with 2 hyperparameters:
         * <span style="color: #FF0000">n_estimators</span> = number of trees in the forest made to vary between 100, 200 and 300
         * <span style="color: #FF0000">min_samples_split</span> = minimum number of samples required to split an internal node made to vary between 10, 15 and 20
-2. Hyperparameter tuning was conducted using the 5-fold cross-validation method with optimal model performance determined using the concordance index.
+2. Hyperparameter tuning was conducted using the 5-fold cross-validation method for 5 repeats with optimal model performance determined using the concordance index.
 
 
 
@@ -4795,8 +4715,10 @@ stree_grid_search = GridSearchCV(estimator=stree_pipeline,
 ##################################
 rsf_pipeline_preprocessor = ColumnTransformer(
     transformers=[
-        ('numeric_predictors', PowerTransformer(method='yeo-johnson', standardize=True), ['AGE', 'EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM'])  # Applying PowerTransformer to numeric columns only
-    ], remainder='passthrough'  # Keeping the categorical columns unchanged
+        # Applying PowerTransformer to numeric columns only
+        ('numeric_predictors', PowerTransformer(method='yeo-johnson', standardize=True), ['AGE', 'EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM'])  
+        # Keeping the categorical columns unchanged
+    ], remainder='passthrough'  
 )
 rsf_pipeline = Pipeline([
     ('yeo_johnson', rsf_pipeline_preprocessor),
@@ -4821,7 +4743,7 @@ rsf_hyperparameter_grid = {'rsf__n_estimators': [100, 200, 300],
 ##################################
 rsf_grid_search = GridSearchCV(estimator=rsf_pipeline,
                                param_grid=rsf_hyperparameter_grid,
-                               cv=KFold(n_splits=5, shuffle=True, random_state=88888888),
+                               cv=RepeatedKFold(n_splits=5, n_repeats=5, random_state=88888888),
                                return_train_score=False,
                                n_jobs=-1,
                                verbose=1)
@@ -4840,11 +4762,11 @@ rsf_grid_search = GridSearchCV(estimator=rsf_pipeline,
 [Yeo-Johnson Transformation](https://academic.oup.com/biomet/article-abstract/87/4/954/232908?redirectedFrom=fulltext&login=false) applies a new family of distributions that can be used without restrictions, extending many of the good properties of the Box-Cox power family. Similar to the Box-Cox transformation, the method also estimates the optimal value of lambda but has the ability to transform both positive and negative values by inflating low variance data and deflating high variance data to create a more uniform data set. While there are no restrictions in terms of the applicable values, the interpretability of the transformed values is more diminished as compared to the other methods.
 
 1. A modelling pipeline was implemented with the following steps:
-    * [Yeo-johnson transformation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PowerTransformer.html) from the <mark style="background-color: #CCECFF"><b>sklearn.processing</b></mark> Python library API.
+    * [Yeo-johnson transformation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PowerTransformer.html) from the <mark style="background-color: #CCECFF"><b>sklearn.processing</b></mark> Python library API applied to the numeric predictors only. Categorical predictors were excluded from the transformation.
     * [Gradient boosted survival model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.GradientBoostingSurvivalAnalysis.html) from the <mark style="background-color: #CCECFF"><b>sksurv.ensemble</b></mark> Python library API with 2 hyperparameters:
         * <span style="color: #FF0000">n_estimators</span> = number of regression trees to create made to vary between 100, 200 and 300
         * <span style="color: #FF0000">learning_rate</span> = shrinkage parameter for the contribution of each tree made to vary between 0.05, 0.10 and 0.15
-2. Hyperparameter tuning was conducted using the 5-fold cross-validation method with optimal model performance determined using the concordance index.
+2. Hyperparameter tuning was conducted using the 5-fold cross-validation method for 5 repeats with optimal model performance determined using the concordance index.
 
 
 
@@ -4855,8 +4777,10 @@ rsf_grid_search = GridSearchCV(estimator=rsf_pipeline,
 ##################################
 gbs_pipeline_preprocessor = ColumnTransformer(
     transformers=[
-        ('numeric_predictors', PowerTransformer(method='yeo-johnson', standardize=True), ['AGE', 'EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM'])  # Applying PowerTransformer to numeric columns only
-    ], remainder='passthrough'  # Keeping the categorical columns unchanged
+        # Applying PowerTransformer to numeric columns only
+        ('numeric_predictors', PowerTransformer(method='yeo-johnson', standardize=True), ['AGE', 'EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM'])  
+        # Keeping the categorical columns unchanged
+    ], remainder='passthrough'  
 )
 gbs_pipeline = Pipeline([
     ('yeo_johnson', gbs_pipeline_preprocessor),
@@ -4881,7 +4805,7 @@ gbs_hyperparameter_grid = {'gbs__n_estimators': [100, 200, 300],
 ##################################
 gbs_grid_search = GridSearchCV(estimator=gbs_pipeline,
                                param_grid=gbs_hyperparameter_grid,
-                               cv=KFold(n_splits=5, shuffle=True, random_state=88888888),
+                               cv=RepeatedKFold(n_splits=5, n_repeats=5, random_state=88888888),
                                return_train_score=False,
                                n_jobs=-1,
                                verbose=1)
@@ -4900,14 +4824,14 @@ gbs_grid_search = GridSearchCV(estimator=gbs_pipeline,
 1. The [cox proportional hazards regression model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html) from the <mark style="background-color: #CCECFF"><b>sksurv.linear_model</b></mark> Python library API was implemented. 
 2. The model implementation used 1 hyperparameter:
     * <span style="color: #FF0000">alpha</span> = regularization parameter for ridge regression penalty made to vary between 0.00, 0.01, 0.10, 1.00, 10.0 and 100.00
-3. Hyperparameter tuning was conducted using the 5-fold cross-validation method with optimal model performance using the concordance index determined for: 
+3. Hyperparameter tuning was conducted using the 5-fold cross-validation method repeated 5 times with optimal model performance using the concordance index determined for: 
     * <span style="color: #FF0000">alpha</span> = 10.00
 4. The cross-validated model performance of the optimal model is summarized as follows:
-    * **Concordance Index** = 0.7250
+    * **Concordance Index** = 0.7073
 5. The apparent model performance of the optimal model is summarized as follows:
-    * **Concordance Index** = 0.7400
+    * **Concordance Index** = 0.7419
 6. The independent validation model performance of the final model is summarized as follows:
-    * **Concordance Index** = 0.7175
+    * **Concordance Index** = 0.7394
 7. Considerable difference in the apparent and cross-validated model performance observed, indicative of the presence of moderate model overfitting.
 8. Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated sufficient differentiation across the entire duration.
 9. Hazard and survival probability estimations for 5 sampled cases demonstrated reasonably smooth profiles.
@@ -4923,7 +4847,7 @@ gbs_grid_search = GridSearchCV(estimator=gbs_pipeline,
 coxph_grid_search.fit(X_train, y_train_array)
 ```
 
-    Fitting 5 folds for each of 5 candidates, totalling 25 fits
+    Fitting 25 folds for each of 4 candidates, totalling 100 fits
     
 
 
@@ -5333,7 +5257,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=RepeatedKFold(n_repeats=5, n_splits=5, random_state=88888888),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
                                         ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                                                           transformers=[(&#x27;numeric_predictors&#x27;,
@@ -5343,9 +5267,8 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                                                           &#x27;SERUM_CREATININE&#x27;,
                                                                           &#x27;SERUM_SODIUM&#x27;])])),
                                        (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis())]),
-             n_jobs=-1,
-             param_grid={&#x27;coxph__alpha&#x27;: [0.01, 0.1, 1.0, 10.0, 100.0]},
-             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" ><label for="sk-estimator-id-1" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+             n_jobs=-1, param_grid={&#x27;coxph__alpha&#x27;: [0.01, 0.1, 1.0, 10.0]},
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" ><label for="sk-estimator-id-1" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=RepeatedKFold(n_repeats=5, n_splits=5, random_state=88888888),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
                                         ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                                                           transformers=[(&#x27;numeric_predictors&#x27;,
@@ -5355,8 +5278,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                                                           &#x27;SERUM_CREATININE&#x27;,
                                                                           &#x27;SERUM_SODIUM&#x27;])])),
                                        (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis())]),
-             n_jobs=-1,
-             param_grid={&#x27;coxph__alpha&#x27;: [0.01, 0.1, 1.0, 10.0, 100.0]},
+             n_jobs=-1, param_grid={&#x27;coxph__alpha&#x27;: [0.01, 0.1, 1.0, 10.0]},
              verbose=1)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" ><label for="sk-estimator-id-2" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">best_estimator_: Pipeline</label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
                  ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                                    transformers=[(&#x27;numeric_predictors&#x27;,
@@ -5364,10 +5286,10 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                                   [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
                                                    &#x27;SERUM_CREATININE&#x27;,
                                                    &#x27;SERUM_SODIUM&#x27;])])),
-                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=1.0))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox" ><label for="sk-estimator-id-3" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=10.0))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox" ><label for="sk-estimator-id-3" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                   transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
-                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-4" type="checkbox" ><label for="sk-estimator-id-4" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-5" type="checkbox" ><label for="sk-estimator-id-5" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-6" type="checkbox" ><label for="sk-estimator-id-6" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-7" type="checkbox" ><label for="sk-estimator-id-7" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-8" type="checkbox" ><label for="sk-estimator-id-8" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxPHSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxPHSurvivalAnalysis(alpha=1.0)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-4" type="checkbox" ><label for="sk-estimator-id-4" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-5" type="checkbox" ><label for="sk-estimator-id-5" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-6" type="checkbox" ><label for="sk-estimator-id-6" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-7" type="checkbox" ><label for="sk-estimator-id-7" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-8" type="checkbox" ><label for="sk-estimator-id-8" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxPHSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxPHSurvivalAnalysis(alpha=10.0)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
 
 
 
@@ -5409,12 +5331,47 @@ coxph_grid_search_results.loc[:, ~coxph_grid_search_results.columns.str.endswith
       <th>split2_test_score</th>
       <th>split3_test_score</th>
       <th>split4_test_score</th>
+      <th>split5_test_score</th>
+      <th>split6_test_score</th>
+      <th>split7_test_score</th>
+      <th>...</th>
+      <th>split18_test_score</th>
+      <th>split19_test_score</th>
+      <th>split20_test_score</th>
+      <th>split21_test_score</th>
+      <th>split22_test_score</th>
+      <th>split23_test_score</th>
+      <th>split24_test_score</th>
       <th>mean_test_score</th>
       <th>std_test_score</th>
       <th>rank_test_score</th>
     </tr>
   </thead>
   <tbody>
+    <tr>
+      <th>3</th>
+      <td>10.00</td>
+      <td>{'coxph__alpha': 10.0}</td>
+      <td>0.758410</td>
+      <td>0.681115</td>
+      <td>0.780612</td>
+      <td>0.840000</td>
+      <td>0.521429</td>
+      <td>0.588957</td>
+      <td>0.637821</td>
+      <td>0.862500</td>
+      <td>...</td>
+      <td>0.62</td>
+      <td>0.683019</td>
+      <td>0.732143</td>
+      <td>0.712264</td>
+      <td>0.700272</td>
+      <td>0.525641</td>
+      <td>0.791667</td>
+      <td>0.707318</td>
+      <td>0.084671</td>
+      <td>1</td>
+    </tr>
     <tr>
       <th>2</th>
       <td>1.00</td>
@@ -5424,21 +5381,19 @@ coxph_grid_search_results.loc[:, ~coxph_grid_search_results.columns.str.endswith
       <td>0.785714</td>
       <td>0.848889</td>
       <td>0.492857</td>
-      <td>0.721431</td>
-      <td>0.122082</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>0.01</td>
-      <td>{'coxph__alpha': 0.01}</td>
-      <td>0.758410</td>
-      <td>0.702786</td>
-      <td>0.790816</td>
-      <td>0.848889</td>
-      <td>0.492857</td>
-      <td>0.718752</td>
-      <td>0.122462</td>
+      <td>0.616564</td>
+      <td>0.628205</td>
+      <td>0.850000</td>
+      <td>...</td>
+      <td>0.63</td>
+      <td>0.675472</td>
+      <td>0.736607</td>
+      <td>0.669811</td>
+      <td>0.694823</td>
+      <td>0.521368</td>
+      <td>0.802083</td>
+      <td>0.701906</td>
+      <td>0.086235</td>
       <td>2</td>
     </tr>
     <tr>
@@ -5450,38 +5405,48 @@ coxph_grid_search_results.loc[:, ~coxph_grid_search_results.columns.str.endswith
       <td>0.790816</td>
       <td>0.848889</td>
       <td>0.492857</td>
-      <td>0.718752</td>
-      <td>0.122462</td>
-      <td>2</td>
+      <td>0.625767</td>
+      <td>0.631410</td>
+      <td>0.854167</td>
+      <td>...</td>
+      <td>0.62</td>
+      <td>0.679245</td>
+      <td>0.709821</td>
+      <td>0.669811</td>
+      <td>0.697548</td>
+      <td>0.529915</td>
+      <td>0.796875</td>
+      <td>0.701768</td>
+      <td>0.085985</td>
+      <td>3</td>
     </tr>
     <tr>
-      <th>3</th>
-      <td>10.00</td>
-      <td>{'coxph__alpha': 10.0}</td>
+      <th>0</th>
+      <td>0.01</td>
+      <td>{'coxph__alpha': 0.01}</td>
       <td>0.758410</td>
-      <td>0.681115</td>
-      <td>0.780612</td>
-      <td>0.840000</td>
-      <td>0.521429</td>
-      <td>0.716313</td>
-      <td>0.109931</td>
+      <td>0.702786</td>
+      <td>0.790816</td>
+      <td>0.848889</td>
+      <td>0.492857</td>
+      <td>0.625767</td>
+      <td>0.631410</td>
+      <td>0.854167</td>
+      <td>...</td>
+      <td>0.62</td>
+      <td>0.679245</td>
+      <td>0.709821</td>
+      <td>0.669811</td>
+      <td>0.694823</td>
+      <td>0.529915</td>
+      <td>0.796875</td>
+      <td>0.701134</td>
+      <td>0.086022</td>
       <td>4</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>100.00</td>
-      <td>{'coxph__alpha': 100.0}</td>
-      <td>0.770642</td>
-      <td>0.668731</td>
-      <td>0.755102</td>
-      <td>0.817778</td>
-      <td>0.550000</td>
-      <td>0.712451</td>
-      <td>0.094447</td>
-      <td>5</td>
     </tr>
   </tbody>
 </table>
+<p>4 rows × 30 columns</p>
 </div>
 
 
@@ -5497,7 +5462,7 @@ print(f"Best Model Parameters: {coxph_grid_search.best_params_}")
 ```
 
     Best Cox Proportional Hazards Regression Model using the Cross-Validated Train Data: 
-    Best Model Parameters: {'coxph__alpha': 1.0}
+    Best Model Parameters: {'coxph__alpha': 10.0}
     
 
 
@@ -5511,7 +5476,7 @@ optimal_coxph_heart_failure_y_crossvalidation_ci = coxph_grid_search.best_score_
 print(f"Cross-Validation Concordance Index: {optimal_coxph_heart_failure_y_crossvalidation_ci}")
 ```
 
-    Cross-Validation Concordance Index: 0.721431317996376
+    Cross-Validation Concordance Index: 0.7073178688853099
     
 
 
@@ -5938,17 +5903,17 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                                   [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
                                                    &#x27;SERUM_CREATININE&#x27;,
                                                    &#x27;SERUM_SODIUM&#x27;])])),
-                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=1.0))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-9" type="checkbox" ><label for="sk-estimator-id-9" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
+                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=10.0))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-9" type="checkbox" ><label for="sk-estimator-id-9" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
                  ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                                    transformers=[(&#x27;numeric_predictors&#x27;,
                                                   PowerTransformer(),
                                                   [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
                                                    &#x27;SERUM_CREATININE&#x27;,
                                                    &#x27;SERUM_SODIUM&#x27;])])),
-                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=1.0))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-10" type="checkbox" ><label for="sk-estimator-id-10" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
+                (&#x27;coxph&#x27;, CoxPHSurvivalAnalysis(alpha=10.0))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-10" type="checkbox" ><label for="sk-estimator-id-10" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                   transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
-                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-11" type="checkbox" ><label for="sk-estimator-id-11" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-12" type="checkbox" ><label for="sk-estimator-id-12" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-13" type="checkbox" ><label for="sk-estimator-id-13" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-14" type="checkbox" ><label for="sk-estimator-id-14" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-15" type="checkbox" ><label for="sk-estimator-id-15" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxPHSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxPHSurvivalAnalysis(alpha=1.0)</pre></div> </div></div></div></div></div></div>
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-11" type="checkbox" ><label for="sk-estimator-id-11" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-12" type="checkbox" ><label for="sk-estimator-id-12" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-13" type="checkbox" ><label for="sk-estimator-id-13" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-14" type="checkbox" ><label for="sk-estimator-id-14" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-15" type="checkbox" ><label for="sk-estimator-id-15" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">CoxPHSurvivalAnalysis</label><div class="sk-toggleable__content fitted"><pre>CoxPHSurvivalAnalysis(alpha=10.0)</pre></div> </div></div></div></div></div></div>
 
 
 
@@ -5966,7 +5931,7 @@ optimal_coxph_heart_failure_y_train_ci = concordance_index_censored(y_train_arra
 print(f"Apparent Concordance Index: {optimal_coxph_heart_failure_y_train_ci}")
 ```
 
-    Apparent Concordance Index: 0.7422598148739228
+    Apparent Concordance Index: 0.7419406319821258
     
 
 
@@ -5983,7 +5948,7 @@ optimal_coxph_heart_failure_y_validation_ci = concordance_index_censored(y_valid
 print(f"Validation Concordance Index: {optimal_coxph_heart_failure_y_validation_ci}")
 ```
 
-    Validation Concordance Index: 0.7175989085948158
+    Validation Concordance Index: 0.7394270122783083
     
 
 
@@ -6034,19 +5999,19 @@ display(coxph_summary)
     <tr>
       <th>0</th>
       <td>Train</td>
-      <td>0.742260</td>
+      <td>0.741941</td>
       <td>COXPH</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Cross-Validation</td>
-      <td>0.721431</td>
+      <td>0.707318</td>
       <td>COXPH</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Validation</td>
-      <td>0.717599</td>
+      <td>0.739427</td>
       <td>COXPH</td>
     </tr>
   </tbody>
@@ -6081,7 +6046,7 @@ plt.show()
 
 
     
-![png](output_167_0.png)
+![png](output_166_0.png)
     
 
 
@@ -6232,7 +6197,7 @@ plt.show()
 
 
     
-![png](output_171_0.png)
+![png](output_170_0.png)
     
 
 
@@ -6267,15 +6232,15 @@ joblib.dump(coxph_best_model_train_cv,
 2. The model implementation used 2 hyperparameters:
     * <span style="color: #FF0000">l1_ratio</span> = ElasticNet mixing parameter made to vary between 0.10, 0.50 and 1.00
     * <span style="color: #FF0000">alpha_min_ratio</span> = minimum alpha of the regularization path made to vary between 0.0001 and 0.01
-3. Hyperparameter tuning was conducted using the 5-fold cross-validation method with optimal model performance using the concordance index determined for: 
+3. Hyperparameter tuning was conducted using the 5-fold cross-validation method repeated 5 times with optimal model performance using the concordance index determined for: 
     * <span style="color: #FF0000">l1_ratio</span> = 0.10
     * <span style="color: #FF0000">alpha_min_ratio</span> = 0.01
 4. The cross-validated model performance of the optimal model is summarized as follows:
-    * **Concordance Index** = 0.7199
+    * **Concordance Index** = 0.7014
 5. The apparent model performance of the optimal model is summarized as follows:
-    * **Concordance Index** = 0.7417
+    * **Concordance Index** = 0.7419
 6. The independent validation model performance of the final model is summarized as follows:
-    * **Concordance Index** = 0.7162
+    * **Concordance Index** = 0.7299
 7. Considerable difference in the apparent and cross-validated model performance observed, indicative of the presence of moderate model overfitting.
 8. Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated sufficient differentiation across the entire duration.
 9. Hazard and survival probability estimations for 5 sampled cases demonstrated reasonably smooth profiles.
@@ -6291,7 +6256,7 @@ joblib.dump(coxph_best_model_train_cv,
 coxns_grid_search.fit(X_train, y_train_array)
 ```
 
-    Fitting 5 folds for each of 6 candidates, totalling 30 fits
+    Fitting 25 folds for each of 6 candidates, totalling 150 fits
     
 
 
@@ -6701,7 +6666,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-3" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+</style><div id="sk-container-id-3" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=RepeatedKFold(n_repeats=5, n_splits=5, random_state=88888888),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
                                         ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                                                           transformers=[(&#x27;numeric_predictors&#x27;,
@@ -6715,7 +6680,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
              param_grid={&#x27;coxns__alpha_min_ratio&#x27;: [0.0001, 0.01],
                          &#x27;coxns__fit_baseline_model&#x27;: [True],
                          &#x27;coxns__l1_ratio&#x27;: [0.1, 0.5, 1.0]},
-             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-16" type="checkbox" ><label for="sk-estimator-id-16" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-16" type="checkbox" ><label for="sk-estimator-id-16" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=RepeatedKFold(n_repeats=5, n_splits=5, random_state=88888888),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
                                         ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                                                           transformers=[(&#x27;numeric_predictors&#x27;,
@@ -6787,6 +6752,15 @@ coxns_grid_search_results.loc[:, ~coxns_grid_search_results.columns.str.endswith
       <th>split2_test_score</th>
       <th>split3_test_score</th>
       <th>split4_test_score</th>
+      <th>split5_test_score</th>
+      <th>...</th>
+      <th>split18_test_score</th>
+      <th>split19_test_score</th>
+      <th>split20_test_score</th>
+      <th>split21_test_score</th>
+      <th>split22_test_score</th>
+      <th>split23_test_score</th>
+      <th>split24_test_score</th>
       <th>mean_test_score</th>
       <th>std_test_score</th>
       <th>rank_test_score</th>
@@ -6804,39 +6778,18 @@ coxns_grid_search_results.loc[:, ~coxns_grid_search_results.columns.str.endswith
       <td>0.785714</td>
       <td>0.844444</td>
       <td>0.514286</td>
-      <td>0.722359</td>
-      <td>0.113150</td>
+      <td>0.601227</td>
+      <td>...</td>
+      <td>0.630</td>
+      <td>0.675472</td>
+      <td>0.727679</td>
+      <td>0.683962</td>
+      <td>0.694823</td>
+      <td>0.525641</td>
+      <td>0.796875</td>
+      <td>0.701369</td>
+      <td>0.085525</td>
       <td>1</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>0.0100</td>
-      <td>True</td>
-      <td>0.5</td>
-      <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
-      <td>0.758410</td>
-      <td>0.708978</td>
-      <td>0.790816</td>
-      <td>0.848889</td>
-      <td>0.492857</td>
-      <td>0.719990</td>
-      <td>0.122326</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>0.0100</td>
-      <td>True</td>
-      <td>1.0</td>
-      <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
-      <td>0.758410</td>
-      <td>0.705882</td>
-      <td>0.790816</td>
-      <td>0.848889</td>
-      <td>0.492857</td>
-      <td>0.719371</td>
-      <td>0.122388</td>
-      <td>3</td>
     </tr>
     <tr>
       <th>0</th>
@@ -6849,9 +6802,18 @@ coxns_grid_search_results.loc[:, ~coxns_grid_search_results.columns.str.endswith
       <td>0.790816</td>
       <td>0.848889</td>
       <td>0.492857</td>
-      <td>0.719363</td>
-      <td>0.122666</td>
-      <td>4</td>
+      <td>0.619632</td>
+      <td>...</td>
+      <td>0.625</td>
+      <td>0.675472</td>
+      <td>0.723214</td>
+      <td>0.669811</td>
+      <td>0.694823</td>
+      <td>0.521368</td>
+      <td>0.802083</td>
+      <td>0.701345</td>
+      <td>0.086059</td>
+      <td>2</td>
     </tr>
     <tr>
       <th>1</th>
@@ -6864,9 +6826,18 @@ coxns_grid_search_results.loc[:, ~coxns_grid_search_results.columns.str.endswith
       <td>0.785714</td>
       <td>0.848889</td>
       <td>0.492857</td>
-      <td>0.718343</td>
-      <td>0.122087</td>
-      <td>5</td>
+      <td>0.619632</td>
+      <td>...</td>
+      <td>0.625</td>
+      <td>0.675472</td>
+      <td>0.718750</td>
+      <td>0.665094</td>
+      <td>0.694823</td>
+      <td>0.525641</td>
+      <td>0.802083</td>
+      <td>0.701266</td>
+      <td>0.086197</td>
+      <td>3</td>
     </tr>
     <tr>
       <th>2</th>
@@ -6879,12 +6850,70 @@ coxns_grid_search_results.loc[:, ~coxns_grid_search_results.columns.str.endswith
       <td>0.785714</td>
       <td>0.848889</td>
       <td>0.492857</td>
-      <td>0.718343</td>
-      <td>0.122087</td>
+      <td>0.619632</td>
+      <td>...</td>
+      <td>0.625</td>
+      <td>0.675472</td>
+      <td>0.718750</td>
+      <td>0.665094</td>
+      <td>0.694823</td>
+      <td>0.525641</td>
+      <td>0.796875</td>
+      <td>0.700668</td>
+      <td>0.086233</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0100</td>
+      <td>True</td>
+      <td>0.5</td>
+      <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
+      <td>0.758410</td>
+      <td>0.708978</td>
+      <td>0.790816</td>
+      <td>0.848889</td>
+      <td>0.492857</td>
+      <td>0.619632</td>
+      <td>...</td>
+      <td>0.625</td>
+      <td>0.675472</td>
+      <td>0.718750</td>
+      <td>0.669811</td>
+      <td>0.694823</td>
+      <td>0.517094</td>
+      <td>0.802083</td>
+      <td>0.700332</td>
+      <td>0.086584</td>
       <td>5</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.0100</td>
+      <td>True</td>
+      <td>1.0</td>
+      <td>{'coxns__alpha_min_ratio': 0.01, 'coxns__fit_b...</td>
+      <td>0.758410</td>
+      <td>0.705882</td>
+      <td>0.790816</td>
+      <td>0.848889</td>
+      <td>0.492857</td>
+      <td>0.616564</td>
+      <td>...</td>
+      <td>0.625</td>
+      <td>0.675472</td>
+      <td>0.714286</td>
+      <td>0.669811</td>
+      <td>0.694823</td>
+      <td>0.517094</td>
+      <td>0.802083</td>
+      <td>0.700281</td>
+      <td>0.086774</td>
+      <td>6</td>
     </tr>
   </tbody>
 </table>
+<p>6 rows × 32 columns</p>
 </div>
 
 
@@ -6914,7 +6943,7 @@ optimal_coxns_heart_failure_y_crossvalidation_ci = coxns_grid_search.best_score_
 print(f"Cross-Validation Concordance Index: {optimal_coxns_heart_failure_y_crossvalidation_ci}")
 ```
 
-    Cross-Validation Concordance Index: 0.7223589374587756
+    Cross-Validation Concordance Index: 0.7013694603679497
     
 
 
@@ -7450,7 +7479,7 @@ display(coxns_summary)
     <tr>
       <th>1</th>
       <td>Cross-Validation</td>
-      <td>0.722359</td>
+      <td>0.701369</td>
       <td>COXNS</td>
     </tr>
     <tr>
@@ -7491,7 +7520,7 @@ plt.show()
 
 
     
-![png](output_182_0.png)
+![png](output_181_0.png)
     
 
 
@@ -7642,7 +7671,7 @@ plt.show()
 
 
     
-![png](output_186_0.png)
+![png](output_185_0.png)
     
 
 
@@ -7677,15 +7706,15 @@ joblib.dump(coxns_best_model_train_cv,
 2. The model implementation used 2 hyperparameters:
     * <span style="color: #FF0000">min_samples_split</span> = minimum number of samples required to split an internal node made to vary between 10, 15 and 20
     * <span style="color: #FF0000">min_samples_leaf</span> = minimum number of samples required to be at a leaf node made to vary between 3 and 6
-3. Hyperparameter tuning was conducted using the 5-fold cross-validation method with optimal model performance using the concordance index determined for: 
-    * <span style="color: #FF0000">min_samples_split</span> = 15
+3. Hyperparameter tuning was conducted using the 5-fold cross-validation method repeated 5 times with optimal model performance using the concordance index determined for: 
+    * <span style="color: #FF0000">min_samples_split</span> = 20
     * <span style="color: #FF0000">min_samples_leaf</span> = 6
 4. The cross-validated model performance of the optimal model is summarized as follows:
-    * **Concordance Index** = 0.6989
+    * **Concordance Index** = 0.6542
 5. The apparent model performance of the optimal model is summarized as follows:
-    * **Concordance Index** = 0.8313
+    * **Concordance Index** = 0.7992
 6. The independent validation model performance of the final model is summarized as follows:
-    * **Concordance Index** = 0.6548
+    * **Concordance Index** = 0.6446
 7. Significant difference in the apparent and cross-validated model performance observed, indicative of the presence of excessive model overfitting.
 8. Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated non-optimal differentiation across the entire duration.
 9. Hazard and survival probability estimations for 5 sampled cases demonstrated non-optimal profiles.
@@ -7701,7 +7730,7 @@ joblib.dump(coxns_best_model_train_cv,
 stree_grid_search.fit(X_train, y_train_array)
 ```
 
-    Fitting 5 folds for each of 6 candidates, totalling 30 fits
+    Fitting 25 folds for each of 6 candidates, totalling 150 fits
     
 
 
@@ -8111,7 +8140,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-5" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+</style><div id="sk-container-id-5" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=RepeatedKFold(n_repeats=5, n_splits=5, random_state=88888888),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
                                         ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                                                           transformers=[(&#x27;numeric_predictors&#x27;,
@@ -8125,7 +8154,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
              param_grid={&#x27;stree__min_samples_leaf&#x27;: [3, 6],
                          &#x27;stree__min_samples_split&#x27;: [10, 15, 20],
                          &#x27;stree__random_state&#x27;: [88888888]},
-             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-31" type="checkbox" ><label for="sk-estimator-id-31" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-31" type="checkbox" ><label for="sk-estimator-id-31" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=RepeatedKFold(n_repeats=5, n_splits=5, random_state=88888888),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
                                         ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                                                           transformers=[(&#x27;numeric_predictors&#x27;,
@@ -8147,11 +8176,11 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                                    &#x27;SERUM_CREATININE&#x27;,
                                                    &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;stree&#x27;,
-                 SurvivalTree(min_samples_leaf=6, min_samples_split=15,
+                 SurvivalTree(min_samples_leaf=6, min_samples_split=20,
                               random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-33" type="checkbox" ><label for="sk-estimator-id-33" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                   transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
-                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-34" type="checkbox" ><label for="sk-estimator-id-34" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-35" type="checkbox" ><label for="sk-estimator-id-35" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-36" type="checkbox" ><label for="sk-estimator-id-36" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-37" type="checkbox" ><label for="sk-estimator-id-37" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-38" type="checkbox" ><label for="sk-estimator-id-38" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">SurvivalTree</label><div class="sk-toggleable__content fitted"><pre>SurvivalTree(min_samples_leaf=6, min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-34" type="checkbox" ><label for="sk-estimator-id-34" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-35" type="checkbox" ><label for="sk-estimator-id-35" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-36" type="checkbox" ><label for="sk-estimator-id-36" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-37" type="checkbox" ><label for="sk-estimator-id-37" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-38" type="checkbox" ><label for="sk-estimator-id-38" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">SurvivalTree</label><div class="sk-toggleable__content fitted"><pre>SurvivalTree(min_samples_leaf=6, min_samples_split=20, random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
 
 
 
@@ -8195,27 +8224,21 @@ stree_grid_search_results.loc[:, ~stree_grid_search_results.columns.str.endswith
       <th>split2_test_score</th>
       <th>split3_test_score</th>
       <th>split4_test_score</th>
+      <th>split5_test_score</th>
+      <th>...</th>
+      <th>split18_test_score</th>
+      <th>split19_test_score</th>
+      <th>split20_test_score</th>
+      <th>split21_test_score</th>
+      <th>split22_test_score</th>
+      <th>split23_test_score</th>
+      <th>split24_test_score</th>
       <th>mean_test_score</th>
       <th>std_test_score</th>
       <th>rank_test_score</th>
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th>4</th>
-      <td>6</td>
-      <td>15</td>
-      <td>88888888</td>
-      <td>{'stree__min_samples_leaf': 6, 'stree__min_sam...</td>
-      <td>0.743119</td>
-      <td>0.687307</td>
-      <td>0.798469</td>
-      <td>0.726667</td>
-      <td>0.539286</td>
-      <td>0.698970</td>
-      <td>0.087466</td>
-      <td>1</td>
-    </tr>
     <tr>
       <th>5</th>
       <td>6</td>
@@ -8227,24 +8250,18 @@ stree_grid_search_results.loc[:, ~stree_grid_search_results.columns.str.endswith
       <td>0.721939</td>
       <td>0.726667</td>
       <td>0.560714</td>
-      <td>0.694745</td>
-      <td>0.067984</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>6</td>
-      <td>10</td>
-      <td>88888888</td>
-      <td>{'stree__min_samples_leaf': 6, 'stree__min_sam...</td>
-      <td>0.718654</td>
-      <td>0.681115</td>
-      <td>0.801020</td>
-      <td>0.724444</td>
-      <td>0.546429</td>
-      <td>0.694332</td>
-      <td>0.083583</td>
-      <td>3</td>
+      <td>0.562883</td>
+      <td>...</td>
+      <td>0.7250</td>
+      <td>0.609434</td>
+      <td>0.680804</td>
+      <td>0.627358</td>
+      <td>0.698910</td>
+      <td>0.611111</td>
+      <td>0.494792</td>
+      <td>0.654169</td>
+      <td>0.072607</td>
+      <td>1</td>
     </tr>
     <tr>
       <th>2</th>
@@ -8257,8 +8274,65 @@ stree_grid_search_results.loc[:, ~stree_grid_search_results.columns.str.endswith
       <td>0.653061</td>
       <td>0.777778</td>
       <td>0.553571</td>
-      <td>0.668908</td>
-      <td>0.071929</td>
+      <td>0.475460</td>
+      <td>...</td>
+      <td>0.7250</td>
+      <td>0.588679</td>
+      <td>0.671875</td>
+      <td>0.632075</td>
+      <td>0.716621</td>
+      <td>0.638889</td>
+      <td>0.505208</td>
+      <td>0.646178</td>
+      <td>0.076711</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>6</td>
+      <td>15</td>
+      <td>88888888</td>
+      <td>{'stree__min_samples_leaf': 6, 'stree__min_sam...</td>
+      <td>0.743119</td>
+      <td>0.687307</td>
+      <td>0.798469</td>
+      <td>0.726667</td>
+      <td>0.539286</td>
+      <td>0.553681</td>
+      <td>...</td>
+      <td>0.6325</td>
+      <td>0.658491</td>
+      <td>0.629464</td>
+      <td>0.627358</td>
+      <td>0.660763</td>
+      <td>0.621795</td>
+      <td>0.486979</td>
+      <td>0.636490</td>
+      <td>0.079302</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>6</td>
+      <td>10</td>
+      <td>88888888</td>
+      <td>{'stree__min_samples_leaf': 6, 'stree__min_sam...</td>
+      <td>0.718654</td>
+      <td>0.681115</td>
+      <td>0.801020</td>
+      <td>0.724444</td>
+      <td>0.546429</td>
+      <td>0.558282</td>
+      <td>...</td>
+      <td>0.6500</td>
+      <td>0.715094</td>
+      <td>0.642857</td>
+      <td>0.587264</td>
+      <td>0.643052</td>
+      <td>0.611111</td>
+      <td>0.486979</td>
+      <td>0.634086</td>
+      <td>0.078157</td>
       <td>4</td>
     </tr>
     <tr>
@@ -8272,8 +8346,17 @@ stree_grid_search_results.loc[:, ~stree_grid_search_results.columns.str.endswith
       <td>0.673469</td>
       <td>0.746667</td>
       <td>0.564286</td>
-      <td>0.665504</td>
-      <td>0.058268</td>
+      <td>0.438650</td>
+      <td>...</td>
+      <td>0.6425</td>
+      <td>0.598113</td>
+      <td>0.609375</td>
+      <td>0.632075</td>
+      <td>0.663488</td>
+      <td>0.608974</td>
+      <td>0.502604</td>
+      <td>0.624111</td>
+      <td>0.072077</td>
       <td>5</td>
     </tr>
     <tr>
@@ -8287,12 +8370,22 @@ stree_grid_search_results.loc[:, ~stree_grid_search_results.columns.str.endswith
       <td>0.678571</td>
       <td>0.691111</td>
       <td>0.582143</td>
-      <td>0.656565</td>
-      <td>0.040190</td>
+      <td>0.435583</td>
+      <td>...</td>
+      <td>0.6300</td>
+      <td>0.635849</td>
+      <td>0.587054</td>
+      <td>0.509434</td>
+      <td>0.632153</td>
+      <td>0.647436</td>
+      <td>0.489583</td>
+      <td>0.609106</td>
+      <td>0.074834</td>
       <td>6</td>
     </tr>
   </tbody>
 </table>
+<p>6 rows × 32 columns</p>
 </div>
 
 
@@ -8308,7 +8401,7 @@ print(f"Best Model Parameters: {stree_grid_search.best_params_}")
 ```
 
     Best Survival Tree Model using the Cross-Validated Train Data: 
-    Best Model Parameters: {'stree__min_samples_leaf': 6, 'stree__min_samples_split': 15, 'stree__random_state': 88888888}
+    Best Model Parameters: {'stree__min_samples_leaf': 6, 'stree__min_samples_split': 20, 'stree__random_state': 88888888}
     
 
 
@@ -8322,7 +8415,7 @@ optimal_stree_heart_failure_y_crossvalidation_ci = stree_grid_search.best_score_
 print(f"Cross-Validation Concordance Index: {optimal_stree_heart_failure_y_crossvalidation_ci}")
 ```
 
-    Cross-Validation Concordance Index: 0.6989695072621033
+    Cross-Validation Concordance Index: 0.6541686643258245
     
 
 
@@ -8750,7 +8843,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                                    &#x27;SERUM_CREATININE&#x27;,
                                                    &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;stree&#x27;,
-                 SurvivalTree(min_samples_leaf=6, min_samples_split=15,
+                 SurvivalTree(min_samples_leaf=6, min_samples_split=20,
                               random_state=88888888))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-39" type="checkbox" ><label for="sk-estimator-id-39" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
                  ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                                    transformers=[(&#x27;numeric_predictors&#x27;,
@@ -8759,11 +8852,11 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                                    &#x27;SERUM_CREATININE&#x27;,
                                                    &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;stree&#x27;,
-                 SurvivalTree(min_samples_leaf=6, min_samples_split=15,
+                 SurvivalTree(min_samples_leaf=6, min_samples_split=20,
                               random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-40" type="checkbox" ><label for="sk-estimator-id-40" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                   transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
-                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-41" type="checkbox" ><label for="sk-estimator-id-41" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-42" type="checkbox" ><label for="sk-estimator-id-42" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-43" type="checkbox" ><label for="sk-estimator-id-43" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-44" type="checkbox" ><label for="sk-estimator-id-44" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-45" type="checkbox" ><label for="sk-estimator-id-45" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">SurvivalTree</label><div class="sk-toggleable__content fitted"><pre>SurvivalTree(min_samples_leaf=6, min_samples_split=15, random_state=88888888)</pre></div> </div></div></div></div></div></div>
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-41" type="checkbox" ><label for="sk-estimator-id-41" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-42" type="checkbox" ><label for="sk-estimator-id-42" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-43" type="checkbox" ><label for="sk-estimator-id-43" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-44" type="checkbox" ><label for="sk-estimator-id-44" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-45" type="checkbox" ><label for="sk-estimator-id-45" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">SurvivalTree</label><div class="sk-toggleable__content fitted"><pre>SurvivalTree(min_samples_leaf=6, min_samples_split=20, random_state=88888888)</pre></div> </div></div></div></div></div></div>
 
 
 
@@ -8781,7 +8874,7 @@ optimal_stree_heart_failure_y_train_ci = concordance_index_censored(y_train_arra
 print(f"Apparent Concordance Index: {optimal_stree_heart_failure_y_train_ci}")
 ```
 
-    Apparent Concordance Index: 0.831391637408235
+    Apparent Concordance Index: 0.7992339610596872
     
 
 
@@ -8798,7 +8891,7 @@ optimal_stree_heart_failure_y_validation_ci = concordance_index_censored(y_valid
 print(f"Validation Concordance Index: {optimal_stree_heart_failure_y_validation_ci}")
 ```
 
-    Validation Concordance Index: 0.654843110504775
+    Validation Concordance Index: 0.6446111869031378
     
 
 
@@ -8849,19 +8942,19 @@ display(stree_summary)
     <tr>
       <th>0</th>
       <td>Train</td>
-      <td>0.831392</td>
+      <td>0.799234</td>
       <td>STREE</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Cross-Validation</td>
-      <td>0.698970</td>
+      <td>0.654169</td>
       <td>STREE</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Validation</td>
-      <td>0.654843</td>
+      <td>0.644611</td>
       <td>STREE</td>
     </tr>
   </tbody>
@@ -8896,7 +8989,7 @@ plt.show()
 
 
     
-![png](output_197_0.png)
+![png](output_196_0.png)
     
 
 
@@ -9011,10 +9104,10 @@ print(heart_failure_validation.loc[[5, 10, 15, 20, 25]][['Predicted_RiskGroups_S
 
        Predicted_RiskGroups_STree
     5                    Low-Risk
-    10                   Low-Risk
-    15                   Low-Risk
+    10                  High-Risk
+    15                  High-Risk
     20                  High-Risk
-    25                   Low-Risk
+    25                  High-Risk
     
 
 
@@ -9047,7 +9140,7 @@ plt.show()
 
 
     
-![png](output_201_0.png)
+![png](output_200_0.png)
     
 
 
@@ -9082,15 +9175,15 @@ joblib.dump(stree_best_model_train_cv,
 2. The model implementation used 2 hyperparameters:
     * <span style="color: #FF0000">n_estimators</span> = number of trees in the forest made to vary between 100, 200 and 300
     * <span style="color: #FF0000">min_samples_split</span> = minimum number of samples required to split an internal node made to vary between 10, 15 and 20
-3. Hyperparameter tuning was conducted using the 5-fold cross-validation method with optimal model performance using the concordance index determined for: 
-    * <span style="color: #FF0000">n_estimators</span> = 100
-    * <span style="color: #FF0000">min_samples_split</span> = 15
+3. Hyperparameter tuning was conducted using the 5-fold cross-validation method repeated 5 times with optimal model performance using the concordance index determined for: 
+    * <span style="color: #FF0000">n_estimators</span> = 300
+    * <span style="color: #FF0000">min_samples_split</span> = 10
 4. The cross-validated model performance of the optimal model is summarized as follows:
-    * **Concordance Index** = 0.7258
+    * **Concordance Index** = 0.7091
 5. The apparent model performance of the optimal model is summarized as follows:
-    * **Concordance Index** = 0.8506
+    * **Concordance Index** = 0.8714
 6. The independent test model performance of the final model is summarized as follows:
-    * **Concordance Index** = 0.6780
+    * **Concordance Index** = 0.6930
 7. Significant difference in the apparent and cross-validated model performance observed, indicative of the presence of excessive model overfitting.
 8. Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated sufficient differentiation across the entire duration.
 9. Hazard and survival probability estimations for 5 sampled cases demonstrated reasonably smooth profiles.
@@ -9105,7 +9198,7 @@ joblib.dump(stree_best_model_train_cv,
 rsf_grid_search.fit(X_train, y_train_array)
 ```
 
-    Fitting 5 folds for each of 9 candidates, totalling 45 fits
+    Fitting 25 folds for each of 9 candidates, totalling 225 fits
     
 
 
@@ -9515,7 +9608,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-7" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+</style><div id="sk-container-id-7" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=RepeatedKFold(n_repeats=5, n_splits=5, random_state=88888888),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
                                         ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                                                           transformers=[(&#x27;numeric_predictors&#x27;,
@@ -9529,7 +9622,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
              param_grid={&#x27;rsf__min_samples_split&#x27;: [10, 15, 20],
                          &#x27;rsf__n_estimators&#x27;: [100, 200, 300],
                          &#x27;rsf__random_state&#x27;: [88888888]},
-             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-46" type="checkbox" ><label for="sk-estimator-id-46" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-46" type="checkbox" ><label for="sk-estimator-id-46" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=RepeatedKFold(n_repeats=5, n_splits=5, random_state=88888888),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
                                         ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                                                           transformers=[(&#x27;numeric_predictors&#x27;,
@@ -9551,11 +9644,12 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                                    &#x27;SERUM_CREATININE&#x27;,
                                                    &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;rsf&#x27;,
-                 RandomSurvivalForest(min_samples_split=10,
+                 RandomSurvivalForest(min_samples_split=10, n_estimators=300,
                                       random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-48" type="checkbox" ><label for="sk-estimator-id-48" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                   transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
-                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-49" type="checkbox" ><label for="sk-estimator-id-49" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-50" type="checkbox" ><label for="sk-estimator-id-50" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-51" type="checkbox" ><label for="sk-estimator-id-51" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-52" type="checkbox" ><label for="sk-estimator-id-52" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-53" type="checkbox" ><label for="sk-estimator-id-53" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">RandomSurvivalForest</label><div class="sk-toggleable__content fitted"><pre>RandomSurvivalForest(min_samples_split=10, random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-49" type="checkbox" ><label for="sk-estimator-id-49" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-50" type="checkbox" ><label for="sk-estimator-id-50" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-51" type="checkbox" ><label for="sk-estimator-id-51" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-52" type="checkbox" ><label for="sk-estimator-id-52" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-53" type="checkbox" ><label for="sk-estimator-id-53" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">RandomSurvivalForest</label><div class="sk-toggleable__content fitted"><pre>RandomSurvivalForest(min_samples_split=10, n_estimators=300,
+                     random_state=88888888)</pre></div> </div></div></div></div></div></div></div></div></div></div></div>
 
 
 
@@ -9599,6 +9693,15 @@ rsf_grid_search_results.loc[:, ~rsf_grid_search_results.columns.str.endswith('_t
       <th>split2_test_score</th>
       <th>split3_test_score</th>
       <th>split4_test_score</th>
+      <th>split5_test_score</th>
+      <th>...</th>
+      <th>split18_test_score</th>
+      <th>split19_test_score</th>
+      <th>split20_test_score</th>
+      <th>split21_test_score</th>
+      <th>split22_test_score</th>
+      <th>split23_test_score</th>
+      <th>split24_test_score</th>
       <th>mean_test_score</th>
       <th>std_test_score</th>
       <th>rank_test_score</th>
@@ -9606,34 +9709,28 @@ rsf_grid_search_results.loc[:, ~rsf_grid_search_results.columns.str.endswith('_t
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
+      <th>2</th>
       <td>10</td>
-      <td>100</td>
+      <td>300</td>
       <td>88888888</td>
       <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
-      <td>0.755352</td>
-      <td>0.690402</td>
-      <td>0.755102</td>
-      <td>0.844444</td>
-      <td>0.578571</td>
-      <td>0.724774</td>
-      <td>0.088014</td>
+      <td>0.737003</td>
+      <td>0.687307</td>
+      <td>0.744898</td>
+      <td>0.840000</td>
+      <td>0.585714</td>
+      <td>0.650307</td>
+      <td>...</td>
+      <td>0.660</td>
+      <td>0.701887</td>
+      <td>0.772321</td>
+      <td>0.759434</td>
+      <td>0.727520</td>
+      <td>0.598291</td>
+      <td>0.671875</td>
+      <td>0.709097</td>
+      <td>0.068130</td>
       <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>10</td>
-      <td>200</td>
-      <td>88888888</td>
-      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
-      <td>0.743119</td>
-      <td>0.684211</td>
-      <td>0.739796</td>
-      <td>0.835556</td>
-      <td>0.592857</td>
-      <td>0.719108</td>
-      <td>0.079651</td>
-      <td>2</td>
     </tr>
     <tr>
       <th>8</th>
@@ -9646,23 +9743,65 @@ rsf_grid_search_results.loc[:, ~rsf_grid_search_results.columns.str.endswith('_t
       <td>0.734694</td>
       <td>0.831111</td>
       <td>0.592857</td>
-      <td>0.719086</td>
-      <td>0.076211</td>
+      <td>0.647239</td>
+      <td>...</td>
+      <td>0.675</td>
+      <td>0.698113</td>
+      <td>0.758929</td>
+      <td>0.754717</td>
+      <td>0.741144</td>
+      <td>0.598291</td>
+      <td>0.671875</td>
+      <td>0.707597</td>
+      <td>0.066923</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>10</td>
+      <td>100</td>
+      <td>88888888</td>
+      <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
+      <td>0.755352</td>
+      <td>0.690402</td>
+      <td>0.755102</td>
+      <td>0.844444</td>
+      <td>0.578571</td>
+      <td>0.647239</td>
+      <td>...</td>
+      <td>0.665</td>
+      <td>0.713208</td>
+      <td>0.772321</td>
+      <td>0.754717</td>
+      <td>0.727520</td>
+      <td>0.581197</td>
+      <td>0.640625</td>
+      <td>0.707268</td>
+      <td>0.074312</td>
       <td>3</td>
     </tr>
     <tr>
-      <th>2</th>
+      <th>1</th>
       <td>10</td>
-      <td>300</td>
+      <td>200</td>
       <td>88888888</td>
       <td>{'rsf__min_samples_split': 10, 'rsf__n_estimat...</td>
-      <td>0.737003</td>
-      <td>0.687307</td>
-      <td>0.744898</td>
-      <td>0.840000</td>
-      <td>0.585714</td>
-      <td>0.718984</td>
-      <td>0.082952</td>
+      <td>0.743119</td>
+      <td>0.684211</td>
+      <td>0.739796</td>
+      <td>0.835556</td>
+      <td>0.592857</td>
+      <td>0.644172</td>
+      <td>...</td>
+      <td>0.660</td>
+      <td>0.705660</td>
+      <td>0.758929</td>
+      <td>0.754717</td>
+      <td>0.732970</td>
+      <td>0.594017</td>
+      <td>0.651042</td>
+      <td>0.707263</td>
+      <td>0.068872</td>
       <td>4</td>
     </tr>
     <tr>
@@ -9676,24 +9815,18 @@ rsf_grid_search_results.loc[:, ~rsf_grid_search_results.columns.str.endswith('_t
       <td>0.739796</td>
       <td>0.831111</td>
       <td>0.578571</td>
-      <td>0.718480</td>
-      <td>0.081295</td>
+      <td>0.647239</td>
+      <td>...</td>
+      <td>0.675</td>
+      <td>0.701887</td>
+      <td>0.754464</td>
+      <td>0.754717</td>
+      <td>0.741144</td>
+      <td>0.594017</td>
+      <td>0.666667</td>
+      <td>0.706527</td>
+      <td>0.068454</td>
       <td>5</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>15</td>
-      <td>100</td>
-      <td>88888888</td>
-      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
-      <td>0.740061</td>
-      <td>0.684211</td>
-      <td>0.755102</td>
-      <td>0.840000</td>
-      <td>0.571429</td>
-      <td>0.718160</td>
-      <td>0.088738</td>
-      <td>6</td>
     </tr>
     <tr>
       <th>7</th>
@@ -9706,9 +9839,18 @@ rsf_grid_search_results.loc[:, ~rsf_grid_search_results.columns.str.endswith('_t
       <td>0.734694</td>
       <td>0.835556</td>
       <td>0.578571</td>
-      <td>0.716499</td>
-      <td>0.082371</td>
-      <td>7</td>
+      <td>0.653374</td>
+      <td>...</td>
+      <td>0.675</td>
+      <td>0.683019</td>
+      <td>0.758929</td>
+      <td>0.759434</td>
+      <td>0.732970</td>
+      <td>0.598291</td>
+      <td>0.666667</td>
+      <td>0.706351</td>
+      <td>0.067533</td>
+      <td>6</td>
     </tr>
     <tr>
       <th>6</th>
@@ -9721,9 +9863,18 @@ rsf_grid_search_results.loc[:, ~rsf_grid_search_results.columns.str.endswith('_t
       <td>0.739796</td>
       <td>0.840000</td>
       <td>0.557143</td>
-      <td>0.715338</td>
-      <td>0.091674</td>
-      <td>8</td>
+      <td>0.650307</td>
+      <td>...</td>
+      <td>0.670</td>
+      <td>0.698113</td>
+      <td>0.772321</td>
+      <td>0.745283</td>
+      <td>0.722071</td>
+      <td>0.594017</td>
+      <td>0.671875</td>
+      <td>0.706127</td>
+      <td>0.069620</td>
+      <td>7</td>
     </tr>
     <tr>
       <th>4</th>
@@ -9736,12 +9887,46 @@ rsf_grid_search_results.loc[:, ~rsf_grid_search_results.columns.str.endswith('_t
       <td>0.739796</td>
       <td>0.835556</td>
       <td>0.571429</td>
-      <td>0.714837</td>
-      <td>0.085849</td>
+      <td>0.653374</td>
+      <td>...</td>
+      <td>0.675</td>
+      <td>0.690566</td>
+      <td>0.758929</td>
+      <td>0.768868</td>
+      <td>0.735695</td>
+      <td>0.598291</td>
+      <td>0.666667</td>
+      <td>0.704593</td>
+      <td>0.071233</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>15</td>
+      <td>100</td>
+      <td>88888888</td>
+      <td>{'rsf__min_samples_split': 15, 'rsf__n_estimat...</td>
+      <td>0.740061</td>
+      <td>0.684211</td>
+      <td>0.755102</td>
+      <td>0.840000</td>
+      <td>0.571429</td>
+      <td>0.644172</td>
+      <td>...</td>
+      <td>0.665</td>
+      <td>0.698113</td>
+      <td>0.745536</td>
+      <td>0.745283</td>
+      <td>0.732970</td>
+      <td>0.585470</td>
+      <td>0.661458</td>
+      <td>0.703792</td>
+      <td>0.074270</td>
       <td>9</td>
     </tr>
   </tbody>
 </table>
+<p>9 rows × 32 columns</p>
 </div>
 
 
@@ -9757,7 +9942,7 @@ print(f"Best Model Parameters: {rsf_grid_search.best_params_}")
 ```
 
     Best Random Survival Forest Model using the Cross-Validated Train Data: 
-    Best Model Parameters: {'rsf__min_samples_split': 10, 'rsf__n_estimators': 100, 'rsf__random_state': 88888888}
+    Best Model Parameters: {'rsf__min_samples_split': 10, 'rsf__n_estimators': 300, 'rsf__random_state': 88888888}
     
 
 
@@ -9771,7 +9956,7 @@ optimal_rsf_heart_failure_y_crossvalidation_ci = rsf_grid_search.best_score_
 print(f"Cross-Validation Concordance Index: {optimal_rsf_heart_failure_y_crossvalidation_ci}")
 ```
 
-    Cross-Validation Concordance Index: 0.7247744145139144
+    Cross-Validation Concordance Index: 0.7090965292195327
     
 
 
@@ -10199,7 +10384,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                                    &#x27;SERUM_CREATININE&#x27;,
                                                    &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;rsf&#x27;,
-                 RandomSurvivalForest(min_samples_split=10,
+                 RandomSurvivalForest(min_samples_split=10, n_estimators=300,
                                       random_state=88888888))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-54" type="checkbox" ><label for="sk-estimator-id-54" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
                  ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                                    transformers=[(&#x27;numeric_predictors&#x27;,
@@ -10208,11 +10393,12 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                                                    &#x27;SERUM_CREATININE&#x27;,
                                                    &#x27;SERUM_SODIUM&#x27;])])),
                 (&#x27;rsf&#x27;,
-                 RandomSurvivalForest(min_samples_split=10,
+                 RandomSurvivalForest(min_samples_split=10, n_estimators=300,
                                       random_state=88888888))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-55" type="checkbox" ><label for="sk-estimator-id-55" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;yeo_johnson: ColumnTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.compose.ColumnTransformer.html">?<span>Documentation for yeo_johnson: ColumnTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                   transformers=[(&#x27;numeric_predictors&#x27;, PowerTransformer(),
                                  [&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;,
-                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-56" type="checkbox" ><label for="sk-estimator-id-56" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-57" type="checkbox" ><label for="sk-estimator-id-57" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-58" type="checkbox" ><label for="sk-estimator-id-58" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-59" type="checkbox" ><label for="sk-estimator-id-59" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-60" type="checkbox" ><label for="sk-estimator-id-60" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">RandomSurvivalForest</label><div class="sk-toggleable__content fitted"><pre>RandomSurvivalForest(min_samples_split=10, random_state=88888888)</pre></div> </div></div></div></div></div></div>
+                                  &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;])])</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-56" type="checkbox" ><label for="sk-estimator-id-56" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">numeric_predictors</label><div class="sk-toggleable__content fitted"><pre>[&#x27;AGE&#x27;, &#x27;EJECTION_FRACTION&#x27;, &#x27;SERUM_CREATININE&#x27;, &#x27;SERUM_SODIUM&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-57" type="checkbox" ><label for="sk-estimator-id-57" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;PowerTransformer<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.preprocessing.PowerTransformer.html">?<span>Documentation for PowerTransformer</span></a></label><div class="sk-toggleable__content fitted"><pre>PowerTransformer()</pre></div> </div></div></div></div></div><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-58" type="checkbox" ><label for="sk-estimator-id-58" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">remainder</label><div class="sk-toggleable__content fitted"><pre>[&#x27;ANAEMIA&#x27;, &#x27;HIGH_BLOOD_PRESSURE&#x27;]</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-59" type="checkbox" ><label for="sk-estimator-id-59" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">passthrough</label><div class="sk-toggleable__content fitted"><pre>passthrough</pre></div> </div></div></div></div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-60" type="checkbox" ><label for="sk-estimator-id-60" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">RandomSurvivalForest</label><div class="sk-toggleable__content fitted"><pre>RandomSurvivalForest(min_samples_split=10, n_estimators=300,
+                     random_state=88888888)</pre></div> </div></div></div></div></div></div>
 
 
 
@@ -10230,7 +10416,7 @@ optimal_rsf_heart_failure_y_train_ci = concordance_index_censored(y_train_array[
 print(f"Apparent Concordance Index: {optimal_rsf_heart_failure_y_train_ci}")
 ```
 
-    Apparent Concordance Index: 0.8702521544845196
+    Apparent Concordance Index: 0.8713692946058091
     
 
 
@@ -10247,7 +10433,7 @@ optimal_rsf_heart_failure_y_validation_ci = concordance_index_censored(y_validat
 print(f"Validation Concordance Index: {optimal_rsf_heart_failure_y_validation_ci}")
 ```
 
-    Validation Concordance Index: 0.6875852660300137
+    Validation Concordance Index: 0.6930422919508867
     
 
 
@@ -10298,19 +10484,19 @@ display(rsf_summary)
     <tr>
       <th>0</th>
       <td>Train</td>
-      <td>0.870252</td>
+      <td>0.871369</td>
       <td>RSF</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Cross-Validation</td>
-      <td>0.724774</td>
+      <td>0.709097</td>
       <td>RSF</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Validation</td>
-      <td>0.687585</td>
+      <td>0.693042</td>
       <td>RSF</td>
     </tr>
   </tbody>
@@ -10345,7 +10531,7 @@ plt.show()
 
 
     
-![png](output_212_0.png)
+![png](output_211_0.png)
     
 
 
@@ -10496,7 +10682,7 @@ plt.show()
 
 
     
-![png](output_216_0.png)
+![png](output_215_0.png)
     
 
 
@@ -10531,15 +10717,15 @@ joblib.dump(rsf_best_model_train_cv,
 2. The model implementation used 2 hyperparameters:
     * <span style="color: #FF0000">n_estimators</span> = number of regression trees to create made to vary between 100, 200 and 300
     * <span style="color: #FF0000">learning_rate</span> = shrinkage parameter for the contribution of each tree made to vary between 0.05, 0.10 and 0.15
-3. Hyperparameter tuning was conducted using the 5-fold cross-validation method with optimal model performance using the concordance index determined for: 
-    * <span style="color: #FF0000">n_estimators</span> = 100
-    * <span style="color: #FF0000">learning_rate</span> = 0.15
+3. Hyperparameter tuning was conducted using the 5-fold cross-validation method repeated 5 times with optimal model performance using the concordance index determined for: 
+    * <span style="color: #FF0000">n_estimators</span> = 200
+    * <span style="color: #FF0000">learning_rate</span> = 0.10
 4. The cross-validated model performance of the optimal model is summarized as follows:
-    * **Concordance Index** = 0.6937
+    * **Concordance Index** = 0.6765
 5. The apparent model performance of the optimal model is summarized as follows:
-    * **Concordance Index** = 0.9444
+    * **Concordance Index** = 0.9275
 6. The independent test model performance of the final model is summarized as follows:
-    * **Concordance Index** = 0.6725
+    * **Concordance Index** = 0.6575
 7. Significant difference in the apparent and cross-validated model performance observed, indicative of the presence of excessive model overfitting.
 8. Survival probability curves obtained from the groups generated by dichotomizing the risk scores demonstrated sufficient differentiation across the entire duration.
 9. Hazard and survival probability estimations for 5 sampled cases demonstrated reasonably smooth profiles.
@@ -10555,7 +10741,7 @@ joblib.dump(rsf_best_model_train_cv,
 gbs_grid_search.fit(X_train, y_train_array)
 ```
 
-    Fitting 5 folds for each of 9 candidates, totalling 45 fits
+    Fitting 25 folds for each of 9 candidates, totalling 225 fits
     
 
 
@@ -10965,7 +11151,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
   /* fitted */
   background-color: var(--sklearn-color-fitted-level-3);
 }
-</style><div id="sk-container-id-9" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+</style><div id="sk-container-id-9" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>GridSearchCV(cv=RepeatedKFold(n_repeats=5, n_splits=5, random_state=88888888),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
                                         ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                                                           transformers=[(&#x27;numeric_predictors&#x27;,
@@ -10980,7 +11166,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
              param_grid={&#x27;gbs__learning_rate&#x27;: [0.05, 0.1, 0.15],
                          &#x27;gbs__n_estimators&#x27;: [100, 200, 300],
                          &#x27;gbs__random_state&#x27;: [88888888]},
-             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-61" type="checkbox" ><label for="sk-estimator-id-61" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=KFold(n_splits=5, random_state=88888888, shuffle=True),
+             verbose=1)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-61" type="checkbox" ><label for="sk-estimator-id-61" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;GridSearchCV<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.model_selection.GridSearchCV.html">?<span>Documentation for GridSearchCV</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>GridSearchCV(cv=RepeatedKFold(n_repeats=5, n_splits=5, random_state=88888888),
              estimator=Pipeline(steps=[(&#x27;yeo_johnson&#x27;,
                                         ColumnTransformer(remainder=&#x27;passthrough&#x27;,
                                                           transformers=[(&#x27;numeric_predictors&#x27;,
@@ -11051,6 +11237,15 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <th>split2_test_score</th>
       <th>split3_test_score</th>
       <th>split4_test_score</th>
+      <th>split5_test_score</th>
+      <th>...</th>
+      <th>split18_test_score</th>
+      <th>split19_test_score</th>
+      <th>split20_test_score</th>
+      <th>split21_test_score</th>
+      <th>split22_test_score</th>
+      <th>split23_test_score</th>
+      <th>split24_test_score</th>
       <th>mean_test_score</th>
       <th>std_test_score</th>
       <th>rank_test_score</th>
@@ -11068,8 +11263,17 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>0.704082</td>
       <td>0.782222</td>
       <td>0.564286</td>
-      <td>0.691371</td>
-      <td>0.070715</td>
+      <td>0.604294</td>
+      <td>...</td>
+      <td>0.620</td>
+      <td>0.656604</td>
+      <td>0.736607</td>
+      <td>0.712264</td>
+      <td>0.697548</td>
+      <td>0.594017</td>
+      <td>0.692708</td>
+      <td>0.676537</td>
+      <td>0.059798</td>
       <td>1</td>
     </tr>
     <tr>
@@ -11083,39 +11287,18 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>0.704082</td>
       <td>0.760000</td>
       <td>0.571429</td>
-      <td>0.690816</td>
-      <td>0.063339</td>
+      <td>0.592025</td>
+      <td>...</td>
+      <td>0.630</td>
+      <td>0.679245</td>
+      <td>0.709821</td>
+      <td>0.721698</td>
+      <td>0.711172</td>
+      <td>0.594017</td>
+      <td>0.677083</td>
+      <td>0.675917</td>
+      <td>0.055144</td>
       <td>2</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>0.05</td>
-      <td>300</td>
-      <td>88888888</td>
-      <td>{'gbs__learning_rate': 0.05, 'gbs__n_estimator...</td>
-      <td>0.712538</td>
-      <td>0.708978</td>
-      <td>0.688776</td>
-      <td>0.788889</td>
-      <td>0.550000</td>
-      <td>0.689836</td>
-      <td>0.077780</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>0.15</td>
-      <td>300</td>
-      <td>88888888</td>
-      <td>{'gbs__learning_rate': 0.15, 'gbs__n_estimator...</td>
-      <td>0.703364</td>
-      <td>0.705882</td>
-      <td>0.714286</td>
-      <td>0.742222</td>
-      <td>0.557143</td>
-      <td>0.684579</td>
-      <td>0.065195</td>
-      <td>4</td>
     </tr>
     <tr>
       <th>5</th>
@@ -11128,24 +11311,66 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>0.698980</td>
       <td>0.773333</td>
       <td>0.564286</td>
-      <td>0.684276</td>
-      <td>0.067883</td>
-      <td>5</td>
+      <td>0.604294</td>
+      <td>...</td>
+      <td>0.625</td>
+      <td>0.656604</td>
+      <td>0.723214</td>
+      <td>0.716981</td>
+      <td>0.697548</td>
+      <td>0.594017</td>
+      <td>0.708333</td>
+      <td>0.675460</td>
+      <td>0.054978</td>
+      <td>3</td>
     </tr>
     <tr>
-      <th>6</th>
+      <th>2</th>
+      <td>0.05</td>
+      <td>300</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.05, 'gbs__n_estimator...</td>
+      <td>0.712538</td>
+      <td>0.708978</td>
+      <td>0.688776</td>
+      <td>0.788889</td>
+      <td>0.550000</td>
+      <td>0.598160</td>
+      <td>...</td>
+      <td>0.615</td>
+      <td>0.664151</td>
+      <td>0.709821</td>
+      <td>0.707547</td>
+      <td>0.700272</td>
+      <td>0.606838</td>
+      <td>0.700521</td>
+      <td>0.675307</td>
+      <td>0.059465</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>8</th>
       <td>0.15</td>
-      <td>100</td>
+      <td>300</td>
       <td>88888888</td>
       <td>{'gbs__learning_rate': 0.15, 'gbs__n_estimator...</td>
-      <td>0.700306</td>
-      <td>0.696594</td>
-      <td>0.683673</td>
-      <td>0.768889</td>
-      <td>0.564286</td>
-      <td>0.682750</td>
-      <td>0.066264</td>
-      <td>6</td>
+      <td>0.703364</td>
+      <td>0.705882</td>
+      <td>0.714286</td>
+      <td>0.742222</td>
+      <td>0.557143</td>
+      <td>0.579755</td>
+      <td>...</td>
+      <td>0.630</td>
+      <td>0.652830</td>
+      <td>0.709821</td>
+      <td>0.726415</td>
+      <td>0.727520</td>
+      <td>0.581197</td>
+      <td>0.651042</td>
+      <td>0.673835</td>
+      <td>0.058635</td>
+      <td>5</td>
     </tr>
     <tr>
       <th>3</th>
@@ -11158,8 +11383,41 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>0.660714</td>
       <td>0.777778</td>
       <td>0.521429</td>
-      <td>0.679644</td>
-      <td>0.087743</td>
+      <td>0.576687</td>
+      <td>...</td>
+      <td>0.605</td>
+      <td>0.673585</td>
+      <td>0.727679</td>
+      <td>0.683962</td>
+      <td>0.673025</td>
+      <td>0.602564</td>
+      <td>0.671875</td>
+      <td>0.669783</td>
+      <td>0.060433</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>0.15</td>
+      <td>100</td>
+      <td>88888888</td>
+      <td>{'gbs__learning_rate': 0.15, 'gbs__n_estimator...</td>
+      <td>0.700306</td>
+      <td>0.696594</td>
+      <td>0.683673</td>
+      <td>0.768889</td>
+      <td>0.564286</td>
+      <td>0.604294</td>
+      <td>...</td>
+      <td>0.600</td>
+      <td>0.660377</td>
+      <td>0.714286</td>
+      <td>0.693396</td>
+      <td>0.683924</td>
+      <td>0.619658</td>
+      <td>0.666667</td>
+      <td>0.669566</td>
+      <td>0.056325</td>
       <td>7</td>
     </tr>
     <tr>
@@ -11173,8 +11431,17 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>0.668367</td>
       <td>0.777778</td>
       <td>0.492857</td>
-      <td>0.674520</td>
-      <td>0.098074</td>
+      <td>0.576687</td>
+      <td>...</td>
+      <td>0.600</td>
+      <td>0.660377</td>
+      <td>0.714286</td>
+      <td>0.688679</td>
+      <td>0.678474</td>
+      <td>0.606838</td>
+      <td>0.684896</td>
+      <td>0.669083</td>
+      <td>0.063933</td>
       <td>8</td>
     </tr>
     <tr>
@@ -11188,12 +11455,22 @@ gbs_grid_search_results.loc[:, ~gbs_grid_search_results.columns.str.endswith('_t
       <td>0.665816</td>
       <td>0.760000</td>
       <td>0.500000</td>
-      <td>0.662319</td>
-      <td>0.089009</td>
+      <td>0.536810</td>
+      <td>...</td>
+      <td>0.620</td>
+      <td>0.635849</td>
+      <td>0.705357</td>
+      <td>0.681604</td>
+      <td>0.675749</td>
+      <td>0.574786</td>
+      <td>0.653646</td>
+      <td>0.658122</td>
+      <td>0.067976</td>
       <td>9</td>
     </tr>
   </tbody>
 </table>
+<p>9 rows × 32 columns</p>
 </div>
 
 
@@ -11223,7 +11500,7 @@ optimal_gbs_heart_failure_y_crossvalidation_ci = gbs_grid_search.best_score_
 print(f"Cross-Validation Concordance Index: {optimal_gbs_heart_failure_y_crossvalidation_ci}")
 ```
 
-    Cross-Validation Concordance Index: 0.6913706950026108
+    Cross-Validation Concordance Index: 0.6765369976540313
     
 
 
@@ -11756,7 +12033,7 @@ display(gbs_summary)
     <tr>
       <th>1</th>
       <td>Cross-Validation</td>
-      <td>0.691371</td>
+      <td>0.676537</td>
       <td>GBS</td>
     </tr>
     <tr>
@@ -11797,7 +12074,7 @@ plt.show()
 
 
     
-![png](output_227_0.png)
+![png](output_226_0.png)
     
 
 
@@ -11948,7 +12225,7 @@ plt.show()
 
 
     
-![png](output_231_0.png)
+![png](output_230_0.png)
     
 
 
@@ -11972,13 +12249,13 @@ joblib.dump(gbs_best_model_train_cv,
 ### 1.6.9 Model Selection <a class="anchor" id="1.6.9"></a>
 
 1. The [cox proportional hazards regression model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html) was selected as the final model by demonstrating the best **concordance index** in the **validation data** with minimal overfitting between the apparent and cross-validated **train data**:
-    * **train data (apparent)** = 0.7400
-    * **train data (cross-validated)** = 0.7250
-    * **validation data** = 0.7175
+    * **train data (apparent)** = 0.7394
+    * **train data (cross-validated)** = 0.7073
+    * **validation data** = 0.7419
 2. The optimal hyperparameters for the final model configuration was determined as follows:
     * <span style="color: #FF0000">alpha</span> = 10.00
 3. The [cox net survival model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxnetSurvivalAnalysis.html) also demonstrated comparably good survival prediction, but was not selected over the [cox proportional hazards regression model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html) due to model complexity.
-4. the [survival tree model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.tree.SurvivalTree.html), [random survival forest model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.RandomSurvivalForest.html), and [gradient boosted survival model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.GradientBoostingSurvivalAnalysis.html) all showed lower **concordance index** values.
+4. The [survival tree model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.tree.SurvivalTree.html), [random survival forest model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.RandomSurvivalForest.html), and [gradient boosted survival model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.GradientBoostingSurvivalAnalysis.html) all showed conditions of overfitting as demonstrated by a considerable difference between the apparent and cross-validated **concordance index** values.
 
 
 
@@ -12035,26 +12312,26 @@ display(ci_plot)
   <tbody>
     <tr>
       <th>Train</th>
-      <td>0.742260</td>
       <td>0.741941</td>
-      <td>0.831392</td>
-      <td>0.870252</td>
+      <td>0.741941</td>
+      <td>0.799234</td>
+      <td>0.871369</td>
       <td>0.927466</td>
     </tr>
     <tr>
       <th>Cross-Validation</th>
-      <td>0.721431</td>
-      <td>0.722359</td>
-      <td>0.698970</td>
-      <td>0.724774</td>
-      <td>0.691371</td>
+      <td>0.707318</td>
+      <td>0.701369</td>
+      <td>0.654169</td>
+      <td>0.709097</td>
+      <td>0.676537</td>
     </tr>
     <tr>
       <th>Validation</th>
-      <td>0.717599</td>
+      <td>0.739427</td>
       <td>0.729877</td>
-      <td>0.654843</td>
-      <td>0.687585</td>
+      <td>0.644611</td>
+      <td>0.693042</td>
       <td>0.657572</td>
     </tr>
   </tbody>
@@ -12081,17 +12358,17 @@ for container in ci_plot.containers:
 
 
     
-![png](output_235_0.png)
+![png](output_234_0.png)
     
 
 
 ### 1.6.10 Model Testing <a class="anchor" id="1.6.10"></a>
 
 1. The selected [cox proportional hazards regression model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html) demonstrated sufficient **concordance index** in the independent **test data** :
-    * **train data (apparent)** = 0.7400
-    * **train data (cross-validated)** = 0.7250
-    * **validation data** = 0.7175
-    * **test data** = 0.7163
+    * **train data (apparent)** = 0.7394
+    * **train data (cross-validated)** = 0.7073
+    * **validation data** = 0.7419
+    * **test data** = 0.7064
 2. For benchmarking purposes, all candidate models were evaluated on the **test data**. Interestingly, the [survival tree model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.tree.SurvivalTree.html), [random survival forest model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.RandomSurvivalForest.html), and [gradient boosted survival model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.ensemble.GradientBoostingSurvivalAnalysis.html) performed better than the selected model. In this case, the inconsistent performance (poor on validation, good on test) might be an indicator of instability. The [cox proportional hazards regression model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html) model (and to some extent, the [cox net survival model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxnetSurvivalAnalysis.html) model), which shows more consistent performance across validation and test sets, is more reliable. Although, the selected model may not perform as well on the test set alone, its generalization across both validation and test sets makes it a more robust and stable choice in practice.
 
 
@@ -12177,33 +12454,33 @@ display(updated_ci_plot)
   <tbody>
     <tr>
       <th>Train</th>
-      <td>0.742260</td>
       <td>0.741941</td>
-      <td>0.831392</td>
-      <td>0.870252</td>
+      <td>0.741941</td>
+      <td>0.799234</td>
+      <td>0.871369</td>
       <td>0.927466</td>
     </tr>
     <tr>
       <th>Cross-Validation</th>
-      <td>0.721431</td>
-      <td>0.722359</td>
-      <td>0.698970</td>
-      <td>0.724774</td>
-      <td>0.691371</td>
+      <td>0.707318</td>
+      <td>0.701369</td>
+      <td>0.654169</td>
+      <td>0.709097</td>
+      <td>0.676537</td>
     </tr>
     <tr>
       <th>Validation</th>
-      <td>0.717599</td>
+      <td>0.739427</td>
       <td>0.729877</td>
-      <td>0.654843</td>
-      <td>0.687585</td>
+      <td>0.644611</td>
+      <td>0.693042</td>
       <td>0.657572</td>
     </tr>
     <tr>
       <th>Test</th>
-      <td>0.724065</td>
+      <td>0.706422</td>
       <td>0.719831</td>
-      <td>0.770995</td>
+      <td>0.762526</td>
       <td>0.760056</td>
       <td>0.778758</td>
     </tr>
@@ -12231,11 +12508,23 @@ for container in updated_ci_plot.containers:
 
 
     
-![png](output_239_0.png)
+![png](output_238_0.png)
     
 
 
 ### 1.6.11 Model Inference <a class="anchor" id="1.6.11"></a>
+
+1. For the final selected survival prediction model developed from the **train data**, the contributions of the predictors, ranked by importance, are given as follows:
+    * [Cox proportional hazards regression model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html) 
+        * <span style="color: #FF0000">SERUM_CREATININE</span>
+        * <span style="color: #FF0000">EJECTION_FRACTION</span>
+        * <span style="color: #FF0000">SERUM_SODIUM</span>
+        * <span style="color: #FF0000">ANAEMIA</span>
+        * <span style="color: #FF0000">AGE</span>
+        * <span style="color: #FF0000">HIGH_BLOOD_PRESSURE</span>
+2. Model inference involved indicating the characteristics and predicting the survival probability of the new case against the model training observations.
+    * Characteristics based on all predictors used for generating the final selected survival prediction model
+    * Predicted heart failure survival probability profile based on the final selected survival prediction model
 
 
 ```python
@@ -12275,38 +12564,61 @@ display(coxph_train_feature_importance.sort_values('Absolute.Coefficient', ascen
   </thead>
   <tbody>
     <tr>
-      <th>SERUM_CREATININE</th>
-      <td>0.626032</td>
-      <td>0.626032</td>
-    </tr>
-    <tr>
       <th>EJECTION_FRACTION</th>
-      <td>0.479839</td>
-      <td>0.479839</td>
+      <td>0.407833</td>
+      <td>0.407833</td>
     </tr>
     <tr>
-      <th>SERUM_SODIUM</th>
-      <td>0.429101</td>
-      <td>0.429101</td>
+      <th>SERUM_CREATININE</th>
+      <td>0.352092</td>
+      <td>0.352092</td>
     </tr>
     <tr>
       <th>ANAEMIA</th>
-      <td>-0.379991</td>
-      <td>0.379991</td>
+      <td>-0.306170</td>
+      <td>0.306170</td>
     </tr>
     <tr>
       <th>HIGH_BLOOD_PRESSURE</th>
-      <td>-0.296241</td>
-      <td>0.296241</td>
+      <td>-0.280524</td>
+      <td>0.280524</td>
     </tr>
     <tr>
       <th>AGE</th>
-      <td>0.284114</td>
-      <td>0.284114</td>
+      <td>0.245804</td>
+      <td>0.245804</td>
+    </tr>
+    <tr>
+      <th>SERUM_SODIUM</th>
+      <td>0.234638</td>
+      <td>0.234638</td>
     </tr>
   </tbody>
 </table>
 </div>
+
+
+
+```python
+##################################
+# Plotting the Cox Proportional Hazards Regression model
+# absolute coefficient-based feature importance 
+# on train data
+##################################
+coxph_train_coefficient_importance_summary = coxph_train_feature_importance.sort_values('Absolute.Coefficient', ascending=True)
+plt.figure(figsize=(17, 8))
+plt.barh(coxph_train_coefficient_importance_summary.index, coxph_train_coefficient_importance_summary['Absolute.Coefficient'])
+plt.xlabel('Predictor Contribution: Absolute Coefficient')
+plt.ylabel('Predictor')
+plt.title('Feature Importance - Final Survival Prediction Model: Cox Proportional Hazards Regression')
+plt.tight_layout()
+plt.show()
+```
+
+
+    
+![png](output_241_0.png)
+    
 
 
 
@@ -12356,37 +12668,60 @@ display(coxph_train_feature_importance_summary)
   <tbody>
     <tr>
       <th>SERUM_CREATININE</th>
-      <td>0.053256</td>
-      <td>0.017803</td>
+      <td>0.055362</td>
+      <td>0.017600</td>
     </tr>
     <tr>
       <th>EJECTION_FRACTION</th>
-      <td>0.031759</td>
-      <td>0.015755</td>
-    </tr>
-    <tr>
-      <th>ANAEMIA</th>
-      <td>0.024535</td>
-      <td>0.013439</td>
+      <td>0.032078</td>
+      <td>0.014803</td>
     </tr>
     <tr>
       <th>SERUM_SODIUM</th>
-      <td>0.018757</td>
-      <td>0.011353</td>
+      <td>0.023034</td>
+      <td>0.012928</td>
+    </tr>
+    <tr>
+      <th>ANAEMIA</th>
+      <td>0.018449</td>
+      <td>0.009402</td>
     </tr>
     <tr>
       <th>AGE</th>
-      <td>0.015071</td>
-      <td>0.009484</td>
+      <td>0.017763</td>
+      <td>0.009435</td>
     </tr>
     <tr>
       <th>HIGH_BLOOD_PRESSURE</th>
-      <td>0.004713</td>
-      <td>0.006479</td>
+      <td>0.002915</td>
+      <td>0.004219</td>
     </tr>
   </tbody>
 </table>
 </div>
+
+
+
+```python
+##################################
+# Plotting the Cox Proportional Hazards Regression model
+# absolute coefficient-based feature importance 
+# on train data
+##################################
+coxph_train_feature_importance_summary = coxph_train_feature_importance_summary.sort_values('Importances.Mean', ascending=True)
+plt.figure(figsize=(17, 8))
+plt.barh(coxph_train_feature_importance_summary.index, coxph_train_feature_importance_summary['Importances.Mean'])
+plt.xlabel('Predictor Contribution: Permutation Importance')
+plt.ylabel('Predictor')
+plt.title('Feature Importance - Final Survival Prediction Model: Cox Proportional Hazards Regression')
+plt.tight_layout()
+plt.show()
+```
+
+
+    
+![png](output_243_0.png)
+    
 
 
 
@@ -12668,7 +13003,7 @@ def plot_kaplan_meier(df, cat_var, ax, new_case_value=None):
     if new_case_value is not None:
         mask_new_case = df[cat_var] == new_case_value
         kmf.fit(df['TIME'][mask_new_case], event_observed=df['DEATH_EVENT'][mask_new_case], label=f'{cat_var}={new_case_value} (Test Case)')
-        kmf.plot_survival_function(ax=ax, ci_show=False, color='black', linestyle=':', linewidth=4.0)
+        kmf.plot_survival_function(ax=ax, ci_show=False, color='black', linestyle=':', linewidth=3.0)
 ```
 
 
@@ -12694,7 +13029,7 @@ plt.show()
 
 
     
-![png](output_249_0.png)
+![png](output_250_0.png)
     
 
 
@@ -12743,7 +13078,7 @@ plt.show()
 
 
     
-![png](output_252_0.png)
+![png](output_253_0.png)
     
 
 
@@ -12757,8 +13092,8 @@ X_sample = {'AGE': 43,
             'ANAEMIA': 0, 
             'EJECTION_FRACTION': 75,
             'HIGH_BLOOD_PRESSURE': 1,
-            'SERUM_CREATININE': 2.75, 
-            'SERUM_SODIUM': 50}
+            'SERUM_CREATININE': 0.75, 
+            'SERUM_SODIUM': 100}
 X_test_sample = pd.DataFrame([X_sample])
 X_test_sample.head()
 ```
@@ -12799,8 +13134,8 @@ X_test_sample.head()
       <td>0</td>
       <td>75</td>
       <td>1</td>
-      <td>2.75</td>
-      <td>50</td>
+      <td>0.75</td>
+      <td>100</td>
     </tr>
   </tbody>
 </table>
@@ -12853,8 +13188,8 @@ X_test_sample_converted.head()
       <th>0</th>
       <td>-1.669035</td>
       <td>2.423321</td>
-      <td>1.737733</td>
-      <td>-5.207127</td>
+      <td>-1.404833</td>
+      <td>-4.476082</td>
       <td>0.0</td>
       <td>1.0</td>
     </tr>
@@ -12925,7 +13260,7 @@ X_test_sample_converted.head()
       <th>0</th>
       <td>Low</td>
       <td>High</td>
-      <td>High</td>
+      <td>Low</td>
       <td>Low</td>
       <td>Absent</td>
       <td>Present</td>
@@ -12959,7 +13294,7 @@ plt.show()
 
 
     
-![png](output_258_0.png)
+![png](output_259_0.png)
     
 
 
@@ -12992,12 +13327,12 @@ plt.step(X_test_sample_survival_function[0].x,
          X_test_sample_survival_function[0].y, 
          where="post", 
          color='black', 
-         linewidth=4.0, 
+         linewidth=3.0, 
          linestyle=':',
          label='Test Case')
 red_patch = plt.Line2D([0], [0], color='red', lw=6, alpha=0.30,  label='Death Event Status = True')
 blue_patch = plt.Line2D([0], [0], color='blue', lw=6, alpha=0.30, label='Death Event Status = False')
-black_patch = plt.Line2D([0], [0], color='black', lw=3, label='Test Case')
+black_patch = plt.Line2D([0], [0], color='black', lw=3, linestyle=":", label='Test Case')
 plt.legend(handles=[red_patch, blue_patch, black_patch], facecolor='white', framealpha=1, loc='upper center', bbox_to_anchor=(0.5, -0.10), ncol=3)
 plt.title('Final Survival Prediction Model: Cox Proportional Hazards Regression')
 plt.xlabel('Time (Days)')
@@ -13008,9 +13343,46 @@ plt.show()
 
 
     
-![png](output_260_0.png)
+![png](output_261_0.png)
     
 
+
+
+```python
+##################################
+# Determining the risk category
+# for the test case
+##################################
+optimal_coxph_heart_failure_y_train_pred = optimal_coxph_model.predict(X_train)
+heart_failure_train['Predicted_Risks_CoxPH'] = optimal_coxph_heart_failure_y_train_pred
+risk_groups, risk_group_bin_range = pd.qcut(heart_failure_train['Predicted_Risks_CoxPH'], 2, labels=['Low-Risk', 'High-Risk'], retbins=True)
+risk_group_threshold = risk_group_bin_range[1]
+X_test_sample_risk_category = "High-Risk" if (optimal_coxph_model.predict(X_test_sample) > risk_group_threshold) else "Low-Risk"
+```
+
+
+```python
+##################################
+# Computing the estimated survival probabilities
+# for the test case at five defined time points
+##################################
+X_test_sample_survival_time = np.array([50, 100, 150, 200, 250])
+X_test_sample_survival_probability = np.interp(X_test_sample_survival_time, 
+                                               X_test_sample_survival_function[0].x, 
+                                               X_test_sample_survival_function[0].y)
+X_test_sample_survival_probability = X_test_sample_survival_probability*100
+for survival_time, survival_probability in zip(X_test_sample_survival_time, X_test_sample_survival_probability):
+    print(f"Test Case Survival Probability ({survival_time} Days): {survival_probability:.2f}%")
+print(f"Test Case Risk Category: {X_test_sample_risk_category}")
+```
+
+    Test Case Survival Probability (50 Days): 90.98%
+    Test Case Survival Probability (100 Days): 87.65%
+    Test Case Survival Probability (150 Days): 84.60%
+    Test Case Survival Probability (200 Days): 78.48%
+    Test Case Survival Probability (250 Days): 70.70%
+    Test Case Risk Category: Low-Risk
+    
 
 ## 1.7. Predictive Model Deployment Using Streamlit and Streamlit Community Cloud <a class="anchor" id="1.7"></a>
 
