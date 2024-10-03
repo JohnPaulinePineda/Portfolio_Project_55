@@ -2,7 +2,7 @@
 # Model Deployment : Estimating Heart Failure Survival Risk Profiles From Cardiovascular, Hematologic And Metabolic Markers
 
 ***
-### John Pauline Pineda <br> <br> *October 5, 2024*
+### John Pauline Pineda <br> <br> *October 7, 2024*
 ***
 
 * [**1. Table of Contents**](#TOC)
@@ -13310,46 +13310,6 @@ X_test_sample_survival_function = optimal_coxph_model.predict_survival_function(
 
 ```python
 ##################################
-# Plotting the estimated survival probability
-# for the test case 
-# in the baseline survival function
-# of the final survival prediction model
-##################################
-plt.figure(figsize=(17, 8))
-for i, surv_func in enumerate(heart_failure_train_survival_function):
-    plt.step(surv_func.x, 
-             surv_func.y, 
-             where="post", 
-             color='red' if y_train_reset_index['DEATH_EVENT'][i] == 1 else 'blue', 
-             linewidth=6.0,
-             alpha=0.05)
-plt.step(X_test_sample_survival_function[0].x, 
-         X_test_sample_survival_function[0].y, 
-         where="post", 
-         color='black', 
-         linewidth=3.0, 
-         linestyle=':',
-         label='Test Case')
-red_patch = plt.Line2D([0], [0], color='red', lw=6, alpha=0.30,  label='Death Event Status = True')
-blue_patch = plt.Line2D([0], [0], color='blue', lw=6, alpha=0.30, label='Death Event Status = False')
-black_patch = plt.Line2D([0], [0], color='black', lw=3, linestyle=":", label='Test Case')
-plt.legend(handles=[red_patch, blue_patch, black_patch], facecolor='white', framealpha=1, loc='upper center', bbox_to_anchor=(0.5, -0.10), ncol=3)
-plt.title('Final Survival Prediction Model: Cox Proportional Hazards Regression')
-plt.xlabel('Time (Days)')
-plt.ylabel('Estimated Survival Probability')
-plt.tight_layout(rect=[0, 0, 1.00, 0.95])
-plt.show()
-```
-
-
-    
-![png](output_261_0.png)
-    
-
-
-
-```python
-##################################
 # Determining the risk category
 # for the test case
 ##################################
@@ -13370,8 +13330,8 @@ X_test_sample_survival_time = np.array([50, 100, 150, 200, 250])
 X_test_sample_survival_probability = np.interp(X_test_sample_survival_time, 
                                                X_test_sample_survival_function[0].x, 
                                                X_test_sample_survival_function[0].y)
-X_test_sample_survival_probability = X_test_sample_survival_probability*100
-for survival_time, survival_probability in zip(X_test_sample_survival_time, X_test_sample_survival_probability):
+X_test_sample_survival_probability_percentage = X_test_sample_survival_probability*100
+for survival_time, survival_probability in zip(X_test_sample_survival_time, X_test_sample_survival_probability_percentage):
     print(f"Test Case Survival Probability ({survival_time} Days): {survival_probability:.2f}%")
 print(f"Test Case Risk Category: {X_test_sample_risk_category}")
 ```
@@ -13383,6 +13343,48 @@ print(f"Test Case Risk Category: {X_test_sample_risk_category}")
     Test Case Survival Probability (250 Days): 70.70%
     Test Case Risk Category: Low-Risk
     
+
+
+```python
+##################################
+# Plotting the estimated survival probability
+# for the test case 
+# in the baseline survival function
+# of the final survival prediction model
+##################################
+plt.figure(figsize=(17, 8))
+for i, surv_func in enumerate(heart_failure_train_survival_function):
+    plt.step(surv_func.x, 
+             surv_func.y, 
+             where="post", 
+             color='red' if y_train_reset_index['DEATH_EVENT'][i] == 1 else 'blue', 
+             linewidth=6.0,
+             alpha=0.05)
+plt.step(X_test_sample_survival_function[0].x, 
+         X_test_sample_survival_function[0].y, 
+         where="post", 
+         color='black', 
+         linewidth=3.0, 
+         linestyle=':',
+         label='Test Case')
+for survival_time, survival_probability in zip(X_test_sample_survival_time, X_test_sample_survival_probability):
+    plt.vlines(x=survival_time, ymin=0, ymax=survival_probability, color='black', linestyle='-',linewidth=1.0)
+red_patch = plt.Line2D([0], [0], color='red', lw=6, alpha=0.30,  label='Death Event Status = True')
+blue_patch = plt.Line2D([0], [0], color='blue', lw=6, alpha=0.30, label='Death Event Status = False')
+black_patch = plt.Line2D([0], [0], color='black', lw=3, linestyle=":", label='Test Case')
+plt.legend(handles=[red_patch, blue_patch, black_patch], facecolor='white', framealpha=1, loc='upper center', bbox_to_anchor=(0.5, -0.10), ncol=3)
+plt.title('Final Survival Prediction Model: Cox Proportional Hazards Regression')
+plt.xlabel('Time (Days)')
+plt.ylabel('Estimated Survival Probability')
+plt.tight_layout(rect=[0, 0, 1.00, 0.95])
+plt.show()
+```
+
+
+    
+![png](output_263_0.png)
+    
+
 
 ## 1.7. Predictive Model Deployment Using Streamlit and Streamlit Community Cloud <a class="anchor" id="1.7"></a>
 
