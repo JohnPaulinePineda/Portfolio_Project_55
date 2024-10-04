@@ -5,7 +5,6 @@ import os
 import joblib
 import numpy as np
 from sksurv.linear_model import CoxPHSurvivalAnalysis
-from lifelines import KaplanMeierFitter
 
 ##################################
 # Defining file paths
@@ -18,6 +17,12 @@ PARAMETERS_PATH = r"parameters"
 # from the MODELS_PATH
 ##################################
 final_survival_prediction_model = joblib.load(os.path.join("..",MODELS_PATH, "coxph_best_model.pkl"))
+
+##################################
+# Loading the numeric feature median
+# from the PARAMETERS_PATH
+##################################
+numeric_feature_median = joblib.load(os.path.join("..",PARAMETERS_PATH, "numeric_feature_median_list.pkl"))
 
 ##################################
 # Loading the final survival prediction model
@@ -51,6 +56,20 @@ def compute_individual_coxph_survival_probability_class(X_test_sample):
 ##################################
 def compute_list_coxph_survival_profile(X_train_list, y_train_list):
     X_list_survival_function = final_survival_prediction_model.predict_survival_function(X_train_list)
-    y_list_response = y_train_list.reset_index()
-    return X_list_survival_function, y_list_response
+    return X_list_survival_function
+
+##################################
+# Formulating a function to
+# create dichotomous bins
+# for the numeric features
+# of a list of
+##################################
+def bin_numeric_model_feature(X_original_list, numeric_feature):
+    median = numeric_feature_median.loc[numeric_feature]
+    X_original_list[numeric_feature] = np.where(X_original_list[numeric_feature] <= median, "Low", "High")
+    return X_original_list
+
+
+
+
     
