@@ -177,6 +177,7 @@ DATASETS_FINAL_TEST_PATH = r"datasets\final\test"
 DATASETS_FINAL_TEST_FEATURES_PATH = r"datasets\final\test\features"
 DATASETS_FINAL_TEST_TARGET_PATH = r"datasets\final\test\target"
 MODELS_PATH = r"models"
+PARAMETERS_PATH = r"parameters"
 ```
 
 
@@ -2956,6 +2957,15 @@ heart_failure_EDA.head()
 
 ```python
 ##################################
+# Saving the EDA data
+# to the DATASETS_PREPROCESSED_PATH
+##################################
+heart_failure_EDA.to_csv(os.path.join("..", DATASETS_PREPROCESSED_PATH, "heart_failure_EDA.csv"), index=False)
+```
+
+
+```python
+##################################
 # Plotting the baseline survival curve
 # and computing the survival rates
 ##################################
@@ -2985,7 +2995,7 @@ plt.show()
 
 
     
-![png](output_98_0.png)
+![png](output_99_0.png)
     
 
 
@@ -3019,7 +3029,7 @@ plt.show()
 
 
     
-![png](output_100_0.png)
+![png](output_101_0.png)
     
 
 
@@ -3043,7 +3053,7 @@ plt.show()
 
 
     
-![png](output_101_0.png)
+![png](output_102_0.png)
     
 
 
@@ -3067,7 +3077,7 @@ plt.show()
 
 
     
-![png](output_102_0.png)
+![png](output_103_0.png)
     
 
 
@@ -3089,7 +3099,7 @@ plt.show()
 
 
     
-![png](output_103_0.png)
+![png](output_104_0.png)
     
 
 
@@ -3452,7 +3462,7 @@ plt.show()
 
 
     
-![png](output_110_0.png)
+![png](output_111_0.png)
     
 
 
@@ -3595,7 +3605,7 @@ plt.show()
 
 
     
-![png](output_114_0.png)
+![png](output_115_0.png)
     
 
 
@@ -6046,7 +6056,7 @@ plt.show()
 
 
     
-![png](output_166_0.png)
+![png](output_167_0.png)
     
 
 
@@ -6197,7 +6207,7 @@ plt.show()
 
 
     
-![png](output_170_0.png)
+![png](output_171_0.png)
     
 
 
@@ -7520,7 +7530,7 @@ plt.show()
 
 
     
-![png](output_181_0.png)
+![png](output_182_0.png)
     
 
 
@@ -7671,7 +7681,7 @@ plt.show()
 
 
     
-![png](output_185_0.png)
+![png](output_186_0.png)
     
 
 
@@ -8989,7 +8999,7 @@ plt.show()
 
 
     
-![png](output_196_0.png)
+![png](output_197_0.png)
     
 
 
@@ -9140,7 +9150,7 @@ plt.show()
 
 
     
-![png](output_200_0.png)
+![png](output_201_0.png)
     
 
 
@@ -10531,7 +10541,7 @@ plt.show()
 
 
     
-![png](output_211_0.png)
+![png](output_212_0.png)
     
 
 
@@ -10682,7 +10692,7 @@ plt.show()
 
 
     
-![png](output_215_0.png)
+![png](output_216_0.png)
     
 
 
@@ -12074,7 +12084,7 @@ plt.show()
 
 
     
-![png](output_226_0.png)
+![png](output_227_0.png)
     
 
 
@@ -12225,7 +12235,7 @@ plt.show()
 
 
     
-![png](output_230_0.png)
+![png](output_231_0.png)
     
 
 
@@ -12358,7 +12368,7 @@ for container in ci_plot.containers:
 
 
     
-![png](output_234_0.png)
+![png](output_235_0.png)
     
 
 
@@ -12508,7 +12518,7 @@ for container in updated_ci_plot.containers:
 
 
     
-![png](output_238_0.png)
+![png](output_239_0.png)
     
 
 
@@ -12617,7 +12627,7 @@ plt.show()
 
 
     
-![png](output_241_0.png)
+![png](output_242_0.png)
     
 
 
@@ -12720,7 +12730,7 @@ plt.show()
 
 
     
-![png](output_243_0.png)
+![png](output_244_0.png)
     
 
 
@@ -12837,17 +12847,32 @@ heart_failure_MI.head()
 ##################################
 heart_failure_MI_numeric = heart_failure_MI[["AGE","EJECTION_FRACTION","SERUM_CREATININE","SERUM_SODIUM"]]
 numeric_predictor_median_list = heart_failure_MI_numeric.median()
-numeric_predictor_median_list
+print("Numeric Predictor Median: ","\n", numeric_predictor_median_list)
+```
+
+    Numeric Predictor Median:  
+     AGE                  0.065124
+    EJECTION_FRACTION    0.100914
+    SERUM_CREATININE    -0.087641
+    SERUM_SODIUM        -0.006503
+    dtype: float64
+    
+
+
+```python
+##################################
+# Saving the risk category threshold
+# from the best Cox Proportional Hazards Regression Model
+# developed from the original training data
+##################################
+joblib.dump(numeric_predictor_median_list, 
+            os.path.join("..", PARAMETERS_PATH, "numeric_feature_median_list.pkl"))
 ```
 
 
 
 
-    AGE                  0.065124
-    EJECTION_FRACTION    0.100914
-    SERUM_CREATININE    -0.087641
-    SERUM_SODIUM        -0.006503
-    dtype: float64
+    ['..\\parameters\\numeric_feature_median_list.pkl']
 
 
 
@@ -13029,7 +13054,7 @@ plt.show()
 
 
     
-![png](output_250_0.png)
+![png](output_252_0.png)
     
 
 
@@ -13078,15 +13103,49 @@ plt.show()
 
 
     
-![png](output_253_0.png)
+![png](output_255_0.png)
     
 
 
 
 ```python
 ##################################
-# Describing the details of the 
-# test case for evaluation
+# Determining the risk category
+# for the test case
+##################################
+optimal_coxph_heart_failure_y_train_pred = optimal_coxph_model.predict(X_train)
+heart_failure_train['Predicted_Risks_CoxPH'] = optimal_coxph_heart_failure_y_train_pred
+risk_groups, risk_group_bin_range = pd.qcut(heart_failure_train['Predicted_Risks_CoxPH'], 2, labels=['Low-Risk', 'High-Risk'], retbins=True)
+risk_group_threshold = risk_group_bin_range[1]
+print("Risk Category Threshold: ", risk_group_threshold)
+```
+
+    Risk Category Threshold:  0.1856637832961452
+    
+
+
+```python
+##################################
+# Saving the risk category threshold
+# from the best Cox Proportional Hazards Regression Model
+# developed from the original training data
+##################################
+joblib.dump(risk_group_threshold, 
+            os.path.join("..", PARAMETERS_PATH, "coxph_best_model_risk_group_threshold.pkl"))
+```
+
+
+
+
+    ['..\\parameters\\coxph_best_model_risk_group_threshold.pkl']
+
+
+
+
+```python
+##################################
+# Describing the details of a 
+# low-risk test case for evaluation
 ##################################
 X_sample = {'AGE': 43,  
             'ANAEMIA': 0, 
@@ -13146,7 +13205,8 @@ X_test_sample.head()
 
 ```python
 ##################################
-# Applying preprocessing to the new case
+# Applying preprocessing to 
+# the test case
 ##################################
 coxph_pipeline.fit(X_train, y_train_array)
 X_test_sample_transformed = coxph_pipeline.named_steps['yeo_johnson'].transform(X_test_sample)
@@ -13294,7 +13354,7 @@ plt.show()
 
 
     
-![png](output_259_0.png)
+![png](output_263_0.png)
     
 
 
@@ -13313,10 +13373,6 @@ X_test_sample_survival_function = optimal_coxph_model.predict_survival_function(
 # Determining the risk category
 # for the test case
 ##################################
-optimal_coxph_heart_failure_y_train_pred = optimal_coxph_model.predict(X_train)
-heart_failure_train['Predicted_Risks_CoxPH'] = optimal_coxph_heart_failure_y_train_pred
-risk_groups, risk_group_bin_range = pd.qcut(heart_failure_train['Predicted_Risks_CoxPH'], 2, labels=['Low-Risk', 'High-Risk'], retbins=True)
-risk_group_threshold = risk_group_bin_range[1]
 X_test_sample_risk_category = "High-Risk" if (optimal_coxph_model.predict(X_test_sample) > risk_group_threshold) else "Low-Risk"
 ```
 
@@ -13360,18 +13416,48 @@ for i, surv_func in enumerate(heart_failure_train_survival_function):
              color='red' if y_train_reset_index['DEATH_EVENT'][i] == 1 else 'blue', 
              linewidth=6.0,
              alpha=0.05)
-plt.step(X_test_sample_survival_function[0].x, 
-         X_test_sample_survival_function[0].y, 
-         where="post", 
-         color='black', 
-         linewidth=3.0, 
-         linestyle=':',
-         label='Test Case')
-for survival_time, survival_probability in zip(X_test_sample_survival_time, X_test_sample_survival_probability):
-    plt.vlines(x=survival_time, ymin=0, ymax=survival_probability, color='black', linestyle='-',linewidth=1.0)
-red_patch = plt.Line2D([0], [0], color='red', lw=6, alpha=0.30,  label='Death Event Status = True')
-blue_patch = plt.Line2D([0], [0], color='blue', lw=6, alpha=0.30, label='Death Event Status = False')
-black_patch = plt.Line2D([0], [0], color='black', lw=3, linestyle=":", label='Test Case')
+if X_test_sample_risk_category == "Low-Risk":
+    plt.step(X_test_sample_survival_function[0].x, 
+             X_test_sample_survival_function[0].y, 
+             where="post", 
+             color='blue',
+             linewidth=6.0,
+             linestyle='-',
+             alpha=0.30,
+             label='Test Case (Low-Risk)')
+    plt.step(X_test_sample_survival_function[0].x, 
+             X_test_sample_survival_function[0].y, 
+             where="post", 
+             color='black',
+             linewidth=3.0,
+             linestyle=':',
+             label='Test Case (Low-Risk)')
+    for survival_time, survival_probability in zip(X_test_sample_survival_time, X_test_sample_survival_probability):
+        plt.vlines(x=survival_time, ymin=0, ymax=survival_probability, color='blue', linestyle='-', linewidth=2.0, alpha=0.30)
+    red_patch = plt.Line2D([0], [0], color='red', lw=6, alpha=0.30,  label='Death Event Status = True')
+    blue_patch = plt.Line2D([0], [0], color='blue', lw=6, alpha=0.30, label='Death Event Status = False')
+    black_patch = plt.Line2D([0], [0], color='black', lw=3, linestyle=":", label='Test Case (Low-Risk)')
+if X_test_sample_risk_category == "High-Risk":
+    plt.step(X_test_sample_survival_function[0].x, 
+             X_test_sample_survival_function[0].y, 
+             where="post", 
+             color='red',
+             linewidth=6.0,
+             linestyle='-',
+             alpha=0.30,
+             label='Test Case (High-Risk)')
+    plt.step(X_test_sample_survival_function[0].x, 
+             X_test_sample_survival_function[0].y, 
+             where="post", 
+             color='black',
+             linewidth=3.0,
+             linestyle=':',
+             label='Test Case (High-Risk)')
+    for survival_time, survival_probability in zip(X_test_sample_survival_time, X_test_sample_survival_probability):
+        plt.vlines(x=survival_time, ymin=0, ymax=survival_probability, color='red', linestyle='-', linewidth=2.0, alpha=0.30)
+    red_patch = plt.Line2D([0], [0], color='red', lw=6, alpha=0.30,  label='Death Event Status = True')
+    blue_patch = plt.Line2D([0], [0], color='blue', lw=6, alpha=0.30, label='Death Event Status = False')
+    black_patch = plt.Line2D([0], [0], color='black', lw=3, linestyle=":", label='Test Case (High-Risk)')
 plt.legend(handles=[red_patch, blue_patch, black_patch], facecolor='white', framealpha=1, loc='upper center', bbox_to_anchor=(0.5, -0.10), ncol=3)
 plt.title('Final Survival Prediction Model: Cox Proportional Hazards Regression')
 plt.xlabel('Time (Days)')
@@ -13382,7 +13468,338 @@ plt.show()
 
 
     
-![png](output_263_0.png)
+![png](output_267_0.png)
+    
+
+
+
+```python
+##################################
+# Describing the details of a 
+# high-risk test case for evaluation
+##################################
+X_sample = {'AGE': 70,  
+            'ANAEMIA': 1, 
+            'EJECTION_FRACTION': 20,
+            'HIGH_BLOOD_PRESSURE': 1,
+            'SERUM_CREATININE': 0.75, 
+            'SERUM_SODIUM': 100}
+X_test_sample = pd.DataFrame([X_sample])
+X_test_sample.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AGE</th>
+      <th>ANAEMIA</th>
+      <th>EJECTION_FRACTION</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>70</td>
+      <td>1</td>
+      <td>20</td>
+      <td>1</td>
+      <td>0.75</td>
+      <td>100</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Applying preprocessing to 
+# the test case
+##################################
+coxph_pipeline.fit(X_train, y_train_array)
+X_test_sample_transformed = coxph_pipeline.named_steps['yeo_johnson'].transform(X_test_sample)
+X_test_sample_converted = pd.DataFrame([X_test_sample_transformed[0]], columns=["AGE", "EJECTION_FRACTION", "SERUM_CREATININE", "SERUM_SODIUM", "ANAEMIA", "HIGH_BLOOD_PRESSURE"])
+X_test_sample_converted.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AGE</th>
+      <th>EJECTION_FRACTION</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+      <th>ANAEMIA</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.758286</td>
+      <td>-1.733233</td>
+      <td>-1.404833</td>
+      <td>-4.476082</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Binning numeric predictors into two groups
+##################################
+for i, col in enumerate(["AGE", "EJECTION_FRACTION", "SERUM_CREATININE", "SERUM_SODIUM"]):
+    X_test_sample_converted[col] = X_test_sample_converted[col].apply(lambda x: 'High' if x > numeric_predictor_median_list[i] else 'Low')
+```
+
+
+```python
+##################################
+# Converting integer predictors into labels
+##################################
+for col in ["ANAEMIA", "HIGH_BLOOD_PRESSURE"]:
+    X_test_sample_converted[col] = X_test_sample_converted[col].apply(lambda x: 'Absent' if x < 1.0 else 'Present')
+```
+
+
+```python
+##################################
+# Describing the details of the 
+# test case for evaluation
+##################################
+X_test_sample_converted.head()
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AGE</th>
+      <th>EJECTION_FRACTION</th>
+      <th>SERUM_CREATININE</th>
+      <th>SERUM_SODIUM</th>
+      <th>ANAEMIA</th>
+      <th>HIGH_BLOOD_PRESSURE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>High</td>
+      <td>Low</td>
+      <td>Low</td>
+      <td>Low</td>
+      <td>Present</td>
+      <td>Present</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Plotting the estimated survival profiles
+# of the test case
+# using Kaplan-Meier Plots
+##################################
+fig, axes = plt.subplots(3, 2, figsize=(17, 18))
+
+heart_failure_predictors = ['AGE','EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM','ANAEMIA','HIGH_BLOOD_PRESSURE']
+
+for i, predictor in enumerate(heart_failure_predictors):
+    ax = axes[i // 2, i % 2]
+    plot_kaplan_meier(heart_failure_MI_EDA, predictor, ax, new_case_value=X_test_sample_converted[predictor][0])
+    ax.set_title(f'DEATH_EVENT Survival Probabilities by {predictor} Categories')
+    ax.set_xlabel('TIME')
+    ax.set_ylabel('DEATH_EVENT Survival Probability')
+plt.tight_layout()
+plt.show()
+```
+
+
+    
+![png](output_273_0.png)
+    
+
+
+
+```python
+##################################
+# Computing the estimated survival probability
+# for the test case
+##################################
+X_test_sample_survival_function = optimal_coxph_model.predict_survival_function(X_test_sample)
+```
+
+
+```python
+##################################
+# Determining the risk category
+# for the test case
+##################################
+X_test_sample_risk_category = "High-Risk" if (optimal_coxph_model.predict(X_test_sample) > risk_group_threshold) else "Low-Risk"
+```
+
+
+```python
+##################################
+# Computing the estimated survival probabilities
+# for the test case at five defined time points
+##################################
+X_test_sample_survival_time = np.array([50, 100, 150, 200, 250])
+X_test_sample_survival_probability = np.interp(X_test_sample_survival_time, 
+                                               X_test_sample_survival_function[0].x, 
+                                               X_test_sample_survival_function[0].y)
+X_test_sample_survival_probability_percentage = X_test_sample_survival_probability*100
+for survival_time, survival_probability in zip(X_test_sample_survival_time, X_test_sample_survival_probability_percentage):
+    print(f"Test Case Survival Probability ({survival_time} Days): {survival_probability:.2f}%")
+print(f"Test Case Risk Category: {X_test_sample_risk_category}")
+```
+
+    Test Case Survival Probability (50 Days): 41.81%
+    Test Case Survival Probability (100 Days): 29.65%
+    Test Case Survival Probability (150 Days): 21.39%
+    Test Case Survival Probability (200 Days): 10.71%
+    Test Case Survival Probability (250 Days): 4.09%
+    Test Case Risk Category: High-Risk
+    
+
+
+```python
+##################################
+# Plotting the estimated survival probability
+# for the test case 
+# in the baseline survival function
+# of the final survival prediction model
+##################################
+plt.figure(figsize=(17, 8))
+for i, surv_func in enumerate(heart_failure_train_survival_function):
+    plt.step(surv_func.x, 
+             surv_func.y, 
+             where="post", 
+             color='red' if y_train_reset_index['DEATH_EVENT'][i] == 1 else 'blue', 
+             linewidth=6.0,
+             alpha=0.05)
+if X_test_sample_risk_category == "Low-Risk":
+    plt.step(X_test_sample_survival_function[0].x, 
+             X_test_sample_survival_function[0].y, 
+             where="post", 
+             color='blue',
+             linewidth=6.0,
+             linestyle='-',
+             alpha=0.30,
+             label='Test Case (Low-Risk)')
+    plt.step(X_test_sample_survival_function[0].x, 
+             X_test_sample_survival_function[0].y, 
+             where="post", 
+             color='black',
+             linewidth=3.0,
+             linestyle=':',
+             label='Test Case (Low-Risk)')
+    for survival_time, survival_probability in zip(X_test_sample_survival_time, X_test_sample_survival_probability):
+        plt.vlines(x=survival_time, ymin=0, ymax=survival_probability, color='blue', linestyle='-', linewidth=2.0, alpha=0.30)
+    red_patch = plt.Line2D([0], [0], color='red', lw=6, alpha=0.30,  label='Death Event Status = True')
+    blue_patch = plt.Line2D([0], [0], color='blue', lw=6, alpha=0.30, label='Death Event Status = False')
+    black_patch = plt.Line2D([0], [0], color='black', lw=3, linestyle=":", label='Test Case (Low-Risk)')
+if X_test_sample_risk_category == "High-Risk":
+    plt.step(X_test_sample_survival_function[0].x, 
+             X_test_sample_survival_function[0].y, 
+             where="post", 
+             color='red',
+             linewidth=6.0,
+             linestyle='-',
+             alpha=0.30,
+             label='Test Case (High-Risk)')
+    plt.step(X_test_sample_survival_function[0].x, 
+             X_test_sample_survival_function[0].y, 
+             where="post", 
+             color='black',
+             linewidth=3.0,
+             linestyle=':',
+             label='Test Case (High-Risk)')
+    for survival_time, survival_probability in zip(X_test_sample_survival_time, X_test_sample_survival_probability):
+        plt.vlines(x=survival_time, ymin=0, ymax=survival_probability, color='red', linestyle='-', linewidth=2.0, alpha=0.30)
+    red_patch = plt.Line2D([0], [0], color='red', lw=6, alpha=0.30,  label='Death Event Status = True')
+    blue_patch = plt.Line2D([0], [0], color='blue', lw=6, alpha=0.30, label='Death Event Status = False')
+    black_patch = plt.Line2D([0], [0], color='black', lw=3, linestyle=":", label='Test Case (High-Risk)')
+plt.legend(handles=[red_patch, blue_patch, black_patch], facecolor='white', framealpha=1, loc='upper center', bbox_to_anchor=(0.5, -0.10), ncol=3)
+plt.title('Final Survival Prediction Model: Cox Proportional Hazards Regression')
+plt.xlabel('Time (Days)')
+plt.ylabel('Estimated Survival Probability')
+plt.tight_layout(rect=[0, 0, 1.00, 0.95])
+plt.show()
+```
+
+
+    
+![png](output_277_0.png)
     
 
 
