@@ -107,7 +107,7 @@ with input_column_3:
     ejection_fraction_numeric_input = st.slider(variables[1], min_value=10, max_value=80, value=10)
 with input_column_4:
     serum_creatinine_numeric_input = st.slider(variables[2], min_value=0.5, max_value=10.0, value=0.5)
-with input_column_6:
+with input_column_5:
     serum_sodium_numeric_input = st.slider(variables[3], min_value=110, max_value=150, value=50)
 with input_column_6:
     anaemia_categorical_input = st.radio(variables[4], ('Present', 'Absent'), horizontal=True)
