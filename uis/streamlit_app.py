@@ -177,7 +177,7 @@ if entered:
     # using Kaplan-Meier Plots
     # against the training data characteristics
     ##################################
-    fig, axes = plt.subplots(3, 2, figsize=(17, 18))
+    fig, axes = plt.subplots(3, 2, figsize=(17, 13))
 
     heart_failure_predictors = ['AGE','EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM','ANAEMIA','HIGH_BLOOD_PRESSURE']
 
@@ -187,6 +187,7 @@ if entered:
         ax.set_title(f'Baseline Survival Probability by {predictor} Categories')
         ax.set_xlabel('TIME')
         ax.set_ylabel('Estimated Survival Probability')
+        ax.legend(loc='upper right')
     plt.tight_layout()
     st.pyplot(fig)
 

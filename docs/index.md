@@ -13038,7 +13038,7 @@ def plot_kaplan_meier(df, cat_var, ax, new_case_value=None):
 # of the model training data
 # using Kaplan-Meier Plots
 ##################################
-fig, axes = plt.subplots(3, 2, figsize=(17, 18))
+fig, axes = plt.subplots(3, 2, figsize=(17, 13))
 
 heart_failure_predictors = ['AGE','EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM','ANAEMIA','HIGH_BLOOD_PRESSURE']
 
@@ -13048,6 +13048,7 @@ for i, predictor in enumerate(heart_failure_predictors):
     ax.set_title(f'DEATH_EVENT Survival Probabilities by {predictor} Categories')
     ax.set_xlabel('Time (Days)')
     ax.set_ylabel('Estimated Survival Probability')
+    ax.legend(loc='upper right')
 plt.tight_layout()
 plt.show()
 ```
@@ -13355,7 +13356,7 @@ X_test_sample_converted.head()
 # of the test case
 # using Kaplan-Meier Plots
 ##################################
-fig, axes = plt.subplots(3, 2, figsize=(17, 18))
+fig, axes = plt.subplots(3, 2, figsize=(17, 13))
 
 heart_failure_predictors = ['AGE','EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM','ANAEMIA','HIGH_BLOOD_PRESSURE']
 
@@ -13365,6 +13366,7 @@ for i, predictor in enumerate(heart_failure_predictors):
     ax.set_title(f'DEATH_EVENT Survival Probabilities by {predictor} Categories')
     ax.set_xlabel('TIME')
     ax.set_ylabel('DEATH_EVENT Survival Probability')
+    ax.legend(loc='upper right')
 plt.tight_layout()
 plt.show()
 ```
@@ -13686,7 +13688,7 @@ X_test_sample_converted.head()
 # of the test case
 # using Kaplan-Meier Plots
 ##################################
-fig, axes = plt.subplots(3, 2, figsize=(17, 18))
+fig, axes = plt.subplots(3, 2, figsize=(17, 13))
 
 heart_failure_predictors = ['AGE','EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM','ANAEMIA','HIGH_BLOOD_PRESSURE']
 
@@ -13696,6 +13698,7 @@ for i, predictor in enumerate(heart_failure_predictors):
     ax.set_title(f'DEATH_EVENT Survival Probabilities by {predictor} Categories')
     ax.set_xlabel('TIME')
     ax.set_ylabel('DEATH_EVENT Survival Probability')
+    ax.legend(loc='upper right')
 plt.tight_layout()
 plt.show()
 ```
