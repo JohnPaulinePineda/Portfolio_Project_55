@@ -26,6 +26,7 @@ PIPELINES_PATH = Path("pipelines")
 ##################################
 # Loading the dataset
 # from the DATASETS_FINAL_TRAIN_PATH
+# and the DATASETS_PREPROCESSED_PATH
 ##################################
 X_train = pd.read_csv(DATASETS_FINAL_TRAIN_FEATURES_PATH / "X_train.csv", index_col=0)
 y_train = pd.read_csv(DATASETS_FINAL_TRAIN_TARGET_PATH / "y_train.csv", index_col=0)
@@ -33,7 +34,7 @@ x_original_EDA = pd.read_csv(DATASETS_PREPROCESSED_PATH / "heart_failure_EDA.csv
 
 ##################################
 # Rebuilding the training data
-# for plotting kaplan-meier charts
+# for Kaplan-Meier plotting
 ##################################
 X_train_indices = X_train.index.tolist()
 x_original_MI = x_original_EDA.copy()
@@ -42,8 +43,8 @@ x_train_MI = x_original_MI.loc[X_train_indices]
 
 ##################################
 # Converting the event and duration variables
-# for the train set
-# to array as preparation for modeling
+# for the train set to array 
+# as preparation for modeling
 ##################################
 y_train_array = np.array([(row.DEATH_EVENT, row.TIME) for index, row in y_train.iterrows()], dtype=[('DEATH_EVENT', 'bool'), ('TIME', 'int')])
 
@@ -171,11 +172,13 @@ if entered:
         X_test_sample_converted[col] = X_test_sample_converted[col].apply(lambda x: 'Absent' if x < 1.0 else 'Present')
 
     ##################################
-    # Plotting the estimated survival profiles
-    # of the test case
+    # Creating a 2x3 grid of plots for
+    # plotting the estimated survival profiles
+    # of the test case input
     # using Kaplan-Meier Plots
+    # against the training data characteristics
     ##################################
-    fig, axes = plt.subplots(3, 2, figsize=(17, 18))
+    fig, axes = plt.subplots(3, 2, figsize=(17, 9))
 
     heart_failure_predictors = ['AGE','EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM','ANAEMIA','HIGH_BLOOD_PRESSURE']
 
@@ -190,7 +193,7 @@ if entered:
 
     ##################################
     # Defining a section title
-    # for the test case lung cancer probability estimation
+    # for the test case heart failure survival estimation
     ################################## 
     st.markdown("""---""")    
     st.markdown("<h4 style='font-size: 20px; font-weight: bold;'>Test Case Heart Failure Survival Probability Estimation</h4>", unsafe_allow_html=True)    
@@ -199,7 +202,7 @@ if entered:
     ##################################
     # Computing the estimated survival probabilities
     # for the test case at five defined time points
-    # and determined the risk category 
+    # and determining the risk category 
     ##################################
     X_test_sample_prediction = compute_individual_coxph_survival_probability_class(X_test_sample)
     X_test_sample_survival_function = X_test_sample_prediction[0]
