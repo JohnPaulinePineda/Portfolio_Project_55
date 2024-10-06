@@ -103,14 +103,17 @@ st.markdown("""---""")
 input_column_1, input_column_2, input_column_3, input_column_4, input_column_5, input_column_6 = st.columns(6)
 with input_column_1:
     age_numeric_input = st.slider(variables[0], min_value=20, max_value=100, value=20)
+with input_column_2:
     ejection_fraction_numeric_input = st.slider(variables[1], min_value=10, max_value=80, value=10)
 with input_column_3:
     serum_creatinine_numeric_input = st.slider(variables[2], min_value=0.5, max_value=10.0, value=0.5)
+with input_column_4:
     serum_sodium_numeric_input = st.slider(variables[3], min_value=110, max_value=150, value=50)
 with input_column_5:
     anaemia_categorical_input = st.radio(variables[4], ('Present', 'Absent'), horizontal=True)
-    high_blood_pressure_categorical_input = st.radio(variables[5], ('Present', 'Absent'), horizontal=True)
     anaemia_numeric_input = 1 if anaemia_categorical_input == 'Present' else 0
+with input_column_6:
+    high_blood_pressure_categorical_input = st.radio(variables[5], ('Present', 'Absent'), horizontal=True)
     high_blood_pressure_numeric_input = 1 if high_blood_pressure_categorical_input == 'Present' else 0
 
 test_case_responses[variables[0]] = age_numeric_input
