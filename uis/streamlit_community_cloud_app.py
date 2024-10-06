@@ -102,11 +102,13 @@ st.markdown("""---""")
 # and storing the user inputs
 ##################################
 input_column_1,input_column_2, input_column_3 = st.columns(3)
-with input_column_2:
+with input_column_1:
     age_numeric_input = st.slider(variables[0], min_value=20, max_value=100, value=20)
     ejection_fraction_numeric_input = st.slider(variables[1], min_value=10, max_value=80, value=10)
+with input_column_2:
     serum_creatinine_numeric_input = st.slider(variables[2], min_value=0.5, max_value=10.0, value=0.5)
     serum_sodium_numeric_input = st.slider(variables[3], min_value=110, max_value=150, value=50)
+with input_column_3:
     anaemia_categorical_input = st.radio(variables[4], ('Present', 'Absent'), horizontal=True)
     high_blood_pressure_categorical_input = st.radio(variables[5], ('Present', 'Absent'), horizontal=True)
     anaemia_numeric_input = 1 if anaemia_categorical_input == 'Present' else 0
