@@ -31,10 +31,9 @@
         * [1.6.10 Model Testing](#1.6.10)
         * [1.6.11 Model Inference](#1.6.11)
     * [1.7 Predictive Model Deployment Using Streamlit and Streamlit Community Cloud](#1.7)
-        * [1.7.1 Model Prediction Application Code Development](#1.7.1)
-        * [1.7.2 Model Application Programming Interface Code Development](#1.7.2)
-        * [1.7.3 User Interface Application Code Development](#1.7.3)
-        * [1.7.4 Web Application](#1.7.4)
+        * [1.7.1 Model Application Programming Interface Code Development](#1.7.1)
+        * [1.7.2 User Interface Application Code Development](#1.7.2)
+        * [1.7.3 Web Application](#1.7.3)
 * [**2. Summary**](#Summary)   
 * [**3. References**](#References)
 
@@ -178,6 +177,7 @@ DATASETS_FINAL_TEST_FEATURES_PATH = r"datasets\final\test\features"
 DATASETS_FINAL_TEST_TARGET_PATH = r"datasets\final\test\target"
 MODELS_PATH = r"models"
 PARAMETERS_PATH = r"parameters"
+PIPELINES_PATH = r"pipelines"
 ```
 
 
@@ -2960,7 +2960,7 @@ heart_failure_EDA.head()
 # Saving the EDA data
 # to the DATASETS_PREPROCESSED_PATH
 ##################################
-heart_failure_EDA.to_csv(os.path.join("..", DATASETS_PREPROCESSED_PATH, "heart_failure_EDA.csv"), index=False)
+heart_failure_EDA.to_csv(os.path.join("..", DATASETS_PREPROCESSED_PATH, "heart_failure_EDA.csv"), index=True)
 ```
 
 
@@ -3946,7 +3946,7 @@ display(heart_failure_transformed)
 # Saving the tranformed data
 # to the DATASETS_PREPROCESSED_PATH
 ##################################
-heart_failure_transformed.to_csv(os.path.join("..", DATASETS_PREPROCESSED_PATH, "heart_failure_transformed.csv"), index=False)
+heart_failure_transformed.to_csv(os.path.join("..", DATASETS_PREPROCESSED_PATH, "heart_failure_transformed.csv"), index=True)
 ```
 
 
@@ -3958,7 +3958,7 @@ heart_failure_transformed.to_csv(os.path.join("..", DATASETS_PREPROCESSED_PATH, 
 # to the DATASETS_PREPROCESSED_PATH
 ##################################
 heart_failure_filtered = heart_failure_transformed.drop(['DIABETES','SEX', 'SMOKING', 'CREATININE_PHOSPHOKINASE','PLATELETS'], axis=1)
-heart_failure_filtered.to_csv(os.path.join("..", DATASETS_FINAL_PATH, "heart_failure_final.csv"), index=False)
+heart_failure_filtered.to_csv(os.path.join("..", DATASETS_FINAL_PATH, "heart_failure_final.csv"), index=True)
 display(heart_failure_filtered)
 ```
 
@@ -4470,9 +4470,9 @@ display(y_validation['DEATH_EVENT'].value_counts(normalize = True))
 # and DATASETS_FINAL_TRAIN_FEATURES_PATH
 # and DATASETS_FINAL_TRAIN_TARGET_PATH
 ##################################
-heart_failure_train.to_csv(os.path.join("..", DATASETS_FINAL_TRAIN_PATH, "heart_failure_train.csv"), index=False)
-X_train.to_csv(os.path.join("..", DATASETS_FINAL_TRAIN_FEATURES_PATH, "X_train.csv"), index=False)
-y_train.to_csv(os.path.join("..", DATASETS_FINAL_TRAIN_TARGET_PATH, "y_train.csv"), index=False)
+heart_failure_train.to_csv(os.path.join("..", DATASETS_FINAL_TRAIN_PATH, "heart_failure_train.csv"), index=True)
+X_train.to_csv(os.path.join("..", DATASETS_FINAL_TRAIN_FEATURES_PATH, "X_train.csv"), index=True)
+y_train.to_csv(os.path.join("..", DATASETS_FINAL_TRAIN_TARGET_PATH, "y_train.csv"), index=True)
 ```
 
 
@@ -4483,9 +4483,9 @@ y_train.to_csv(os.path.join("..", DATASETS_FINAL_TRAIN_TARGET_PATH, "y_train.csv
 # and DATASETS_FINAL_VALIDATION_FEATURE_PATH
 # and DATASETS_FINAL_VALIDATION_TARGET_PATH
 ##################################
-heart_failure_validation.to_csv(os.path.join("..", DATASETS_FINAL_VALIDATION_PATH, "heart_failure_validation.csv"), index=False)
-X_validation.to_csv(os.path.join("..", DATASETS_FINAL_VALIDATION_FEATURES_PATH, "X_validation.csv"), index=False)
-y_validation.to_csv(os.path.join("..", DATASETS_FINAL_VALIDATION_TARGET_PATH, "y_validation.csv"), index=False)
+heart_failure_validation.to_csv(os.path.join("..", DATASETS_FINAL_VALIDATION_PATH, "heart_failure_validation.csv"), index=True)
+X_validation.to_csv(os.path.join("..", DATASETS_FINAL_VALIDATION_FEATURES_PATH, "X_validation.csv"), index=True)
+y_validation.to_csv(os.path.join("..", DATASETS_FINAL_VALIDATION_TARGET_PATH, "y_validation.csv"), index=True)
 ```
 
 
@@ -4496,9 +4496,9 @@ y_validation.to_csv(os.path.join("..", DATASETS_FINAL_VALIDATION_TARGET_PATH, "y
 # and DATASETS_FINAL_TEST_FEATURES_PATH
 # and DATASETS_FINAL_TEST_TARGET_PATH
 ##################################
-heart_failure_test.to_csv(os.path.join("..", DATASETS_FINAL_TEST_PATH, "heart_failure_test.csv"), index=False)
-X_test.to_csv(os.path.join("..", DATASETS_FINAL_TEST_FEATURES_PATH, "X_test.csv"), index=False)
-y_test.to_csv(os.path.join("..", DATASETS_FINAL_TEST_TARGET_PATH, "y_test.csv"), index=False)
+heart_failure_test.to_csv(os.path.join("..", DATASETS_FINAL_TEST_PATH, "heart_failure_test.csv"), index=True)
+X_test.to_csv(os.path.join("..", DATASETS_FINAL_TEST_FEATURES_PATH, "X_test.csv"), index=True)
+y_test.to_csv(os.path.join("..", DATASETS_FINAL_TEST_TARGET_PATH, "y_test.csv"), index=True)
 ```
 
 
@@ -13205,10 +13205,27 @@ X_test_sample.head()
 
 ```python
 ##################################
+# Saving the best Cox Proportional Hazards Regression Model
+# pipeline developed from the original training data
+################################## 
+coxph_pipeline.fit(X_train, y_train_array)
+joblib.dump(coxph_pipeline, 
+            os.path.join("..", PIPELINES_PATH, "coxph_pipeline.pkl"))
+```
+
+
+
+
+    ['..\\pipelines\\coxph_pipeline.pkl']
+
+
+
+
+```python
+##################################
 # Applying preprocessing to 
 # the test case
 ##################################
-coxph_pipeline.fit(X_train, y_train_array)
 X_test_sample_transformed = coxph_pipeline.named_steps['yeo_johnson'].transform(X_test_sample)
 X_test_sample_converted = pd.DataFrame([X_test_sample_transformed[0]], columns=["AGE", "EJECTION_FRACTION", "SERUM_CREATININE", "SERUM_SODIUM", "ANAEMIA", "HIGH_BLOOD_PRESSURE"])
 X_test_sample_converted.head()
@@ -13354,7 +13371,7 @@ plt.show()
 
 
     
-![png](output_263_0.png)
+![png](output_264_0.png)
     
 
 
@@ -13468,7 +13485,7 @@ plt.show()
 
 
     
-![png](output_267_0.png)
+![png](output_268_0.png)
     
 
 
@@ -13685,7 +13702,7 @@ plt.show()
 
 
     
-![png](output_273_0.png)
+![png](output_274_0.png)
     
 
 
@@ -13799,7 +13816,7 @@ plt.show()
 
 
     
-![png](output_277_0.png)
+![png](output_278_0.png)
     
 
 
@@ -13807,11 +13824,56 @@ plt.show()
 
 ### 1.7.1 Model Prediction Application Code Development <a class="anchor" id="1.7.1"></a>
 
-### 1.7.2 Model Application Programming Interface Code Development <a class="anchor" id="1.7.2"></a>
+[Streamlit](https://streamlit.io/) is an open-source Python library that simplifies the creation and deployment of web applications for machine learning and data science projects. It allows developers and data scientists to turn Python scripts into interactive web apps quickly without requiring extensive web development knowledge. Streamlit seamlessly integrates with popular Python libraries such as Pandas, Matplotlib, Plotly, and TensorFlow, allowing one to leverage existing data processing and visualization tools within the application. Streamlit apps can be easily deployed on various platforms, including Streamlit Community Cloud, Heroku, or any cloud service that supports Python web applications.
 
-### 1.7.3 User Interface Application Code Development <a class="anchor" id="1.7.3"></a>
+[Streamlit Community Cloud](https://streamlit.io/cloud), formerly known as Streamlit Sharing, is a free cloud-based platform provided by Streamlit that allows users to easily deploy and share Streamlit apps online. It is particularly popular among data scientists, machine learning engineers, and developers for quickly showcasing projects, creating interactive demos, and sharing data-driven applications with a wider audience without needing to manage server infrastructure. Significant features include free hosting (Streamlit Community Cloud provides free hosting for Streamlit apps, making it accessible for users who want to share their work without incurring hosting costs), easy deployment (users can connect their GitHub repository to Streamlit Community Cloud, and the app is automatically deployed from the repository), continuous deployment (if the code in the connected GitHub repository is updated, the app is automatically redeployed with the latest changes), 
+sharing capabilities (once deployed, apps can be shared with others via a simple URL, making it easy for collaborators, stakeholders, or the general public to access and interact with the app), built-in authentication (users can restrict access to their apps using GitHub-based authentication, allowing control over who can view and interact with the app), and community support (the platform is supported by a community of users and developers who share knowledge, templates, and best practices for building and deploying Streamlit apps).
 
-### 1.7.4 Web Application <a class="anchor" id="1.7.4"></a>
+### 1.7.2 Model Application Programming Interface Code Development <a class="anchor" id="1.7.1"></a>
+
+1. A model prediction application code in Python was developed to:
+    * generate the Kaplan-Meier plots for the test case and the study population data as baseline
+    * estimate the heart failure survival profile and probabilities for the test case and the study population data as baseline
+    * predict risk categories for the test case
+2. The model prediction application code was saved in a repository that was eventually cloned for uploading to Streamlit Community Cloud.
+
+![ModelDeployment2_ModelPredictionApplicationCode.png](440b0527-a1aa-4e19-b03b-62ffbabc025c.png)
+
+### 1.7.3 User Interface Application Code Development <a class="anchor" id="1.7.2"></a>
+
+1. A user interface application code in Python was developed to:
+    * generate the Kaplan-Meier plots for the test case and the study population data as baseline
+    * estimate the heart failure survival profile and probabilities for the test case and the study population data as baseline
+    * predict risk categories for the test case
+2. The user interface application code was saved in a repository that was eventually cloned for uploading to Streamlit Community Cloud.
+
+![ModelDeployment2_UserInterfaceApplicationCode.png](f4f3fd31-4d21-42c0-ba54-9f4bdc4fe437.png)
+
+### 1.7.4 Web Application <a class="anchor" id="1.7.3"></a>
+
+1. The prediction model was deployed using a web application hosted at [<mark style="background-color: #CCECFF"><b>Streamlit</b></mark>](https://heart-failure-survival-probability-estimation.streamlit.app/).
+2. The user interface input consists of the following:
+    * range sliders to:
+        * enable numerical input to measure the characteristics of the test case for certain cardiovascular, hematologic and metabolic markers
+    * radio buttons to:
+        * enable binary category selection (Present | Absent) to identify the status of the test case for certain hematologic and cardiovascular markers
+    * action button to:
+        * process study population data as baseline
+        * process user input as test case
+        * render all entries into visualization charts
+        * execute all computations, estimations and predictions
+        * render test case prediction into the survival probability plot
+4. The user interface ouput consists of the following:
+    * Kaplan-Meier plots to:
+        * provide a visualization of the survival profiles of the various feature categories (Yes | No or High | Low) given the survival time and event status as baseline
+        * indicate the entries made from the user input to visually assess the test case characteristics against the study population 
+    * survival probability plot to:
+        * provide a visualization of the baseline survival probability profile using each observation of the study population given the survival time and event status
+        * indicate the heart failure survival probabilities of the test case into different time points
+    * summary table to:
+        * present the estimated heart failure survival probabilities and predicted risk category for the test case 
+
+![ModelDeployment2_WebApplication.png](ad02846e-9be2-4137-83bd-d8843e2a36a0.png)
 
 # 2. Summary <a class="anchor" id="Summary"></a>
 
