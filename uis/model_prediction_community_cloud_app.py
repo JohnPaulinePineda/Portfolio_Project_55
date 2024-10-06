@@ -64,7 +64,7 @@ def compute_list_coxph_survival_profile(X_train_list):
 # Formulating a function to
 # create dichotomous bins
 # for the numeric features
-# of a list of
+# of a list of train cases
 ##################################
 def bin_numeric_model_feature(X_original_list, numeric_feature):
     median = numeric_feature_median.loc[numeric_feature]
@@ -87,7 +87,7 @@ def plot_kaplan_meier(df, cat_var, ax, new_case_value=None):
         categories = ['Absent', 'Present']
         colors = {'Absent': 'blue', 'Present': 'red'}
 
-    # Plotting each category with a partly red or blue transparent line
+    # Plotting each category with a partly red or blue transparent line depending on the risk category
     for value in categories:
         mask = df[cat_var] == value
         kmf.fit(df['TIME'][mask], event_observed=df['DEATH_EVENT'][mask], label=f'{cat_var}={value} (Baseline Distribution)')
