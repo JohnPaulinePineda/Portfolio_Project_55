@@ -27,13 +27,6 @@ PIPELINES_PATH = Path("pipelines")
 # Loading the dataset
 # from the DATASETS_FINAL_TRAIN_PATH
 ##################################
-X_train_smote = pd.read_csv(DATASETS_FINAL_TRAIN_FEATURES_PATH / "X_train_smote.csv")
-y_train_smote = pd.read_csv(DATASETS_FINAL_TRAIN_TARGET_PATH / "y_train_smote.csv")
-
-##################################
-# Loading the dataset
-# from the DATASETS_FINAL_TRAIN_PATH
-##################################
 X_train = pd.read_csv(DATASETS_FINAL_TRAIN_FEATURES_PATH / "X_train.csv", index_col=0)
 y_train = pd.read_csv(DATASETS_FINAL_TRAIN_TARGET_PATH / "y_train.csv", index_col=0)
 x_original_EDA = pd.read_csv(DATASETS_PREPROCESSED_PATH / "heart_failure_EDA.csv", index_col=0)
