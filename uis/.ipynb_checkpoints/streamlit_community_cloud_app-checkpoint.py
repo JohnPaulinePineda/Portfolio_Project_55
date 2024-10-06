@@ -101,7 +101,7 @@ st.markdown("""---""")
 # and radio buttons for categorical features
 # and storing the user inputs
 ##################################
-input_column_1, input_column_2, input_column_3, input_column_4, input_column_5, input_column_6 = st.columns(6)
+input_column_1, input_column_2, input_column_3, input_column_4, input_column_5, input_column_6, input_column_7 = st.columns(7)
 with input_column_1:
     age_numeric_input = st.slider(variables[0], min_value=20, max_value=100, value=20)
 with input_column_2:
