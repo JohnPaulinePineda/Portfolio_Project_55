@@ -2,7 +2,7 @@
 # Model Deployment : Estimating Heart Failure Survival Risk Profiles From Cardiovascular, Hematologic And Metabolic Markers
 
 ***
-### John Pauline Pineda <br> <br> *October 7, 2024*
+### John Pauline Pineda <br> <br> *October 10, 2024*
 ***
 
 * [**1. Table of Contents**](#TOC)
@@ -4148,13 +4148,13 @@ display(heart_failure_filtered)
              * <span style="color: #FF0000">HIGH_BLOOD_PRESSURE</span>
 7. The **train data (final)** subset is comprised of:
     * **168 rows** (observations)
-        * **114 LUNG_CANCER=Yes**: 67.85%
-        * **54 LUNG_CANCER=No**: 32.14%
+        * **114 DEATH_EVENT=True**: 67.85%
+        * **54 DEATH_EVENT=False**: 32.14%
     * **8 columns** (variables)
 8. The **validation data** subset is comprised of:
     * **56 rows** (observations)
-        * **38 LUNG_CANCER=Yes**: 67.85%
-        * **18 LUNG_CANCER=No**: 32.14%
+        * **38 DEATH_EVENT=True**: 67.85%
+        * **18 DEATH_EVENT=False=No**: 32.14%
     * **8 columns** (variables)
 9. The **test data** subset is comprised of:
     * **75 rows** (observations)
@@ -4833,7 +4833,7 @@ gbs_grid_search = GridSearchCV(estimator=gbs_pipeline,
 
 1. The [cox proportional hazards regression model](https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html) from the <mark style="background-color: #CCECFF"><b>sksurv.linear_model</b></mark> Python library API was implemented. 
 2. The model implementation used 1 hyperparameter:
-    * <span style="color: #FF0000">alpha</span> = regularization parameter for ridge regression penalty made to vary between 0.00, 0.01, 0.10, 1.00, 10.0 and 100.00
+    * <span style="color: #FF0000">alpha</span> = regularization parameter for ridge regression penalty made to vary between 0.00, 0.01, 0.10, 1.00 and 10.0
 3. Hyperparameter tuning was conducted using the 5-fold cross-validation method repeated 5 times with optimal model performance using the concordance index determined for: 
     * <span style="color: #FF0000">alpha</span> = 10.00
 4. The cross-validated model performance of the optimal model is summarized as follows:
@@ -13840,7 +13840,7 @@ sharing capabilities (once deployed, apps can be shared with others via a simple
     * predict risk categories for the test case
 2. The model prediction application code was saved in a repository that was eventually cloned for uploading to Streamlit Community Cloud.
 
-![ModelDeployment2_ModelPredictionApplicationCode.png](440b0527-a1aa-4e19-b03b-62ffbabc025c.png)
+![ModelDeployment2_ModelPredictionApplicationCode.png](102aecda-2513-42f6-ac80-c946be4ba7a7.png)
 
 ### 1.7.3 User Interface Application Code Development <a class="anchor" id="1.7.2"></a>
 
@@ -13850,7 +13850,7 @@ sharing capabilities (once deployed, apps can be shared with others via a simple
     * predict risk categories for the test case
 2. The user interface application code was saved in a repository that was eventually cloned for uploading to Streamlit Community Cloud.
 
-![ModelDeployment2_UserInterfaceApplicationCode.png](f4f3fd31-4d21-42c0-ba54-9f4bdc4fe437.png)
+![ModelDeployment2_UserInterfaceApplicationCode.png](a0b24509-588a-4bef-a43d-7aae883023ce.png)
 
 ### 1.7.4 Web Application <a class="anchor" id="1.7.3"></a>
 
@@ -13868,15 +13868,15 @@ sharing capabilities (once deployed, apps can be shared with others via a simple
         * render test case prediction into the survival probability plot
 4. The user interface ouput consists of the following:
     * Kaplan-Meier plots to:
-        * provide a visualization of the survival profiles of the various feature categories (Yes | No or High | Low) given the survival time and event status as baseline
-        * indicate the entries made from the user input to visually assess the test case characteristics against the study population 
+        * provide a baseline visualization of the survival profiles of the various feature categories (Yes | No or High | Low) estimated from the study population given the survival time and event status
+        * Indicate the entries made from the user input to visually assess the survival probabilities of the test case characteristics against the study population across all time points
     * survival probability plot to:
         * provide a visualization of the baseline survival probability profile using each observation of the study population given the survival time and event status
-        * indicate the heart failure survival probabilities of the test case into different time points
+        * indicate the heart failure survival probabilities of the test case at different time points
     * summary table to:
         * present the estimated heart failure survival probabilities and predicted risk category for the test case 
 
-![ModelDeployment2_WebApplication.png](ad02846e-9be2-4137-83bd-d8843e2a36a0.png)
+![ModelDeployment2_WebApplication.png](8947dbcd-f54b-4e1e-9af0-438e0994e881.png)
 
 # 2. Summary <a class="anchor" id="Summary"></a>
 
