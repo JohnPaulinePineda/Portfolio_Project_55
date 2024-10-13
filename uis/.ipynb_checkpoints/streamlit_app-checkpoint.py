@@ -190,9 +190,10 @@ if entered:
         ax = axes[i // 2, i % 2]
         plot_kaplan_meier(x_train_MI_EDA, predictor, ax, new_case_value=X_test_sample_converted[predictor][0])
         ax.set_title(f'Baseline Survival Probability by {predictor} Categories')
+        ax.set_ylim(-0.05, 1.05)
         ax.set_xlabel('TIME')
         ax.set_ylabel('Estimated Survival Probability')
-        ax.legend(loc='upper right')
+        ax.legend(loc='lower left')
     plt.tight_layout()
     st.pyplot(fig)
 

@@ -2,7 +2,7 @@
 # Model Deployment : Estimating Heart Failure Survival Risk Profiles From Cardiovascular, Hematologic And Metabolic Markers
 
 ***
-### John Pauline Pineda <br> <br> *October 10, 2024*
+### [**John Pauline Pineda**](https://github.com/JohnPaulinePineda) <br> <br> *October 10, 2024*
 ***
 
 * [**1. Table of Contents**](#TOC)
@@ -4553,6 +4553,25 @@ coxph_pipeline = Pipeline([
 
 ```python
 ##################################
+# Saving the model pipeline
+# developed from the original training data
+# for downstream processes
+################################## 
+coxph_pipeline.fit(X_train, y_train_array)
+joblib.dump(coxph_pipeline, 
+            os.path.join("..", PIPELINES_PATH, "coxph_pipeline.pkl"))
+```
+
+
+
+
+    ['..\\pipelines\\coxph_pipeline.pkl']
+
+
+
+
+```python
+##################################
 # Defining the hyperparameters for grid search
 ##################################
 coxph_hyperparameter_grid = {'coxph__alpha': [0.01, 0.10, 1.00, 10.00]}
@@ -4610,6 +4629,25 @@ coxns_pipeline = Pipeline([
     ('yeo_johnson', coxns_pipeline_preprocessor),
     ('coxns', CoxnetSurvivalAnalysis())])
 ```
+
+
+```python
+##################################
+# Saving the model pipeline
+# developed from the original training data
+# for downstream processes
+################################## 
+coxns_pipeline.fit(X_train, y_train_array)
+joblib.dump(coxns_pipeline, 
+            os.path.join("..", PIPELINES_PATH, "coxns_pipeline.pkl"))
+```
+
+
+
+
+    ['..\\pipelines\\coxns_pipeline.pkl']
+
+
 
 
 ```python
@@ -4678,6 +4716,25 @@ stree_pipeline = Pipeline([
 
 ```python
 ##################################
+# Saving the model pipeline
+# developed from the original training data
+# for downstream processes
+################################## 
+stree_pipeline.fit(X_train, y_train_array)
+joblib.dump(stree_pipeline, 
+            os.path.join("..", PIPELINES_PATH, "stree_pipeline.pkl"))
+```
+
+
+
+
+    ['..\\pipelines\\stree_pipeline.pkl']
+
+
+
+
+```python
+##################################
 # Defining the hyperparameters for grid search
 ##################################
 stree_hyperparameter_grid = {'stree__min_samples_split': [10, 15, 20],
@@ -4742,6 +4799,25 @@ rsf_pipeline = Pipeline([
 
 ```python
 ##################################
+# Saving the model pipeline
+# developed from the original training data
+# for downstream processes
+################################## 
+rsf_pipeline.fit(X_train, y_train_array)
+joblib.dump(rsf_pipeline, 
+            os.path.join("..", PIPELINES_PATH, "rsf_pipeline.pkl"))
+```
+
+
+
+
+    ['..\\pipelines\\rsf_pipeline.pkl']
+
+
+
+
+```python
+##################################
 # Defining the hyperparameters for grid search
 ##################################
 rsf_hyperparameter_grid = {'rsf__n_estimators': [100, 200, 300],
@@ -4802,6 +4878,25 @@ gbs_pipeline = Pipeline([
     ('yeo_johnson', gbs_pipeline_preprocessor),
     ('gbs', GradientBoostingSurvivalAnalysis())])
 ```
+
+
+```python
+##################################
+# Saving the model pipeline
+# developed from the original training data
+# for downstream processes
+################################## 
+gbs_pipeline.fit(X_train, y_train_array)
+joblib.dump(gbs_pipeline, 
+            os.path.join("..", PIPELINES_PATH, "gbs_pipeline.pkl"))
+```
+
+
+
+
+    ['..\\pipelines\\gbs_pipeline.pkl']
+
+
 
 
 ```python
@@ -6064,7 +6159,7 @@ plt.show()
 
 
     
-![png](output_167_0.png)
+![png](output_172_0.png)
     
 
 
@@ -6215,7 +6310,7 @@ plt.show()
 
 
     
-![png](output_171_0.png)
+![png](output_176_0.png)
     
 
 
@@ -7540,7 +7635,7 @@ plt.show()
 
 
     
-![png](output_182_0.png)
+![png](output_187_0.png)
     
 
 
@@ -7691,7 +7786,7 @@ plt.show()
 
 
     
-![png](output_186_0.png)
+![png](output_191_0.png)
     
 
 
@@ -9011,7 +9106,7 @@ plt.show()
 
 
     
-![png](output_197_0.png)
+![png](output_202_0.png)
     
 
 
@@ -9162,7 +9257,7 @@ plt.show()
 
 
     
-![png](output_201_0.png)
+![png](output_206_0.png)
     
 
 
@@ -10555,7 +10650,7 @@ plt.show()
 
 
     
-![png](output_212_0.png)
+![png](output_217_0.png)
     
 
 
@@ -10706,7 +10801,7 @@ plt.show()
 
 
     
-![png](output_216_0.png)
+![png](output_221_0.png)
     
 
 
@@ -12100,7 +12195,7 @@ plt.show()
 
 
     
-![png](output_227_0.png)
+![png](output_232_0.png)
     
 
 
@@ -12251,7 +12346,7 @@ plt.show()
 
 
     
-![png](output_231_0.png)
+![png](output_236_0.png)
     
 
 
@@ -12384,7 +12479,7 @@ for container in ci_plot.containers:
 
 
     
-![png](output_235_0.png)
+![png](output_240_0.png)
     
 
 
@@ -12534,7 +12629,7 @@ for container in updated_ci_plot.containers:
 
 
     
-![png](output_239_0.png)
+![png](output_244_0.png)
     
 
 
@@ -12643,7 +12738,7 @@ plt.show()
 
 
     
-![png](output_242_0.png)
+![png](output_247_0.png)
     
 
 
@@ -12746,7 +12841,7 @@ plt.show()
 
 
     
-![png](output_244_0.png)
+![png](output_249_0.png)
     
 
 
@@ -13071,7 +13166,7 @@ plt.show()
 
 
     
-![png](output_252_0.png)
+![png](output_257_0.png)
     
 
 
@@ -13120,7 +13215,7 @@ plt.show()
 
 
     
-![png](output_255_0.png)
+![png](output_260_0.png)
     
 
 
@@ -13216,24 +13311,6 @@ X_test_sample.head()
   </tbody>
 </table>
 </div>
-
-
-
-
-```python
-##################################
-# Saving the best Cox Proportional Hazards Regression Model
-# pipeline developed from the original training data
-################################## 
-coxph_pipeline.fit(X_train, y_train_array)
-joblib.dump(coxph_pipeline, 
-            os.path.join("..", PIPELINES_PATH, "coxph_pipeline.pkl"))
-```
-
-
-
-
-    ['..\\pipelines\\coxph_pipeline.pkl']
 
 
 
@@ -13380,16 +13457,17 @@ for i, predictor in enumerate(heart_failure_predictors):
     ax = axes[i // 2, i % 2]
     plot_kaplan_meier(heart_failure_MI_EDA, predictor, ax, new_case_value=X_test_sample_converted[predictor][0])
     ax.set_title(f'DEATH_EVENT Survival Probabilities by {predictor} Categories')
+    ax.set_ylim(-0.05, 1.05)
     ax.set_xlabel('TIME')
     ax.set_ylabel('DEATH_EVENT Survival Probability')
-    ax.legend(loc='upper right')
+    ax.legend(loc='lower left')
 plt.tight_layout()
 plt.show()
 ```
 
 
     
-![png](output_264_0.png)
+![png](output_268_0.png)
     
 
 
@@ -13503,7 +13581,7 @@ plt.show()
 
 
     
-![png](output_268_0.png)
+![png](output_272_0.png)
     
 
 
@@ -13712,16 +13790,17 @@ for i, predictor in enumerate(heart_failure_predictors):
     ax = axes[i // 2, i % 2]
     plot_kaplan_meier(heart_failure_MI_EDA, predictor, ax, new_case_value=X_test_sample_converted[predictor][0])
     ax.set_title(f'DEATH_EVENT Survival Probabilities by {predictor} Categories')
+    ax.set_ylim(-0.05, 1.05)
     ax.set_xlabel('TIME')
     ax.set_ylabel('DEATH_EVENT Survival Probability')
-    ax.legend(loc='upper right')
+    ax.legend(loc='lower left')
 plt.tight_layout()
 plt.show()
 ```
 
 
     
-![png](output_274_0.png)
+![png](output_278_0.png)
     
 
 
@@ -13835,7 +13914,7 @@ plt.show()
 
 
     
-![png](output_278_0.png)
+![png](output_282_0.png)
     
 
 
