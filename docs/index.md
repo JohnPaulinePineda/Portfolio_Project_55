@@ -13982,7 +13982,7 @@ sharing capabilities (once deployed, apps can be shared with others via a simple
 
 ![ModelDeployment2_Summary_2.png](0c880223-9d53-485a-b82c-af2f63c35e2f.png)
 
-![ModelDeployment2_Summary_3.png](7cef3362-3a1f-4760-b3f2-9805dbf1ecd2.png)
+![ModelDeployment2_Summary_3.png](1f4d2656-09d6-4ef7-9e0c-aff46ac89796.png)
 
 # 3. References <a class="anchor" id="References"></a>
 
