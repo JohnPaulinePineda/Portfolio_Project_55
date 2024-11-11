@@ -183,7 +183,7 @@ if entered:
     # using Kaplan-Meier Plots
     # against the training data characteristics
     ##################################
-    fig, axes = plt.subplots(3, 2, figsize=(17, 13))
+    fig, axes = plt.subplots(3, 2, figsize=(17, 13), dpi=300)
 
     heart_failure_predictors = ['AGE','EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM','ANAEMIA','HIGH_BLOOD_PRESSURE']
 
@@ -242,7 +242,7 @@ if entered:
     # for plotting the estimated survival probability profile
     # of the final survival prediction model
     ##################################
-    fig, ax = plt.subplots(figsize=(17, 8))
+    fig, ax = plt.subplots(figsize=(17, 8), dpi=300)
 
     for i, surv_func in enumerate(X_train_survival_function):
         ax.step(surv_func.x, 
