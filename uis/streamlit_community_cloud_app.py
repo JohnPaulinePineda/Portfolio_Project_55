@@ -104,39 +104,39 @@ st.markdown("""---""")
 ##################################
 # First row input
 ##################################
-_, row1_col2, _ = st.columns(3)
-with row1_col2:
+row1_col1, _, _, _ = st.columns(4)
+with row1_col1:
     age_numeric_input = st.slider(variables[0], min_value=20, max_value=100, value=20)
 ##################################
-# second row input
+# Second row input
 ##################################
-_, row2_col2, _ = st.columns(3)
-with row2_col2:
+row2_col1, _, _, _ = st.columns(4)
+with row2_col1:
     ejection_fraction_numeric_input = st.slider(variables[1], min_value=10, max_value=80, value=10)
 ##################################
 # Third row input
 ##################################
-_, row3_col2, _ = st.columns(3)
-with row3_col2:
+row3_col1, _, _, _ = st.columns(4)
+with row3_col1:
     serum_creatinine_numeric_input = st.slider(variables[2], min_value=0.5, max_value=10.0, value=0.5)
 ##################################
 # Fourth row input
 ##################################
-_, row4_col2, _ = st.columns(3)
-with row4_col2:
+row4_col1, _, _, _ = st.columns(4)
+with row4_col1:
     serum_sodium_numeric_input = st.slider(variables[3], min_value=110, max_value=150, value=50)
 ##################################
 # Fifth row input
 ##################################
-_, row5_col2, _ = st.columns(3)
-with row5_col2:
+row5_col1, _, _, _ = st.columns(4)
+with row5_col1:
     anaemia_categorical_input = st.radio(variables[4], ('Present', 'Absent'), horizontal=True)
     anaemia_numeric_input = 1 if anaemia_categorical_input == 'Present' else 0
 ##################################
 # Sixth row input
 ##################################
-_, row6_col2, _ = st.columns(3)
-with row6_col2:
+row6_col1, _, _, _ = st.columns(4)
+with row6_col1:
     high_blood_pressure_categorical_input = st.radio(variables[5], ('Present', 'Absent'), horizontal=True)
     high_blood_pressure_numeric_input = 1 if high_blood_pressure_categorical_input == 'Present' else 0
 
