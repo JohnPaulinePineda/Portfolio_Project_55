@@ -97,25 +97,44 @@ st.markdown("<h4 style='font-size: 20px; font-weight: bold;'>Cardiovascular, Hem
 st.markdown("""---""")
 
 ##################################
-# Creating sliders for numeric features
-# and radio buttons for categorical features
-# and storing the user inputs
+# First row input
 ##################################
-input_column_1, input_column_2, input_column_3, input_column_4, input_column_5, input_column_6, input_column_7, input_column_8 = st.columns(8)
-with input_column_2:
+row1_col1, _, _ = st.columns(3)
+with row1_col1:
     age_numeric_input = st.slider(variables[0], min_value=20, max_value=100, value=20)
-with input_column_3:
+##################################
+# Second row input
+##################################
+row2_col1, _, _ = st.columns(3)
+with row2_col1:
     ejection_fraction_numeric_input = st.slider(variables[1], min_value=10, max_value=80, value=10)
-with input_column_4:
+##################################
+# Third row input
+##################################
+row3_col1, _, _ = st.columns(3)
+with row3_col1:
     serum_creatinine_numeric_input = st.slider(variables[2], min_value=0.5, max_value=10.0, value=0.5)
-with input_column_5:
+##################################
+# Fourth row input
+##################################
+row4_col1, _, _ = st.columns(3)
+with row4_col1:
     serum_sodium_numeric_input = st.slider(variables[3], min_value=110, max_value=150, value=50)
-with input_column_6:
+##################################
+# Fifth row input
+##################################
+row5_col1, _, _ = st.columns(3)
+with row5_col1:
     anaemia_categorical_input = st.radio(variables[4], ('Present', 'Absent'), horizontal=True)
     anaemia_numeric_input = 1 if anaemia_categorical_input == 'Present' else 0
-with input_column_7:
+##################################
+# Sixth row input
+##################################
+row6_col1, _, _ = st.columns(3)
+with row6_col1:
     high_blood_pressure_categorical_input = st.radio(variables[5], ('Present', 'Absent'), horizontal=True)
     high_blood_pressure_numeric_input = 1 if high_blood_pressure_categorical_input == 'Present' else 0
+
 
 test_case_responses[variables[0]] = age_numeric_input
 test_case_responses[variables[1]] = ejection_fraction_numeric_input
@@ -183,7 +202,7 @@ if entered:
     # using Kaplan-Meier Plots
     # against the training data characteristics
     ##################################
-    fig, axes = plt.subplots(3, 2, figsize=(17, 13))
+    fig, axes = plt.subplots(3, 2, figsize=(17, 13), dpi=1000)
 
     heart_failure_predictors = ['AGE','EJECTION_FRACTION','SERUM_CREATININE','SERUM_SODIUM','ANAEMIA','HIGH_BLOOD_PRESSURE']
 
@@ -242,7 +261,7 @@ if entered:
     # for plotting the estimated survival probability profile
     # of the final survival prediction model
     ##################################
-    fig, ax = plt.subplots(figsize=(17, 8))
+    fig, ax = plt.subplots(figsize=(17, 8), dpi=1000)
 
     for i, surv_func in enumerate(X_train_survival_function):
         ax.step(surv_func.x, 
