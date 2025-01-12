@@ -101,19 +101,30 @@ st.markdown("""---""")
 # and radio buttons for categorical features
 # and storing the user inputs
 ##################################
-input_column_1, input_column_2, input_column_3, input_column_4, input_column_5, input_column_6, input_column_7, input_column_8 = st.columns(8)
-with input_column_2:
+##################################
+# First row input
+##################################
+_, row1_col2, row1_col3, _ = st.columns(4)
+with row1_col2:
     age_numeric_input = st.slider(variables[0], min_value=20, max_value=100, value=20)
-with input_column_3:
+with row1_col3:
     ejection_fraction_numeric_input = st.slider(variables[1], min_value=10, max_value=80, value=10)
-with input_column_4:
+##################################
+# Second row input
+##################################
+_, row2_col2, row2_col3, _ = st.columns(4)
+with row2_col2:
     serum_creatinine_numeric_input = st.slider(variables[2], min_value=0.5, max_value=10.0, value=0.5)
-with input_column_5:
+with row2_col3:
     serum_sodium_numeric_input = st.slider(variables[3], min_value=110, max_value=150, value=50)
-with input_column_6:
+##################################
+# Third row input
+##################################
+_, row3_col2, row3_col3, _ = st.columns(4)
+with row3_col2:
     anaemia_categorical_input = st.radio(variables[4], ('Present', 'Absent'), horizontal=True)
     anaemia_numeric_input = 1 if anaemia_categorical_input == 'Present' else 0
-with input_column_7:
+with row3_col3:
     high_blood_pressure_categorical_input = st.radio(variables[5], ('Present', 'Absent'), horizontal=True)
     high_blood_pressure_numeric_input = 1 if high_blood_pressure_categorical_input == 'Present' else 0
 

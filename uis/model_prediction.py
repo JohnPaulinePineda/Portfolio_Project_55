@@ -63,7 +63,7 @@ def compute_list_coxph_survival_profile(X_train_list):
 # Formulating a function to
 # create dichotomous bins
 # for the numeric features
-# of a list of
+# of a list of train cases
 ##################################
 def bin_numeric_model_feature(X_original_list, numeric_feature):
     median = numeric_feature_median.loc[numeric_feature]
