@@ -101,38 +101,38 @@ st.markdown("""---""")
 ##################################
 row1_col1, _, _ = st.columns(3)
 with row1_col1:
-    age_numeric_input = st.slider(variables[0], min_value=20, max_value=100, value=20)
+    age_numeric_input = st.slider("AGE (Years)", min_value=20, max_value=100, value=20)
 ##################################
 # Second row input
 ##################################
 row2_col1, _, _ = st.columns(3)
 with row2_col1:
-    ejection_fraction_numeric_input = st.slider(variables[1], min_value=10, max_value=80, value=10)
+    ejection_fraction_numeric_input = st.slider("EJECTION FRACTION (%)", min_value=10, max_value=80, value=10)
 ##################################
 # Third row input
 ##################################
 row3_col1, _, _ = st.columns(3)
 with row3_col1:
-    serum_creatinine_numeric_input = st.slider(variables[2], min_value=0.5, max_value=10.0, value=0.5)
+    serum_creatinine_numeric_input = st.slider("SERUM CREATININE (mg/dL)", min_value=0.5, max_value=10.0, value=0.5)
 ##################################
 # Fourth row input
 ##################################
 row4_col1, _, _ = st.columns(3)
 with row4_col1:
-    serum_sodium_numeric_input = st.slider(variables[3], min_value=110, max_value=150, value=50)
+    serum_sodium_numeric_input = st.slider("SERUM SODIUM (mEq/L)", min_value=110, max_value=150, value=50)
 ##################################
 # Fifth row input
 ##################################
 row5_col1, _, _ = st.columns(3)
 with row5_col1:
-    anaemia_categorical_input = st.radio(variables[4], ('Present', 'Absent'), horizontal=True)
+    anaemia_categorical_input = st.radio("ANAEMIA Indication", ('Present', 'Absent'), horizontal=True)
     anaemia_numeric_input = 1 if anaemia_categorical_input == 'Present' else 0
 ##################################
 # Sixth row input
 ##################################
 row6_col1, _, _ = st.columns(3)
 with row6_col1:
-    high_blood_pressure_categorical_input = st.radio(variables[5], ('Present', 'Absent'), horizontal=True)
+    high_blood_pressure_categorical_input = st.radio("HIGH BLOOD PRESSURE Indication", ('Present', 'Absent'), horizontal=True)
     high_blood_pressure_numeric_input = 1 if high_blood_pressure_categorical_input == 'Present' else 0
 
 
